@@ -1,0 +1,364 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Edit Seller Profile</h1>
+          <p class="page-subtitle">Update your selling preferences and buyer requirements</p>
+        </div>
+        <div class="page-header-actions">
+          <%= link_to seller_profile_path, class: "btn btn-secondary" do %>
+            Cancel
+          <% end %>
+          <button type="submit" form="seller_profile_form" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Save Changes
+          </button>
+        </div>
+      </div>
+
+      <%= form_with model: @seller_profile, url: seller_profile_path, method: :patch, id: "seller_profile_form" do |f| %>
+        <%# Settlement Preferences Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Settlement Preferences</h2>
+              <p class="dashboard-panel-subtitle">When do you want to settle?</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Preferred Settlement Period</label>
+            <div class="form-check-group">
+              <% settlement_options = [
+                   ["asap", "ASAP (30 days)", "Fastest possible settlement for quick sales"],
+                   ["standard", "Standard (42-45 days)", "Standard settlement period in most states"],
+                   ["flexible", "Flexible (up to 90 days)", "Accommodating longer settlement if needed"],
+                   ["specific", "Specific Date", "I have a particular date in mind"]
+                 ] %>
+              <% settlement_options.each do |value, label, description| %>
+                <div class="form-check p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: var(--space-2);">
+                  <%= f.radio_button :preferred_settlement_period, value, class: "form-check-input", id: "settlement_#{value}" %>
+                  <label for="settlement_<%= value %>" class="form-check-label" style="display: block; cursor: pointer;">
+                    <span class="font-semibold"><%= label %></span>
+                    <span class="text-small text-muted block mt-1"><%= description %></span>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="form-group" id="specific-date-field">
+            <%= f.label :specific_settlement_date, "Target Settlement Date", class: "form-label" %>
+            <%= f.date_field :specific_settlement_date, class: "form-input", style: "max-width: 300px;", min: Date.current %>
+            <p class="form-help">Select your preferred settlement date (must be in the future)</p>
+          </div>
+        </div>
+
+        <%# Contact Preferences Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Contact Preferences</h2>
+              <p class="dashboard-panel-subtitle">How buyers can reach you</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Preferred Contact Method</label>
+            <div class="form-check-group">
+              <% contact_options = [
+                   ["platform", "Platform Messages", "message", "Communicate through Reasy's messaging system"],
+                   ["email", "Email", "mail", "Receive enquiries via email"],
+                   ["phone", "Phone", "phone", "Allow phone calls from interested buyers"]
+                 ] %>
+              <% contact_options.each do |value, label, icon, description| %>
+                <div class="form-check p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: var(--space-2);">
+                  <%= f.radio_button :preferred_contact_method, value, class: "form-check-input", id: "contact_#{value}" %>
+                  <label for="contact_<%= value %>" class="form-check-label" style="display: block; cursor: pointer;">
+                    <span class="font-semibold flex items-center gap-2">
+                      <% case icon %>
+                      <% when "message" %>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+                        </svg>
+                      <% when "mail" %>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="2" y="4" width="20" height="16" rx="2"/>
+                          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                        </svg>
+                      <% when "phone" %>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/>
+                        </svg>
+                      <% end %>
+                      <%= label %>
+                    </span>
+                    <span class="text-small text-muted block mt-1"><%= description %></span>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-group">
+            <div class="form-toggle">
+              <%= f.check_box :allow_direct_contact, class: "form-toggle-input", id: "allow_direct_contact" %>
+              <label for="allow_direct_contact" class="form-toggle-label">
+                <span class="font-semibold">Allow Direct Buyer Contact</span>
+              </label>
+            </div>
+            <p class="form-help mt-2">When enabled, buyers can contact you directly rather than through a real estate agent</p>
+          </div>
+        </div>
+
+        <%# Buyer Requirements Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Buyer Requirements</h2>
+              <p class="dashboard-panel-subtitle">What types of buyers will you consider?</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Accepted Buyer Types</label>
+            <p class="form-help mb-4">Select which types of buyers you're willing to accept offers from</p>
+
+            <div class="form-check-group">
+              <div class="form-check p-4" style="background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: var(--space-3);">
+                <%= f.check_box :accept_cash_buyers, class: "form-check-input", id: "accept_cash" %>
+                <label for="accept_cash" class="form-check-label" style="cursor: pointer;">
+                  <span class="flex items-center gap-3">
+                    <span class="metric-card-icon metric-card-icon-green" style="width: 32px; height: 32px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                      </svg>
+                    </span>
+                    <span>
+                      <span class="font-semibold block">Cash Buyers</span>
+                      <span class="text-small text-muted">Buyers with funds ready - fastest settlement, lowest risk</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="form-check p-4" style="background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: var(--space-3);">
+                <%= f.check_box :accept_pre_approved_buyers, class: "form-check-input", id: "accept_pre_approved" %>
+                <label for="accept_pre_approved" class="form-check-label" style="cursor: pointer;">
+                  <span class="flex items-center gap-3">
+                    <span class="metric-card-icon metric-card-icon-blue" style="width: 32px; height: 32px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                      </svg>
+                    </span>
+                    <span>
+                      <span class="font-semibold block">Pre-approved Buyers</span>
+                      <span class="text-small text-muted">Buyers with finance approval - good confidence level</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="form-check p-4" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                <%= f.check_box :accept_finance_buyers, class: "form-check-input", id: "accept_finance" %>
+                <label for="accept_finance" class="form-check-label" style="cursor: pointer;">
+                  <span class="flex items-center gap-3">
+                    <span class="metric-card-icon metric-card-icon-orange" style="width: 32px; height: 32px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                        <path d="M2 10h20"/>
+                      </svg>
+                    </span>
+                    <span>
+                      <span class="font-semibold block">Finance Buyers</span>
+                      <span class="text-small text-muted">Buyers requiring finance - subject to approval</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%# Viewing Availability Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Viewing Availability</h2>
+              <p class="dashboard-panel-subtitle">When are you available for property viewings?</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-toggle">
+              <%= f.check_box :allow_scheduled_viewings, class: "form-toggle-input", id: "allow_viewings" %>
+              <label for="allow_viewings" class="form-toggle-label">
+                <span class="font-semibold">Allow Scheduled Viewings</span>
+              </label>
+            </div>
+            <p class="form-help mt-2">Enable buyers to request viewing appointments for your properties</p>
+          </div>
+
+          <div class="divider"></div>
+
+          <div id="viewing-options">
+            <div class="grid grid-cols-2 gap-6">
+              <div class="form-group">
+                <label class="form-label">Available Days</label>
+                <div class="form-check-group">
+                  <div class="form-check">
+                    <%= check_box_tag "seller_profile[viewing_availability][weekdays]", "true",
+                          @seller_profile.available_weekdays?,
+                          id: "available_weekdays",
+                          class: "form-check-input" %>
+                    <%= label_tag "available_weekdays", class: "form-check-label" do %>
+                      <span class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6"/>
+                          <line x1="8" y1="2" x2="8" y2="6"/>
+                          <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Weekdays (Mon-Fri)
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="form-check">
+                    <%= check_box_tag "seller_profile[viewing_availability][weekends]", "true",
+                          @seller_profile.available_weekends?,
+                          id: "available_weekends",
+                          class: "form-check-input" %>
+                    <%= label_tag "available_weekends", class: "form-check-label" do %>
+                      <span class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6"/>
+                          <line x1="8" y1="2" x2="8" y2="6"/>
+                          <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Weekends (Sat-Sun)
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Available Times</label>
+                <div class="form-check-group">
+                  <div class="form-check">
+                    <%= check_box_tag "seller_profile[viewing_availability][times][]", "morning",
+                          @seller_profile.available_morning?,
+                          id: "available_morning",
+                          class: "form-check-input" %>
+                    <%= label_tag "available_morning", class: "form-check-label" do %>
+                      <span class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="4"/>
+                          <path d="M12 2v2"/>
+                          <path d="M12 20v2"/>
+                          <path d="m4.93 4.93 1.41 1.41"/>
+                          <path d="m17.66 17.66 1.41 1.41"/>
+                          <path d="M2 12h2"/>
+                          <path d="M20 12h2"/>
+                        </svg>
+                        Morning (8am - 12pm)
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="form-check">
+                    <%= check_box_tag "seller_profile[viewing_availability][times][]", "afternoon",
+                          @seller_profile.available_afternoon?,
+                          id: "available_afternoon",
+                          class: "form-check-input" %>
+                    <%= label_tag "available_afternoon", class: "form-check-label" do %>
+                      <span class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="4"/>
+                          <path d="M12 2v2"/>
+                          <path d="M12 20v2"/>
+                        </svg>
+                        Afternoon (12pm - 5pm)
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="form-check">
+                    <%= check_box_tag "seller_profile[viewing_availability][times][]", "evening",
+                          @seller_profile.available_evening?,
+                          id: "available_evening",
+                          class: "form-check-input" %>
+                    <%= label_tag "available_evening", class: "form-check-label" do %>
+                      <span class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                        Evening (5pm - 8pm)
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+                <%= hidden_field_tag "seller_profile[viewing_availability][times][]", "" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%# Default Entity Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Default Selling Entity</h2>
+              <p class="dashboard-panel-subtitle">Which entity should be used for your listings?</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :default_entity_id, "Selling Entity", class: "form-label" %>
+            <% entities = current_user.entities.active %>
+            <% if entities.any? %>
+              <%= f.select :default_entity_id,
+                    options_from_collection_for_select(entities, :id, :name, @seller_profile.default_entity_id),
+                    { include_blank: "Select an entity..." },
+                    class: "form-select" %>
+              <p class="form-help">This entity will be used as the default for new property listings</p>
+            <% else %>
+              <div class="alert alert-info">
+                <div class="alert-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                  </svg>
+                </div>
+                <div class="alert-content">
+                  <div class="alert-title">No entities found</div>
+                  <div class="alert-description">You need to create an entity before you can select a default selling entity.</div>
+                  <div class="alert-actions">
+                    <%= link_to "Create Entity", new_entity_path, class: "btn btn-sm btn-primary" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Form Actions (Bottom) %>
+        <div class="form-actions form-actions-right">
+          <%= link_to "Cancel", seller_profile_path, class: "btn btn-secondary" %>
+          <%= f.submit "Save Changes", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

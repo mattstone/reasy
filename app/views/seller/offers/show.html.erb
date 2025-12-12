@@ -1,0 +1,295 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <%= link_to seller_property_offers_path(@property), class: "back-link" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+            Back to Offers
+          <% end %>
+          <h1 class="page-title">Offer from <%= @offer.buyer.full_name || @offer.buyer.email %></h1>
+          <p class="page-subtitle">Received <%= @offer.submitted_at&.strftime("%d %B %Y at %I:%M %p") || "Not yet submitted" %></p>
+        </div>
+      </div>
+
+      <%# Status Banner %>
+      <div class="offer-status-banner offer-status-<%= @offer.status %> mb-6">
+        <div class="offer-status-icon">
+          <% case @offer.status %>
+          <% when "submitted", "viewed" %>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          <% when "accepted" %>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          <% when "rejected" %>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          <% when "countered" %>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          <% else %>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          <% end %>
+        </div>
+        <div class="offer-status-content">
+          <div class="offer-status-title">
+            <% case @offer.status %>
+            <% when "submitted" %>Offer Pending Response
+            <% when "viewed" %>Offer Viewed
+            <% when "accepted" %>Offer Accepted
+            <% when "rejected" %>Offer Rejected
+            <% when "countered" %>Counter-Offer Sent
+            <% when "withdrawn" %>Offer Withdrawn
+            <% when "expired" %>Offer Expired
+            <% else %><%= @offer.status.humanize %>
+            <% end %>
+          </div>
+          <div class="offer-status-description">
+            <% case @offer.status %>
+            <% when "submitted" %>
+              This offer is waiting for your response. You can accept, reject, or counter.
+            <% when "viewed" %>
+              You've viewed this offer. Respond before it expires.
+            <% when "accepted" %>
+              You accepted this offer on <%= @offer.accepted_at&.strftime("%d %B %Y") %>. A transaction has been created.
+            <% when "rejected" %>
+              You rejected this offer on <%= @offer.rejected_at&.strftime("%d %B %Y") %>.
+            <% when "countered" %>
+              You sent a counter-offer. Waiting for buyer's response.
+            <% when "withdrawn" %>
+              The buyer withdrew this offer.
+            <% when "expired" %>
+              This offer expired without a response.
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+        <div class="flex flex-col gap-6">
+          <%# Offer Details %>
+          <div class="dashboard-panel">
+            <h2 class="dashboard-panel-title mb-4">Offer Details</h2>
+
+            <div class="offer-summary">
+              <div class="offer-summary-amount">
+                <span class="offer-summary-label">Offer Amount</span>
+                <span class="offer-summary-value"><%= number_to_currency(@offer.amount, precision: 0) %></span>
+              </div>
+
+              <div class="offer-summary-grid">
+                <div class="offer-summary-item">
+                  <span class="offer-summary-item-label">Finance Type</span>
+                  <span class="offer-summary-item-value">
+                    <span class="badge <%= @offer.cash? ? 'badge-green' : 'badge-blue' %>">
+                      <%= @offer.finance_type.humanize %>
+                    </span>
+                  </span>
+                </div>
+
+                <div class="offer-summary-item">
+                  <span class="offer-summary-item-label">Settlement Period</span>
+                  <span class="offer-summary-item-value"><%= @offer.settlement_days %> days</span>
+                </div>
+
+                <% if @offer.deposit_cents.present? && @offer.deposit_cents > 0 %>
+                  <div class="offer-summary-item">
+                    <span class="offer-summary-item-label">Deposit</span>
+                    <span class="offer-summary-item-value"><%= number_to_currency(@offer.deposit, precision: 0) %></span>
+                  </div>
+                <% end %>
+
+                <% if @offer.expires_at.present? %>
+                  <div class="offer-summary-item">
+                    <span class="offer-summary-item-label">Expires</span>
+                    <span class="offer-summary-item-value">
+                      <% if @offer.expires_at > Time.current %>
+                        <%= @offer.expires_at.strftime("%d %B %Y") %>
+                        <span class="text-muted">(<%= time_ago_in_words(@offer.expires_at) %>)</span>
+                      <% else %>
+                        <span class="text-danger">Expired</span>
+                      <% end %>
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <% if @offer.has_conditions? %>
+            <%# Conditions %>
+            <div class="dashboard-panel">
+              <h2 class="dashboard-panel-title mb-4">Conditions</h2>
+              <div class="conditions-list">
+                <% @offer.conditions_list.each do |condition| %>
+                  <div class="condition-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                      <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    <span><%= condition %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @offer.message.present? %>
+            <%# Buyer Message %>
+            <div class="dashboard-panel">
+              <h2 class="dashboard-panel-title mb-4">Message from Buyer</h2>
+              <div class="message-box">
+                <p><%= simple_format(@offer.message) %></p>
+              </div>
+            </div>
+          <% end %>
+
+          <%# Response Actions %>
+          <% if @offer.active? %>
+            <div class="dashboard-panel">
+              <h2 class="dashboard-panel-title mb-4">Respond to Offer</h2>
+
+              <div class="response-actions">
+                <%# Accept %>
+                <%= form_with url: accept_seller_property_offer_path(@property, @offer), method: :post, class: "response-form" do |f| %>
+                  <div class="form-group">
+                    <%= f.label :seller_response, "Message to buyer (optional)", class: "form-label" %>
+                    <%= f.text_area :seller_response, class: "form-textarea", rows: 2, placeholder: "Thank you for your offer..." %>
+                  </div>
+                  <%= f.submit "Accept Offer", class: "btn btn-success btn-block", data: { turbo_confirm: "Accept this offer for #{number_to_currency(@offer.amount, precision: 0)}? This will mark your property as under offer." } %>
+                <% end %>
+
+                <div class="response-divider">
+                  <span>or</span>
+                </div>
+
+                <%# Counter %>
+                <%= form_with url: counter_seller_property_offer_path(@property, @offer), method: :post, class: "response-form" do |f| %>
+                  <h3 class="text-lg font-semibold mb-3">Make a Counter-Offer</h3>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <%= f.label :counter_amount, "Counter Amount", class: "form-label" %>
+                      <div class="input-with-prefix">
+                        <span class="input-prefix">$</span>
+                        <%= f.number_field :counter_amount, class: "form-input", step: 1000, min: 0, placeholder: "0" %>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <%= f.label :settlement_days, "Settlement (days)", class: "form-label" %>
+                      <%= f.select :settlement_days,
+                            options_for_select([
+                              ["#{@offer.settlement_days} days (same)", @offer.settlement_days],
+                              ["30 days", 30],
+                              ["42 days", 42],
+                              ["45 days", 45],
+                              ["60 days", 60],
+                              ["90 days", 90]
+                            ]),
+                            {},
+                            class: "form-select" %>
+                    </div>
+                  </div>
+
+                  <%= f.submit "Send Counter-Offer", class: "btn btn-primary btn-block" %>
+                <% end %>
+
+                <div class="response-divider">
+                  <span>or</span>
+                </div>
+
+                <%# Reject %>
+                <%= form_with url: reject_seller_property_offer_path(@property, @offer), method: :post, class: "response-form" do |f| %>
+                  <div class="form-group">
+                    <%= f.label :seller_response, "Reason for rejection (optional)", class: "form-label" %>
+                    <%= f.text_area :seller_response, class: "form-textarea", rows: 2, placeholder: "Thank you for your interest, but..." %>
+                  </div>
+                  <%= f.submit "Reject Offer", class: "btn btn-ghost btn-block text-danger", data: { turbo_confirm: "Reject this offer?" } %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Sidebar %>
+        <div class="flex flex-col gap-6">
+          <%# Buyer Info %>
+          <div class="dashboard-panel">
+            <h3 class="dashboard-panel-title mb-4">Buyer Information</h3>
+
+            <div class="buyer-info">
+              <div class="buyer-avatar">
+                <%= @offer.buyer.full_name&.first || @offer.buyer.email.first.upcase %>
+              </div>
+              <div class="buyer-details">
+                <div class="buyer-name"><%= @offer.buyer.full_name || "Buyer" %></div>
+                <div class="buyer-email"><%= @offer.buyer.email %></div>
+              </div>
+            </div>
+
+            <% if @offer.buyer_entity.present? %>
+              <div class="entity-info mt-4">
+                <span class="text-muted text-small">Purchasing as:</span>
+                <div class="font-medium"><%= @offer.buyer_entity.name %></div>
+                <span class="badge badge-gray badge-sm"><%= @offer.buyer_entity.entity_type.humanize %></span>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Property Card %>
+          <div class="dashboard-panel">
+            <h3 class="dashboard-panel-title mb-4">Property</h3>
+            <%= link_to seller_property_path(@property), class: "property-mini-card" do %>
+              <% if @property.hero_image.attached? %>
+                <%= image_tag @property.hero_image.variant(resize_to_fill: [200, 120]), class: "property-mini-image" %>
+              <% else %>
+                <div class="property-mini-image" style="background: linear-gradient(135deg, var(--color-primary-pale), var(--color-beige));"></div>
+              <% end %>
+              <div class="property-mini-details">
+                <div class="property-mini-price"><%= @property.price_range_display %></div>
+                <div class="property-mini-address"><%= @property.short_address %></div>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Cooling-Off Period (NSW) %>
+          <% if @offer.accepted? && @property.state == "NSW" %>
+            <div class="dashboard-panel cooling-off-panel">
+              <h3 class="dashboard-panel-title mb-2">Cooling-Off Period</h3>
+              <p class="text-small text-muted mb-3">
+                Under NSW law, buyers have a 5-business-day cooling-off period after exchange of contracts.
+              </p>
+              <div class="cooling-off-countdown">
+                <% cooling_off_end = @offer.accepted_at + 5.business_days rescue @offer.accepted_at + 7.days %>
+                <% if Time.current < cooling_off_end %>
+                  <div class="countdown-label">Cooling-off ends in</div>
+                  <div class="countdown-value"><%= distance_of_time_in_words(Time.current, cooling_off_end) %></div>
+                <% else %>
+                  <div class="countdown-complete">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    Cooling-off period complete
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

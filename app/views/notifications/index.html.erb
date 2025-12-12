@@ -1,0 +1,78 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Notifications</h1>
+          <p class="page-subtitle">Stay updated with your property journey</p>
+        </div>
+        <div class="page-header-actions">
+          <% if @unread_count > 0 %>
+            <%= button_to mark_all_read_notifications_path,
+                          method: :post,
+                          class: "btn btn-secondary btn-sm",
+                          data: { turbo_method: :post } do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Mark all as read
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Notification Filters %>
+      <div class="notification-filters mb-4">
+        <div class="filter-pills">
+          <%= link_to "All", notifications_path, class: "filter-pill #{'filter-pill-active' unless params[:filter]}" %>
+          <%= link_to "Unread", notifications_path(filter: "unread"), class: "filter-pill #{'filter-pill-active' if params[:filter] == 'unread'}" %>
+          <%= link_to "Offers", notifications_path(filter: "offers"), class: "filter-pill #{'filter-pill-active' if params[:filter] == 'offers'}" %>
+          <%= link_to "Messages", notifications_path(filter: "messages"), class: "filter-pill #{'filter-pill-active' if params[:filter] == 'messages'}" %>
+        </div>
+        <% if @unread_count > 0 %>
+          <span class="badge badge-primary"><%= @unread_count %> unread</span>
+        <% end %>
+      </div>
+
+      <%# Notifications List %>
+      <div class="dashboard-panel" id="notifications-list">
+        <% if @notifications.any? %>
+          <% @grouped_notifications.each do |group_name, notifications| %>
+            <div class="notification-group">
+              <h3 class="notification-group-title"><%= group_name %></h3>
+
+              <div class="notification-list">
+                <% notifications.each do |notification| %>
+                  <%= render "notification_item", notification: notification %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <%# Pagination %>
+          <% if @pagy.pages > 1 %>
+            <div class="pagination-wrapper">
+              <%== pagy_nav(@pagy) %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </div>
+            <h3 class="empty-state-title">No notifications</h3>
+            <p class="empty-state-description">
+              You're all caught up! Notifications about your properties, offers, and messages will appear here.
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>

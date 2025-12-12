@@ -1,0 +1,101 @@
+<%# Step 2: Features %>
+<div class="dashboard-panel mb-6">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Property Features</h2>
+      <p class="dashboard-panel-subtitle">Tell us about the property's key features</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-6 mb-6">
+    <%# Bedrooms %>
+    <div class="form-group">
+      <%= f.label :bedrooms, "Bedrooms", class: "form-label" %>
+      <div class="flex items-center gap-2">
+        <button type="button" class="btn btn-sm btn-secondary" onclick="decrementField('property_bedrooms')" style="width: 40px; height: 40px; padding: 0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14"/>
+          </svg>
+        </button>
+        <%= f.number_field :bedrooms, class: "form-input text-center", min: 0, max: 20, style: "width: 80px;" %>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="incrementField('property_bedrooms')" style="width: 40px; height: 40px; padding: 0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <%# Bathrooms %>
+    <div class="form-group">
+      <%= f.label :bathrooms, "Bathrooms", class: "form-label" %>
+      <div class="flex items-center gap-2">
+        <button type="button" class="btn btn-sm btn-secondary" onclick="decrementField('property_bathrooms')" style="width: 40px; height: 40px; padding: 0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14"/>
+          </svg>
+        </button>
+        <%= f.number_field :bathrooms, class: "form-input text-center", min: 0, max: 20, style: "width: 80px;" %>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="incrementField('property_bathrooms')" style="width: 40px; height: 40px; padding: 0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <%# Parking %>
+    <div class="form-group">
+      <%= f.label :parking_spaces, "Parking Spaces", class: "form-label" %>
+      <div class="flex items-center gap-2">
+        <button type="button" class="btn btn-sm btn-secondary" onclick="decrementField('property_parking_spaces')" style="width: 40px; height: 40px; padding: 0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14"/>
+          </svg>
+        </button>
+        <%= f.number_field :parking_spaces, class: "form-input text-center", min: 0, max: 20, style: "width: 80px;" %>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="incrementField('property_parking_spaces')" style="width: 40px; height: 40px; padding: 0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="grid grid-cols-2 gap-6">
+    <div class="form-group">
+      <%= f.label :land_size_sqm, "Land Size (m²)", class: "form-label" %>
+      <%= f.number_field :land_size_sqm, class: "form-input", min: 0, placeholder: "e.g. 650" %>
+      <p class="form-help">Total land area in square metres</p>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :building_size_sqm, "Building Size (m²)", class: "form-label" %>
+      <%= f.number_field :building_size_sqm, class: "form-input", min: 0, placeholder: "e.g. 180" %>
+      <p class="form-help">Internal floor area in square metres</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function incrementField(fieldId) {
+    const field = document.getElementById(fieldId);
+    const max = parseInt(field.max) || 999;
+    const current = parseInt(field.value) || 0;
+    if (current < max) {
+      field.value = current + 1;
+    }
+  }
+
+  function decrementField(fieldId) {
+    const field = document.getElementById(fieldId);
+    const min = parseInt(field.min) || 0;
+    const current = parseInt(field.value) || 0;
+    if (current > min) {
+      field.value = current - 1;
+    }
+  }
+</script>

@@ -1,0 +1,200 @@
+<div class="admin-content">
+  <%# Back Link %>
+  <div class="mb-4">
+    <%= link_to admin_transactions_path, class: "btn btn-ghost btn-sm" do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Transactions
+    <% end %>
+  </div>
+
+  <%# Transaction Header %>
+  <div class="admin-user-header mb-6">
+    <div class="admin-user-header-main">
+      <div style="width: 64px; height: 64px; background: var(--reasy-green-100); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green-600)" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="admin-user-header-info">
+        <h1 class="admin-user-name">Transaction #<%= @transaction.id %></h1>
+        <p class="admin-user-email"><%= number_to_currency(@transaction.amount_cents.to_i / 100, precision: 0) %></p>
+        <div class="admin-user-badges">
+          <span class="badge <%= @transaction.status == 'completed' ? 'badge-green' : (@transaction.status == 'cancelled' ? 'badge-red' : 'badge-blue') %>">
+            <%= @transaction.status&.humanize || "Pending" %>
+          </span>
+          <% if @transaction.disputed? %>
+            <span class="badge badge-red">Disputed</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-grid-2">
+    <%# Transaction Details %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Details</h2>
+      </div>
+      <div class="admin-detail-list">
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Transaction ID</span>
+          <span class="admin-detail-value">#<%= @transaction.id %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Property</span>
+          <span class="admin-detail-value">
+            <% if @transaction.property %>
+              <%= link_to @transaction.property.address, admin_property_path(@transaction.property) %>
+            <% else %>
+              N/A
+            <% end %>
+          </span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Sale Price</span>
+          <span class="admin-detail-value"><%= number_to_currency(@transaction.amount_cents.to_i / 100, precision: 0) %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Created</span>
+          <span class="admin-detail-value"><%= @transaction.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Settlement Date</span>
+          <span class="admin-detail-value">
+            <% if @transaction.settlement_date %>
+              <%= @transaction.settlement_date.strftime("%B %d, %Y") %>
+            <% else %>
+              Not set
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <%# Parties Involved %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Parties</h2>
+      </div>
+      <div class="admin-detail-list">
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Buyer</span>
+          <span class="admin-detail-value">
+            <% if @transaction.buyer %>
+              <%= link_to @transaction.buyer.name, admin_user_path(@transaction.buyer) %>
+            <% else %>
+              N/A
+            <% end %>
+          </span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Buyer Entity</span>
+          <span class="admin-detail-value">
+            <% if @transaction.buyer_entity %>
+              <%= @transaction.buyer_entity.name %>
+            <% else %>
+              Personal
+            <% end %>
+          </span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Seller</span>
+          <span class="admin-detail-value">
+            <% if @transaction.seller %>
+              <%= link_to @transaction.seller.name, admin_user_path(@transaction.seller) %>
+            <% else %>
+              N/A
+            <% end %>
+          </span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Seller Entity</span>
+          <span class="admin-detail-value">
+            <% if @transaction.seller_entity %>
+              <%= @transaction.seller_entity.name %>
+            <% else %>
+              Personal
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Offers %>
+  <% if @offers.present? %>
+    <div class="admin-panel mt-6">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Offers (<%= @offers.count %>)</h2>
+      </div>
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Amount</th>
+              <th>From</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @offers.each do |offer| %>
+              <tr>
+                <td>
+                  <span class="font-medium"><%= number_to_currency(offer.amount_cents.to_i / 100, precision: 0) %></span>
+                </td>
+                <td>
+                  <% if offer.buyer %>
+                    <%= link_to offer.buyer.name, admin_user_path(offer.buyer), class: "user-cell-name" %>
+                  <% else %>
+                    N/A
+                  <% end %>
+                </td>
+                <td>
+                  <span class="badge badge-sm <%= offer_status_badge_class(offer.status) %>">
+                    <%= offer.status&.humanize || "Draft" %>
+                  </span>
+                </td>
+                <td class="text-muted text-sm">
+                  <%= offer.created_at.strftime("%b %d, %Y %I:%M %p") %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Timeline %>
+  <% if @timeline.present? %>
+    <div class="admin-panel mt-6">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Timeline</h2>
+      </div>
+      <div style="padding: var(--reasy-space-4);">
+        <% @timeline.each do |event| %>
+          <div style="display: flex; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
+            <div style="width: 8px; height: 8px; background: var(--reasy-blue-500); border-radius: 50%; margin-top: 6px;"></div>
+            <div>
+              <div style="font-size: var(--reasy-text-sm); font-weight: 500; color: var(--reasy-gray-900);">
+                <%= event.event_type&.humanize || "Event" %>
+              </div>
+              <div style="font-size: var(--reasy-text-xs); color: var(--reasy-gray-500);">
+                <%= event.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+              </div>
+              <% if event.description.present? %>
+                <div style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin-top: var(--reasy-space-1);">
+                  <%= event.description %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

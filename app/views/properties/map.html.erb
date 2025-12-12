@@ -1,0 +1,137 @@
+<%= render "shared/nav" %>
+
+<div class="map-layout" data-controller="property-map" data-property-map-properties-url-value="<%= property_search_path(format: :json) %>">
+  <%# Sidebar with Property List %>
+  <aside class="map-sidebar">
+    <div class="map-sidebar-header">
+      <h1 class="map-sidebar-title">Properties</h1>
+      <p class="map-sidebar-count" data-property-map-target="propertyCount">
+        <%= pluralize(@properties.count, "property") %> found
+      </p>
+    </div>
+
+    <%# Filters %>
+    <div class="map-filters">
+      <div class="map-filter">
+        <select data-action="change->property-map#filterByType" data-property-map-target="typeFilter">
+          <option value="">All Types</option>
+          <% Property::PROPERTY_TYPES.each do |type| %>
+            <option value="<%= type %>" <%= "selected" if params[:property_type] == type %>><%= type.humanize %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="map-filter">
+        <select data-action="change->property-map#filterByBedrooms" data-property-map-target="bedroomsFilter">
+          <option value="">Beds</option>
+          <% (1..6).each do |n| %>
+            <option value="<%= n %>" <%= "selected" if params[:bedrooms].to_i == n %>><%= n == 6 ? "6+" : n %> bed</option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="map-filter">
+        <select data-action="change->property-map#filterByPrice" data-property-map-target="priceFilter">
+          <option value="">Price</option>
+          <option value="0-500000" <%= "selected" if params[:price] == "0-500000" %>>Under $500K</option>
+          <option value="500000-750000" <%= "selected" if params[:price] == "500000-750000" %>>$500K - $750K</option>
+          <option value="750000-1000000" <%= "selected" if params[:price] == "750000-1000000" %>>$750K - $1M</option>
+          <option value="1000000-1500000" <%= "selected" if params[:price] == "1000000-1500000" %>>$1M - $1.5M</option>
+          <option value="1500000-2000000" <%= "selected" if params[:price] == "1500000-2000000" %>>$1.5M - $2M</option>
+          <option value="2000000-" <%= "selected" if params[:price] == "2000000-" %>>$2M+</option>
+        </select>
+      </div>
+
+      <button type="button" class="map-filter" data-action="click->property-map#clearFilters">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+        Clear
+      </button>
+    </div>
+
+    <%# Property List %>
+    <div class="map-property-list" data-property-map-target="propertyList">
+      <% @properties.each do |property| %>
+        <%= render "properties/map_property_item", property: property %>
+      <% end %>
+
+      <% if @properties.empty? %>
+        <div class="card-empty">
+          <div class="card-empty-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <div class="card-empty-title">No properties found</div>
+          <div class="card-empty-description">Try adjusting your filters or search in a different area</div>
+        </div>
+      <% end %>
+    </div>
+  </aside>
+
+  <%# Map Container %>
+  <div class="map-container">
+    <div id="property-map" data-property-map-target="map"></div>
+
+    <%# Map Controls Overlay %>
+    <div class="map-controls">
+      <div class="map-search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input type="text"
+               placeholder="Search suburb or postcode"
+               data-property-map-target="searchInput"
+               data-action="keydown.enter->property-map#searchLocation">
+        <button type="button" class="map-search-btn" data-action="click->property-map#searchLocation">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="map-view-toggle">
+        <%= link_to properties_path, class: "map-view-btn" do %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
+          </svg>
+          Grid
+        <% end %>
+        <button class="map-view-btn active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
+            <line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/>
+          </svg>
+          Map
+        </button>
+      </div>
+    </div>
+
+    <%# Map Legend %>
+    <div class="map-legend">
+      <div class="map-legend-title">Property Types</div>
+      <div class="map-legend-items">
+        <div class="map-legend-item">
+          <div class="map-legend-dot map-legend-dot-match"></div>
+          <span>Matches your preferences</span>
+        </div>
+        <div class="map-legend-item">
+          <div class="map-legend-dot map-legend-dot-price"></div>
+          <span>In your price range</span>
+        </div>
+        <div class="map-legend-item">
+          <div class="map-legend-dot map-legend-dot-other"></div>
+          <span>Other properties</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Leaflet CSS & JS %>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

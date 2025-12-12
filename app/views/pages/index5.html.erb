@@ -1,0 +1,476 @@
+<%# Reasy Homepage - Emotional, Trust-focused Design %>
+<%# Target: 35+ home buyers/sellers making the biggest decision of their lives %>
+<%= stylesheet_link_tag "pages/index5", media: "all" %>
+
+<div class="r5-page" data-controller="homepage">
+  <!-- Navigation -->
+  <nav class="r5-nav" data-controller="navbar">
+    <div class="r5-nav-inner">
+      <%= image_tag "Reasy Logo Blue.png", alt: "Reasy", class: "r5-logo", height: 36 %>
+      <div class="r5-nav-links">
+        <a href="/how-it-works">How it works</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About us</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="r5-nav-actions">
+        <%= link_to "Log in", new_user_session_path, class: "r5-link" %>
+        <%= link_to "Get started free", new_user_registration_path, class: "r5-btn r5-btn-primary" %>
+      </div>
+      <button class="r5-nav-toggle" data-action="click->navbar#toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="r5-hero">
+    <div class="r5-hero-bg">
+      <div class="r5-hero-gradient"></div>
+      <div class="r5-hero-pattern"></div>
+    </div>
+
+    <div class="r5-hero-content" data-aos="fade-up" data-aos-duration="800">
+      <div class="r5-hero-badge">
+        <span class="r5-badge-dot"></span>
+        Trusted by 2,800+ Australian families
+      </div>
+
+      <h1>Finally, someone<br>in <em>your</em> corner</h1>
+
+      <p class="r5-hero-lead">
+        Buying or selling your home is one of life's biggest decisions.
+        You deserve expert guidance that puts your interests first — not an agent's commission.
+      </p>
+
+      <div class="r5-hero-cta">
+        <%= link_to new_user_registration_path(role: "buyer"), class: "r5-btn r5-btn-primary r5-btn-xl" do %>
+          I'm looking to buy
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-4-4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <% end %>
+        <%= link_to "I'm ready to sell", new_user_registration_path(role: "seller"), class: "r5-btn r5-btn-secondary r5-btn-xl" %>
+      </div>
+
+      <div class="r5-hero-trust">
+        <div class="r5-trust-item">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Bank-level security</span>
+        </div>
+        <div class="r5-trust-item">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Support 7 days a week</span>
+        </div>
+        <div class="r5-trust-item">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>No lock-in contracts</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof Bar -->
+  <section class="r5-proof-bar">
+    <div class="r5-proof-inner">
+      <div class="r5-proof-stat" data-aos="fade-up" data-aos-delay="0">
+        <span class="r5-stat-number" data-controller="counter" data-counter-target="number" data-counter-value="42">$0</span>
+        <span class="r5-stat-suffix">million+</span>
+        <span class="r5-stat-label">saved by our customers</span>
+      </div>
+      <div class="r5-proof-divider"></div>
+      <div class="r5-proof-stat" data-aos="fade-up" data-aos-delay="100">
+        <span class="r5-stat-number">4.9</span>
+        <span class="r5-stat-suffix">/5</span>
+        <span class="r5-stat-label">average customer rating</span>
+      </div>
+      <div class="r5-proof-divider"></div>
+      <div class="r5-proof-stat" data-aos="fade-up" data-aos-delay="200">
+        <span class="r5-stat-number">23</span>
+        <span class="r5-stat-suffix">days</span>
+        <span class="r5-stat-label">average time to sell</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits for Buyers -->
+  <section class="r5-benefits r5-benefits-buyers">
+    <div class="r5-section-inner">
+      <div class="r5-benefits-content" data-aos="fade-right">
+        <span class="r5-eyebrow">For buyers</span>
+        <h2>Find your perfect home<br>without the pressure</h2>
+        <p class="r5-lead">
+          Traditional agents work for sellers. We work for you. Get access to properties
+          others can't see, with guidance you can trust at every step.
+        </p>
+
+        <ul class="r5-benefit-list">
+          <li>
+            <div class="r5-benefit-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <strong>Access off-market properties</strong>
+              <span>See homes before they're publicly listed. Connect directly with sellers who are "open to offers."</span>
+            </div>
+          </li>
+          <li>
+            <div class="r5-benefit-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <strong>Step-by-step guidance</strong>
+              <span>From pre-approval to settlement, know exactly what to do next. No confusion, no surprises.</span>
+            </div>
+          </li>
+          <li>
+            <div class="r5-benefit-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <strong>Negotiate with confidence</strong>
+              <span>Get data-backed advice on what to offer. Understand market value, not just asking price.</span>
+            </div>
+          </li>
+        </ul>
+
+        <%= link_to new_user_registration_path(role: "buyer"), class: "r5-btn r5-btn-primary" do %>
+          Start your property search
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-4-4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <% end %>
+      </div>
+
+      <div class="r5-benefits-visual" data-aos="fade-left">
+        <div class="r5-phone-mockup">
+          <div class="r5-phone-screen">
+            <div class="r5-app-header">
+              <span>Your matches</span>
+              <span class="r5-app-badge">3 new</span>
+            </div>
+            <div class="r5-property-card">
+              <div class="r5-property-image"></div>
+              <div class="r5-property-info">
+                <span class="r5-property-tag">Open to offers</span>
+                <h4>12 Harbour View Rd</h4>
+                <p>Mosman, NSW</p>
+                <div class="r5-property-meta">
+                  <span>4 bed</span>
+                  <span>3 bath</span>
+                  <span>2 car</span>
+                </div>
+              </div>
+            </div>
+            <div class="r5-property-card r5-property-card-small">
+              <div class="r5-property-image"></div>
+              <div class="r5-property-info">
+                <span class="r5-property-tag r5-property-tag-new">Just listed</span>
+                <h4>45 Palm Ave</h4>
+                <p>Bondi Beach, NSW</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits for Sellers -->
+  <section class="r5-benefits r5-benefits-sellers">
+    <div class="r5-section-inner">
+      <div class="r5-benefits-visual" data-aos="fade-right">
+        <div class="r5-savings-showcase">
+          <div class="r5-savings-card">
+            <span class="r5-savings-label">Your property value</span>
+            <span class="r5-savings-value">$1,200,000</span>
+          </div>
+          <div class="r5-savings-comparison">
+            <div class="r5-comparison-row r5-comparison-old">
+              <span>Traditional agent (2.5%)</span>
+              <span class="r5-strikethrough">$30,000</span>
+            </div>
+            <div class="r5-comparison-row r5-comparison-new">
+              <span>With Reasy</span>
+              <span>$4,990</span>
+            </div>
+          </div>
+          <div class="r5-savings-result">
+            <span>You keep</span>
+            <span class="r5-savings-amount">$25,010</span>
+            <span class="r5-savings-extra">extra in your pocket</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="r5-benefits-content" data-aos="fade-left">
+        <span class="r5-eyebrow r5-eyebrow-orange">For sellers</span>
+        <h2>Sell on your terms.<br>Keep what you've earned.</h2>
+        <p class="r5-lead">
+          Why pay $25,000+ to an agent when you can do it yourself — with expert support
+          every step of the way? Stay in control and keep more of your hard-earned equity.
+        </p>
+
+        <ul class="r5-benefit-list">
+          <li>
+            <div class="r5-benefit-icon r5-benefit-icon-orange">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <strong>Flat fee of $4,990</strong>
+              <span>Same price whether you sell for $500K or $5M. Only pay when your property sells.</span>
+            </div>
+          </li>
+          <li>
+            <div class="r5-benefit-icon r5-benefit-icon-orange">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <strong>Test the market privately</strong>
+              <span>"Open to offers" lets you gauge interest without a full campaign. Move at your pace.</span>
+            </div>
+          </li>
+          <li>
+            <div class="r5-benefit-icon r5-benefit-icon-orange">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <strong>Full support to settlement</strong>
+              <span>Contracts, negotiations, inspections — we guide you through every step.</span>
+            </div>
+          </li>
+        </ul>
+
+        <%= link_to new_user_registration_path(role: "seller"), class: "r5-btn r5-btn-orange" do %>
+          Calculate your savings
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-4-4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="r5-how-it-works">
+    <div class="r5-section-inner">
+      <div class="r5-section-header" data-aos="fade-up">
+        <span class="r5-eyebrow">How it works</span>
+        <h2>Your journey, simplified</h2>
+        <p>Whether buying or selling, we break down the complex into clear, manageable steps.</p>
+      </div>
+
+      <div class="r5-steps">
+        <div class="r5-step" data-aos="fade-up" data-aos-delay="0">
+          <div class="r5-step-number">1</div>
+          <div class="r5-step-content">
+            <h3>Tell us about yourself</h3>
+            <p>Create your profile in minutes. Share what you're looking for, or list your property with our easy guided process.</p>
+          </div>
+        </div>
+
+        <div class="r5-step-line" data-aos="fade-up" data-aos-delay="100"></div>
+
+        <div class="r5-step" data-aos="fade-up" data-aos-delay="200">
+          <div class="r5-step-number">2</div>
+          <div class="r5-step-content">
+            <h3>Get matched & guided</h3>
+            <p>Our system connects the right buyers and sellers. Your personal guide helps you understand every step and decision.</p>
+          </div>
+        </div>
+
+        <div class="r5-step-line" data-aos="fade-up" data-aos-delay="300"></div>
+
+        <div class="r5-step" data-aos="fade-up" data-aos-delay="400">
+          <div class="r5-step-number">3</div>
+          <div class="r5-step-content">
+            <h3>Close with confidence</h3>
+            <p>From offer to settlement, we're with you. Negotiate fairly, handle paperwork correctly, and complete your transaction.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="r5-testimonials">
+    <div class="r5-section-inner">
+      <div class="r5-section-header" data-aos="fade-up">
+        <span class="r5-eyebrow">Real stories</span>
+        <h2>Families who found a better way</h2>
+      </div>
+
+      <div class="r5-testimonial-grid">
+        <div class="r5-testimonial r5-testimonial-featured" data-aos="fade-up" data-aos-delay="0">
+          <div class="r5-testimonial-quote">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor" opacity="0.1"><path d="M14 24c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8v2c0 7.7-6.3 14-14 14v-4c3.9 0 7.2-2.5 8.4-6H14zm22 0c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8v2c0 7.7-6.3 14-14 14v-4c3.9 0 7.2-2.5 8.4-6H36z"/></svg>
+            <blockquote>
+              "We were terrified of selling our family home of 25 years. Reasy made us feel supported every step of the way. We saved over $22,000 compared to using a traditional agent, and actually got a higher price than we expected."
+            </blockquote>
+          </div>
+          <div class="r5-testimonial-author">
+            <div class="r5-author-photo">GM</div>
+            <div class="r5-author-info">
+              <strong>George & Margaret Thompson</strong>
+              <span>Sold in Willoughby, NSW</span>
+              <span class="r5-testimonial-result">Saved $22,450</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="r5-testimonial" data-aos="fade-up" data-aos-delay="100">
+          <blockquote>
+            "As a first-home buyer, I had no idea where to start. The step-by-step guidance was exactly what I needed. I never felt pressured or confused."
+          </blockquote>
+          <div class="r5-testimonial-author">
+            <div class="r5-author-photo">SN</div>
+            <div class="r5-author-info">
+              <strong>Sarah Nguyen</strong>
+              <span>Bought in Richmond, VIC</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="r5-testimonial" data-aos="fade-up" data-aos-delay="200">
+          <blockquote>
+            "The 'Open to Offers' feature was perfect for us. We weren't sure if we wanted to sell, but it let us test the waters without commitment."
+          </blockquote>
+          <div class="r5-testimonial-author">
+            <div class="r5-author-photo">DK</div>
+            <div class="r5-author-info">
+              <strong>David & Karen Mills</strong>
+              <span>Sold in Paddington, QLD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust & Security -->
+  <section class="r5-trust">
+    <div class="r5-section-inner">
+      <div class="r5-trust-content" data-aos="fade-up">
+        <h2>Your security is our priority</h2>
+        <p>We know you're trusting us with one of life's biggest decisions. Here's how we protect you.</p>
+      </div>
+
+      <div class="r5-trust-grid">
+        <div class="r5-trust-card" data-aos="fade-up" data-aos-delay="0">
+          <div class="r5-trust-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Bank-level encryption</h3>
+          <p>Your personal and financial data is protected with 256-bit encryption — the same security used by major banks.</p>
+        </div>
+
+        <div class="r5-trust-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="r5-trust-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Verified users only</h3>
+          <p>Every buyer and seller is identity-verified. No anonymous enquiries, no time-wasters.</p>
+        </div>
+
+        <div class="r5-trust-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="r5-trust-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Fair & transparent</h3>
+          <p>No hidden fees, no surprise costs. What we quote is what you pay — and only when your property sells.</p>
+        </div>
+
+        <div class="r5-trust-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="r5-trust-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Real human support</h3>
+          <p>Questions? Concerns? Our Australian-based team is here 7 days a week. Real people, real help.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="r5-final-cta">
+    <div class="r5-cta-bg">
+      <div class="r5-cta-shape r5-cta-shape-1"></div>
+      <div class="r5-cta-shape r5-cta-shape-2"></div>
+    </div>
+    <div class="r5-section-inner">
+      <div class="r5-cta-content" data-aos="fade-up">
+        <h2>Ready to take the next step?</h2>
+        <p>Join thousands of Australians who've discovered a better way to buy and sell property. No pressure, no obligation — just the support you deserve.</p>
+        <div class="r5-cta-actions">
+          <%= link_to new_user_registration_path, class: "r5-btn r5-btn-white r5-btn-xl" do %>
+            Get started free
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-4-4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <% end %>
+        </div>
+        <p class="r5-cta-note">Free to browse. Only pay when you sell.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="r5-footer">
+    <div class="r5-footer-inner">
+      <div class="r5-footer-main">
+        <div class="r5-footer-brand">
+          <%= image_tag "Reasy Logo Beige.png", alt: "Reasy", class: "r5-footer-logo", height: 32 %>
+          <p>Real estate made easy. The smarter way for Australians to buy and sell property.</p>
+          <div class="r5-footer-social">
+            <a href="#" aria-label="Facebook">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="#" aria-label="LinkedIn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="r5-footer-links">
+          <div class="r5-footer-col">
+            <h4>For you</h4>
+            <a href="#">Buying a home</a>
+            <a href="#">Selling a home</a>
+            <a href="#">How it works</a>
+            <a href="#">Pricing</a>
+          </div>
+          <div class="r5-footer-col">
+            <h4>Company</h4>
+            <a href="/about">About us</a>
+            <a href="#">Careers</a>
+            <a href="#">Blog</a>
+            <a href="/contact">Contact</a>
+          </div>
+          <div class="r5-footer-col">
+            <h4>Support</h4>
+            <a href="#">Help centre</a>
+            <a href="#">FAQs</a>
+            <a href="/terms">Terms of service</a>
+            <a href="/privacy">Privacy policy</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="r5-footer-bottom">
+        <p>&copy; 2025 Reasy Pty Ltd. All rights reserved. ABN 00 000 000 000.</p>
+        <p>Reasy is not a licensed real estate agent. We provide a platform to connect buyers and sellers directly.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<%# AOS Animation Library %>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    AOS.init({
+      duration: 600,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 50
+    });
+  });
+</script>

@@ -1,0 +1,66 @@
+<div class="admin-content">
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Review Disputes</h1>
+      <p class="admin-page-subtitle">Manage disputed reviews</p>
+    </div>
+  </div>
+
+  <div class="stat-cards-3 mb-6">
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @pending_count %></div>
+        <div class="metric-card-label">Pending</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @under_review_count %></div>
+        <div class="metric-card-label">Under Review</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @resolved_count %></div>
+        <div class="metric-card-label">Resolved</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Review</th>
+            <th>Disputed By</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @disputes.each do |dispute| %>
+            <tr>
+              <td><%= link_to "Review ##{dispute.review_id}", admin_review_path(dispute.review) %></td>
+              <td><%= dispute.disputed_by&.name || "Unknown" %></td>
+              <td><%= truncate(dispute.reason, length: 50) %></td>
+              <td><span class="badge badge-sm"><%= dispute.status&.humanize %></span></td>
+              <td class="text-muted text-sm"><%= dispute.created_at.strftime("%b %d, %Y") %></td>
+              <td>
+                <%= link_to "View", admin_review_dispute_path(dispute), class: "btn btn-ghost btn-sm" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @pagy.pages > 1 %>
+      <div class="pagination-wrapper">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

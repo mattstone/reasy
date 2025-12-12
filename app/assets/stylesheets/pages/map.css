@@ -1,0 +1,493 @@
+/*
+ * Interactive Map Search
+ * Leaflet integration with three-tier pins
+ */
+
+/* ============================================
+   Map Layout
+   ============================================ */
+.map-layout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* ============================================
+   Map Sidebar (Property List)
+   ============================================ */
+.map-sidebar {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border-light);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-sidebar-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.map-sidebar-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.map-sidebar-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   Map Filters
+   ============================================ */
+.map-filters {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.map-filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.map-filter:hover {
+  background: var(--color-gray-100);
+}
+
+.map-filter.active {
+  background: var(--color-primary-pale);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.map-filter select {
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ============================================
+   Property List
+   ============================================ */
+.map-property-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3);
+}
+
+.map-property-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.map-property-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.map-property-item.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-pale);
+}
+
+.map-property-image {
+  width: 100px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.map-property-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.map-property-price {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.map-property-address {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-property-features {
+  display: flex;
+  gap: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.map-property-feature {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.map-property-match {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: 2px var(--space-2);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-sm);
+}
+
+.map-property-match-high {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.map-property-match-medium {
+  background: var(--color-warning);
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   Map Container
+   ============================================ */
+.map-container {
+  position: relative;
+  height: 100%;
+}
+
+#property-map {
+  height: 100%;
+  width: 100%;
+}
+
+/* ============================================
+   Map Controls Overlay
+   ============================================ */
+.map-controls {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.map-controls > * {
+  pointer-events: auto;
+}
+
+.map-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 400px;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.map-search input {
+  flex: 1;
+  border: none;
+  font-size: var(--font-size-sm);
+  background: none;
+}
+
+.map-search input:focus {
+  outline: none;
+}
+
+.map-search-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.map-view-toggle {
+  display: flex;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.map-view-btn {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.map-view-btn:hover {
+  background: var(--color-gray-50);
+}
+
+.map-view-btn.active {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+/* ============================================
+   Map Legend
+   ============================================ */
+.map-legend {
+  position: absolute;
+  bottom: var(--space-4);
+  left: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+}
+
+.map-legend-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.map-legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.map-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.map-legend-dot-match { background: var(--color-success); }
+.map-legend-dot-price { background: var(--color-warning); }
+.map-legend-dot-other { background: var(--color-primary); }
+
+/* ============================================
+   Custom Map Markers
+   ============================================ */
+.map-marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.map-marker-inner {
+  transform: rotate(45deg);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-white);
+}
+
+.map-marker-match {
+  background: var(--color-success);
+}
+
+.map-marker-price {
+  background: var(--color-warning);
+}
+
+.map-marker-other {
+  background: var(--color-primary);
+}
+
+/* Price markers */
+.map-price-marker {
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-surface);
+  border: 2px solid var(--color-success);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.map-price-marker:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.map-price-marker-match {
+  border-color: var(--color-success);
+  background: var(--color-success-pale);
+}
+
+.map-price-marker-price {
+  border-color: var(--color-warning);
+  background: var(--color-warning-pale);
+}
+
+.map-price-marker-other {
+  border-color: var(--color-primary);
+  background: var(--color-primary-pale);
+}
+
+/* ============================================
+   Map Popup
+   ============================================ */
+.map-popup {
+  min-width: 280px;
+}
+
+.map-popup-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+}
+
+.map-popup-price {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.map-popup-address {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.map-popup-features {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.map-popup-btn {
+  width: 100%;
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+/* Leaflet overrides */
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-xl);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+}
+
+.leaflet-popup-close-button {
+  top: var(--space-2) !important;
+  right: var(--space-2) !important;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 1024px) {
+  .map-layout {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 300px;
+  }
+
+  .map-sidebar {
+    order: 2;
+    border-right: none;
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .map-container {
+    order: 1;
+  }
+
+  .map-controls {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .map-search {
+    max-width: none;
+  }
+
+  .map-view-toggle {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-property-item {
+    flex-direction: column;
+  }
+
+  .map-property-image {
+    width: 100%;
+    height: 120px;
+  }
+}

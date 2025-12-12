@@ -1,0 +1,357 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Seller Profile</h1>
+          <p class="page-subtitle">Your selling preferences and requirements for buyers</p>
+        </div>
+        <div class="page-header-actions">
+          <%= link_to edit_seller_profile_path, class: "btn btn-primary" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+            Edit Profile
+          <% end %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <%# Settlement Preferences Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Settlement Preferences</h2>
+              <p class="dashboard-panel-subtitle">Your preferred settlement timeline</p>
+            </div>
+          </div>
+
+          <div class="stats-summary">
+            <div class="stats-row">
+              <span class="stats-label">Settlement Period</span>
+              <span class="stats-value">
+                <% case @seller_profile.preferred_settlement_period %>
+                <% when "asap" %>
+                  <span class="badge badge-success">ASAP (30 days)</span>
+                <% when "standard" %>
+                  <span class="badge badge-blue">Standard (42-45 days)</span>
+                <% when "flexible" %>
+                  <span class="badge badge-orange">Flexible (up to 90 days)</span>
+                <% when "specific" %>
+                  <span class="badge badge-purple">Specific Date</span>
+                <% else %>
+                  <span class="badge badge-gray">Not set</span>
+                <% end %>
+              </span>
+            </div>
+            <% if @seller_profile.preferred_settlement_period == "specific" && @seller_profile.specific_settlement_date %>
+              <div class="stats-row">
+                <span class="stats-label">Target Settlement Date</span>
+                <span class="stats-value">
+                  <%= @seller_profile.specific_settlement_date.strftime("%d %B %Y") %>
+                  <% days_away = (@seller_profile.specific_settlement_date - Date.current).to_i %>
+                  <% if days_away > 0 %>
+                    <span class="text-muted text-small ml-2">(<%= days_away %> days away)</span>
+                  <% elsif days_away == 0 %>
+                    <span class="badge badge-warning ml-2">Today</span>
+                  <% else %>
+                    <span class="badge badge-error ml-2">Passed</span>
+                  <% end %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mt-4">
+            <div class="action-card action-card-low">
+              <div class="action-card-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div class="action-card-content">
+                <div class="action-card-description">
+                  <%= @seller_profile.settlement_description %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%# Contact Preferences Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Contact Preferences</h2>
+              <p class="dashboard-panel-subtitle">How buyers can reach you</p>
+            </div>
+          </div>
+
+          <div class="stats-summary">
+            <div class="stats-row">
+              <span class="stats-label">
+                <span class="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  Preferred Contact Method
+                </span>
+              </span>
+              <span class="stats-value">
+                <% case @seller_profile.preferred_contact_method %>
+                <% when "platform" %>
+                  <span class="badge badge-blue">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+                    </svg>
+                    Platform Messages
+                  </span>
+                <% when "email" %>
+                  <span class="badge badge-green">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                      <rect x="2" y="4" width="20" height="16" rx="2"/>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    Email
+                  </span>
+                <% when "phone" %>
+                  <span class="badge badge-orange">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/>
+                    </svg>
+                    Phone
+                  </span>
+                <% else %>
+                  <span class="badge badge-gray">Not set</span>
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">
+                <span class="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  Direct Buyer Contact
+                </span>
+              </span>
+              <span class="stats-value">
+                <% if @seller_profile.allow_direct_contact? %>
+                  <span class="status-badge status-badge-active">Allowed</span>
+                <% else %>
+                  <span class="status-badge status-badge-inactive">Not Allowed</span>
+                <% end %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <%# Buyer Requirements Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Buyer Requirements</h2>
+              <p class="dashboard-panel-subtitle">Types of buyers you'll consider</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+              <div class="flex items-center gap-3">
+                <div class="metric-card-icon metric-card-icon-green" style="width: 36px; height: 36px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-semibold">Cash Buyers</div>
+                  <div class="text-small text-muted">Buyers with funds ready</div>
+                </div>
+              </div>
+              <% if @seller_profile.accept_cash_buyers? %>
+                <span class="badge badge-success">Accepted</span>
+              <% else %>
+                <span class="badge badge-gray">Not Accepted</span>
+              <% end %>
+            </div>
+
+            <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+              <div class="flex items-center gap-3">
+                <div class="metric-card-icon metric-card-icon-blue" style="width: 36px; height: 36px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 12l2 2 4-4"/>
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-semibold">Pre-approved Buyers</div>
+                  <div class="text-small text-muted">Buyers with finance approval</div>
+                </div>
+              </div>
+              <% if @seller_profile.accept_pre_approved_buyers? %>
+                <span class="badge badge-success">Accepted</span>
+              <% else %>
+                <span class="badge badge-gray">Not Accepted</span>
+              <% end %>
+            </div>
+
+            <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+              <div class="flex items-center gap-3">
+                <div class="metric-card-icon metric-card-icon-orange" style="width: 36px; height: 36px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <path d="M2 10h20"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-semibold">Finance Buyers</div>
+                  <div class="text-small text-muted">Buyers requiring finance</div>
+                </div>
+              </div>
+              <% if @seller_profile.accept_finance_buyers? %>
+                <span class="badge badge-success">Accepted</span>
+              <% else %>
+                <span class="badge badge-gray">Not Accepted</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <%# Viewing Availability Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Viewing Availability</h2>
+              <p class="dashboard-panel-subtitle">When you're available for property viewings</p>
+            </div>
+          </div>
+
+          <div class="stats-summary mb-4">
+            <div class="stats-row">
+              <span class="stats-label">Scheduled Viewings</span>
+              <span class="stats-value">
+                <% if @seller_profile.allow_scheduled_viewings? %>
+                  <span class="status-badge status-badge-active">Enabled</span>
+                <% else %>
+                  <span class="status-badge status-badge-inactive">Disabled</span>
+                <% end %>
+              </span>
+            </div>
+          </div>
+
+          <% if @seller_profile.allow_scheduled_viewings? %>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <h4 class="text-secondary mb-3">Available Days</h4>
+                <div class="tag-group">
+                  <% if @seller_profile.available_weekdays? %>
+                    <span class="badge badge-blue">Weekdays</span>
+                  <% end %>
+                  <% if @seller_profile.available_weekends? %>
+                    <span class="badge badge-blue">Weekends</span>
+                  <% end %>
+                  <% unless @seller_profile.available_weekdays? || @seller_profile.available_weekends? %>
+                    <span class="text-muted">No days selected</span>
+                  <% end %>
+                </div>
+              </div>
+
+              <div>
+                <h4 class="text-secondary mb-3">Available Times</h4>
+                <div class="tag-group">
+                  <% if @seller_profile.available_morning? %>
+                    <span class="badge badge-green">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2"/>
+                        <path d="M12 20v2"/>
+                        <path d="m4.93 4.93 1.41 1.41"/>
+                        <path d="m17.66 17.66 1.41 1.41"/>
+                        <path d="M2 12h2"/>
+                        <path d="M20 12h2"/>
+                        <path d="m6.34 17.66-1.41 1.41"/>
+                        <path d="m19.07 4.93-1.41 1.41"/>
+                      </svg>
+                      Morning
+                    </span>
+                  <% end %>
+                  <% if @seller_profile.available_afternoon? %>
+                    <span class="badge badge-orange">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2"/>
+                        <path d="M12 20v2"/>
+                      </svg>
+                      Afternoon
+                    </span>
+                  <% end %>
+                  <% if @seller_profile.available_evening? %>
+                    <span class="badge badge-purple">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                      </svg>
+                      Evening
+                    </span>
+                  <% end %>
+                  <% if @seller_profile.available_times.empty? %>
+                    <span class="text-muted">No times selected</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <div class="card-empty">
+              <div class="card-empty-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div class="card-empty-title">Viewings Disabled</div>
+              <div class="card-empty-description">Enable scheduled viewings to allow buyers to book property inspections</div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Default Entity Panel %>
+      <% if @seller_profile.default_entity.present? %>
+        <div class="dashboard-panel mt-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Default Selling Entity</h2>
+              <p class="dashboard-panel-subtitle">The entity used for your property listings</p>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 21a8 8 0 0 0-16 0"/>
+                <circle cx="10" cy="8" r="5"/>
+                <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
+              </svg>
+            </div>
+            <div class="action-card-content">
+              <div class="action-card-title"><%= @seller_profile.default_entity.name %></div>
+              <div class="action-card-description">
+                <%= @seller_profile.default_entity.entity_type&.humanize&.titleize %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

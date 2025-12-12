@@ -1,0 +1,80 @@
+<%# Wizard Step Indicator %>
+<%
+  steps = [
+    { key: "address", label: "Address", icon: "location" },
+    { key: "features", label: "Features", icon: "features" },
+    { key: "description", label: "Description", icon: "description" },
+    { key: "photos", label: "Photos", icon: "photos" },
+    { key: "pricing", label: "Pricing", icon: "pricing" },
+    { key: "entity", label: "Entity", icon: "entity" },
+    { key: "intent", label: "Intent", icon: "intent" },
+    { key: "preview", label: "Preview", icon: "preview" }
+  ]
+  current_index = steps.index { |s| s[:key] == step } || 0
+%>
+
+<div class="wizard-steps mb-8">
+  <div class="flex items-center justify-between" style="position: relative;">
+    <%# Progress Line %>
+    <div style="position: absolute; top: 16px; left: 24px; right: 24px; height: 2px; background: var(--color-gray-200); z-index: 0;"></div>
+    <div style="position: absolute; top: 16px; left: 24px; height: 2px; background: var(--color-primary); z-index: 1; width: <%= (current_index.to_f / (steps.length - 1) * 100).round %>%;"></div>
+
+    <% steps.each_with_index do |s, index| %>
+      <%
+        is_current = s[:key] == step
+        is_completed = index < current_index
+        is_clickable = defined?(property) && property&.persisted?
+      %>
+      <% if is_clickable %>
+        <%= link_to edit_seller_property_path(property, step: s[:key]), class: "wizard-step #{is_current ? 'wizard-step-active' : ''} #{is_completed ? 'wizard-step-completed' : ''}", style: "text-decoration: none; position: relative; z-index: 2;" do %>
+          <div class="wizard-step-circle" style="
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            <%= is_current ? 'background: var(--color-primary); color: white; box-shadow: 0 0 0 4px var(--color-primary-pale);' : '' %>
+            <%= is_completed ? 'background: var(--color-success); color: white;' : '' %>
+            <%= !is_current && !is_completed ? 'background: white; color: var(--color-gray-400); border: 2px solid var(--color-gray-200);' : '' %>
+          ">
+            <% if is_completed %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            <% else %>
+              <%= index + 1 %>
+            <% end %>
+          </div>
+          <div class="wizard-step-label text-small mt-2 <%= is_current ? 'font-semibold' : 'text-muted' %>" style="white-space: nowrap;">
+            <%= s[:label] %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="wizard-step <%= is_current ? 'wizard-step-active' : '' %>" style="position: relative; z-index: 2; text-align: center;">
+          <div class="wizard-step-circle" style="
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            margin: 0 auto;
+            <%= is_current ? 'background: var(--color-primary); color: white; box-shadow: 0 0 0 4px var(--color-primary-pale);' : '' %>
+            <%= !is_current ? 'background: white; color: var(--color-gray-400); border: 2px solid var(--color-gray-200);' : '' %>
+          ">
+            <%= index + 1 %>
+          </div>
+          <div class="wizard-step-label text-small mt-2 <%= is_current ? 'font-semibold' : 'text-muted' %>" style="white-space: nowrap;">
+            <%= s[:label] %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

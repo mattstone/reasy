@@ -1,0 +1,228 @@
+<%# Step 7: Listing Intent %>
+<div class="dashboard-panel mb-6">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Your Selling Intent</h2>
+      <p class="dashboard-panel-subtitle">Let buyers know how serious you are about selling</p>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <%# Want to Sell %>
+    <label class="intent-option" style="cursor: pointer; display: block;">
+      <%= f.radio_button :listing_intent, "want_to_sell", class: "hidden" %>
+      <div class="intent-option-inner p-6" style="
+        background: <%= property.listing_intent == 'want_to_sell' ? 'var(--color-success-pale)' : 'var(--color-gray-50)' %>;
+        border: 2px solid <%= property.listing_intent == 'want_to_sell' ? 'var(--color-success)' : 'transparent' %>;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-fast);
+      ">
+        <div class="flex items-start gap-4">
+          <div class="metric-card-icon metric-card-icon-green" style="width: 48px; height: 48px; flex-shrink: 0;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold text-lg">Want to Sell</h3>
+              <div class="intent-option-check" style="
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                border: 2px solid <%= property.listing_intent == 'want_to_sell' ? 'var(--color-success)' : 'var(--color-gray-300)' %>;
+                background: <%= property.listing_intent == 'want_to_sell' ? 'var(--color-success)' : 'transparent' %>;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <% if property.listing_intent == 'want_to_sell' %>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+            <p class="text-muted mt-1">
+              You're actively looking to sell and are ready to engage with serious buyers. You have a price in mind and are prepared to negotiate.
+            </p>
+            <div class="flex items-center gap-2 mt-3">
+              <span class="badge badge-success">Most engagement</span>
+              <span class="badge badge-gray">Featured in search</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </label>
+
+    <%# Open to Offers %>
+    <label class="intent-option" style="cursor: pointer; display: block;">
+      <%= f.radio_button :listing_intent, "open_to_offers", class: "hidden" %>
+      <div class="intent-option-inner p-6" style="
+        background: <%= property.listing_intent == 'open_to_offers' ? 'var(--color-primary-pale)' : 'var(--color-gray-50)' %>;
+        border: 2px solid <%= property.listing_intent == 'open_to_offers' ? 'var(--color-primary)' : 'transparent' %>;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-fast);
+      ">
+        <div class="flex items-start gap-4">
+          <div class="metric-card-icon metric-card-icon-blue" style="width: 48px; height: 48px; flex-shrink: 0;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold text-lg">Open to Offers</h3>
+              <div class="intent-option-check" style="
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                border: 2px solid <%= property.listing_intent == 'open_to_offers' ? 'var(--color-primary)' : 'var(--color-gray-300)' %>;
+                background: <%= property.listing_intent == 'open_to_offers' ? 'var(--color-primary)' : 'transparent' %>;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <% if property.listing_intent == 'open_to_offers' %>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+            <p class="text-muted mt-1">
+              You're not in a rush but would consider the right offer. You're testing the market to see what interest exists.
+            </p>
+            <div class="flex items-center gap-2 mt-3">
+              <span class="badge badge-blue">Good engagement</span>
+              <span class="badge badge-gray">Flexible timeline</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </label>
+
+    <%# Just Exploring %>
+    <label class="intent-option" style="cursor: pointer; display: block;">
+      <%= f.radio_button :listing_intent, "just_exploring", class: "hidden" %>
+      <div class="intent-option-inner p-6" style="
+        background: <%= property.listing_intent == 'just_exploring' ? 'var(--color-warning-pale)' : 'var(--color-gray-50)' %>;
+        border: 2px solid <%= property.listing_intent == 'just_exploring' ? 'var(--color-warning)' : 'transparent' %>;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-fast);
+      ">
+        <div class="flex items-start gap-4">
+          <div class="metric-card-icon metric-card-icon-yellow" style="width: 48px; height: 48px; flex-shrink: 0;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold text-lg">Just Exploring</h3>
+              <div class="intent-option-check" style="
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                border: 2px solid <%= property.listing_intent == 'just_exploring' ? 'var(--color-warning)' : 'var(--color-gray-300)' %>;
+                background: <%= property.listing_intent == 'just_exploring' ? 'var(--color-warning)' : 'transparent' %>;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <% if property.listing_intent == 'just_exploring' %>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+            <p class="text-muted mt-1">
+              You're curious about what your property might be worth. Not actively selling, but open to discovering the market.
+            </p>
+            <div class="flex items-center gap-2 mt-3">
+              <span class="badge badge-warning">Lower engagement</span>
+              <span class="badge badge-gray">Market research</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </label>
+  </div>
+</div>
+
+<div class="dashboard-panel">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Why does this matter?</h2>
+    </div>
+  </div>
+
+  <div class="flex items-start gap-3 p-4" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="color: var(--color-primary); margin-top: 2px;">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 16v-4"/>
+      <path d="M12 8h.01"/>
+    </svg>
+    <div>
+      <p class="text-small text-muted">
+        Being transparent about your selling intent helps set buyer expectations and leads to better quality enquiries.
+        Serious sellers attract serious buyers, while those exploring get valuable market feedback without pressure.
+      </p>
+      <p class="text-small text-muted mt-2">
+        You can change your intent at any time from your property dashboard.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const options = document.querySelectorAll('.intent-option input[type="radio"]');
+
+    options.forEach(option => {
+      option.addEventListener('change', function() {
+        // Reset all options
+        document.querySelectorAll('.intent-option-inner').forEach(inner => {
+          inner.style.background = 'var(--color-gray-50)';
+          inner.style.borderColor = 'transparent';
+          const check = inner.querySelector('.intent-option-check');
+          check.style.borderColor = 'var(--color-gray-300)';
+          check.style.background = 'transparent';
+          check.innerHTML = '';
+        });
+
+        // Highlight selected option
+        if (this.checked) {
+          const inner = this.parentElement.querySelector('.intent-option-inner');
+          const value = this.value;
+
+          if (value === 'want_to_sell') {
+            inner.style.background = 'var(--color-success-pale)';
+            inner.style.borderColor = 'var(--color-success)';
+            const check = inner.querySelector('.intent-option-check');
+            check.style.borderColor = 'var(--color-success)';
+            check.style.background = 'var(--color-success)';
+            check.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+          } else if (value === 'open_to_offers') {
+            inner.style.background = 'var(--color-primary-pale)';
+            inner.style.borderColor = 'var(--color-primary)';
+            const check = inner.querySelector('.intent-option-check');
+            check.style.borderColor = 'var(--color-primary)';
+            check.style.background = 'var(--color-primary)';
+            check.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+          } else if (value === 'just_exploring') {
+            inner.style.background = 'var(--color-warning-pale)';
+            inner.style.borderColor = 'var(--color-warning)';
+            const check = inner.querySelector('.intent-option-check');
+            check.style.borderColor = 'var(--color-warning)';
+            check.style.background = 'var(--color-warning)';
+            check.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+          }
+        }
+      });
+    });
+  });
+</script>

@@ -1,0 +1,67 @@
+<div class="admin-content">
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">KYC Verifications</h1>
+      <p class="admin-page-subtitle">Review identity verification requests</p>
+    </div>
+  </div>
+
+  <div class="stat-cards-3 mb-6">
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @submitted_count %></div>
+        <div class="metric-card-label">Submitted</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @under_review_count %></div>
+        <div class="metric-card-label">Under Review</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @verified_count %></div>
+        <div class="metric-card-label">Verified</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td><%= link_to user.name, admin_user_path(user) %></td>
+              <td class="text-muted"><%= user.email %></td>
+              <td><span class="badge badge-sm badge-yellow"><%= user.kyc_status&.humanize %></span></td>
+              <td class="text-muted text-sm"><%= user.updated_at.strftime("%b %d, %Y") %></td>
+              <td>
+                <div class="table-actions">
+                  <%= link_to "Review", admin_kyc_verification_path(user), class: "btn btn-ghost btn-sm" %>
+                  <%= button_to "Approve", approve_admin_kyc_verification_path(user), method: :post, class: "btn btn-primary btn-sm" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @pagy.pages > 1 %>
+      <div class="pagination-wrapper">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

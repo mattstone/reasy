@@ -1,0 +1,357 @@
+<%# Direction 2: "Airbnb Warmth" - Friendly & Human %>
+<%= stylesheet_link_tag "pages/index2", media: "all" %>
+
+<div class="d2-page">
+  <!-- Navigation -->
+  <nav class="d2-nav">
+    <div class="d2-nav-inner">
+      <a href="/" class="d2-logo">
+        <svg class="d2-logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="#FF5A5F"/>
+          <path d="M16 8L22 12V20L16 24L10 20V12L16 8Z" fill="white"/>
+        </svg>
+        <span>Reasy</span>
+      </a>
+      <div class="d2-nav-links">
+        <a href="/how-it-works">How it works</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About</a>
+        <a href="/contact">Help</a>
+      </div>
+      <div class="d2-nav-actions">
+        <a href="#" class="d2-btn-text">Log in</a>
+        <a href="#" class="d2-btn-primary">Sign up</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="d2-hero">
+    <div class="d2-hero-content">
+      <div class="d2-hero-text">
+        <h1>Find your way home</h1>
+        <p>Buy or sell property directly, with friendly AI guidance and thousands saved in fees. Because finding home should feel good.</p>
+        <div class="d2-hero-search">
+          <div class="d2-search-tabs">
+            <button class="d2-tab d2-tab-active">Buy</button>
+            <button class="d2-tab">Sell</button>
+          </div>
+          <div class="d2-search-bar">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input type="text" placeholder="Search by suburb, postcode, or region...">
+            <button class="d2-search-submit">Search</button>
+          </div>
+        </div>
+      </div>
+      <div class="d2-hero-image">
+        <div class="d2-hero-card">
+          <div class="d2-card-badge">Just listed</div>
+          <div class="d2-card-image"></div>
+          <div class="d2-card-content">
+            <p class="d2-card-price">$895,000</p>
+            <p class="d2-card-address">42 Jacaranda Street, Paddington</p>
+            <p class="d2-card-features">3 bed · 2 bath · 1 car</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Bar -->
+  <section class="d2-trust">
+    <div class="d2-trust-inner">
+      <div class="d2-trust-stat">
+        <strong>2,400+</strong>
+        <span>Happy homeowners</span>
+      </div>
+      <div class="d2-trust-divider"></div>
+      <div class="d2-trust-stat">
+        <strong>$36M+</strong>
+        <span>Saved in agent fees</span>
+      </div>
+      <div class="d2-trust-divider"></div>
+      <div class="d2-trust-stat">
+        <strong>4.9★</strong>
+        <span>Average rating</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="d2-how">
+    <div class="d2-how-inner">
+      <div class="d2-how-header">
+        <h2>Buying or selling made simple</h2>
+        <p>We've taken the stress out of property transactions. Here's how it works.</p>
+      </div>
+
+      <div class="d2-how-grid">
+        <div class="d2-how-card">
+          <div class="d2-how-illustration d2-illustration-1">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="35" fill="#FFF1F2"/>
+              <path d="M40 25L52 33V47L40 55L28 47V33L40 25Z" fill="#FF5A5F"/>
+              <path d="M40 25V55M28 33L52 47M52 33L28 47" stroke="white" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>List or browse</h3>
+          <p>Create a beautiful listing in minutes, or search properties that match exactly what you're looking for.</p>
+        </div>
+
+        <div class="d2-how-card">
+          <div class="d2-how-illustration d2-illustration-2">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="35" fill="#E8F5E9"/>
+              <path d="M30 50C30 50 35 45 40 45C45 45 50 50 50 50" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="32" cy="35" r="4" fill="#4CAF50"/>
+              <circle cx="48" cy="35" r="4" fill="#4CAF50"/>
+            </svg>
+          </div>
+          <h3>Connect directly</h3>
+          <p>Talk to buyers or sellers directly through our platform. No middleman, no games—just honest conversation.</p>
+        </div>
+
+        <div class="d2-how-card">
+          <div class="d2-how-illustration d2-illustration-3">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="35" fill="#E3F2FD"/>
+              <path d="M28 40L36 48L52 32" stroke="#2196F3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Close with confidence</h3>
+          <p>Our AI guides you through contracts, inspections, and settlement. We're with you every step of the way.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Assistants Section -->
+  <section class="d2-assistants">
+    <div class="d2-assistants-inner">
+      <div class="d2-assistants-text">
+        <span class="d2-badge">Meet your guides</span>
+        <h2>Friendly AI assistants, always here to help</h2>
+        <p>Our team of specialist AI assistants are like having experts in your corner—available 24/7 to answer questions, explain documents, and guide your decisions.</p>
+
+        <div class="d2-assistant-list">
+          <div class="d2-assistant">
+            <div class="d2-assistant-avatar" style="background: #FF5A5F;">M</div>
+            <div>
+              <strong>Max</strong>
+              <span>Property Expert</span>
+            </div>
+          </div>
+          <div class="d2-assistant">
+            <div class="d2-assistant-avatar" style="background: #00A699;">S</div>
+            <div>
+              <strong>Sage</strong>
+              <span>Journey Guide</span>
+            </div>
+          </div>
+          <div class="d2-assistant">
+            <div class="d2-assistant-avatar" style="background: #FC642D;">N</div>
+            <div>
+              <strong>Nina</strong>
+              <span>Negotiation Advisor</span>
+            </div>
+          </div>
+          <div class="d2-assistant">
+            <div class="d2-assistant-avatar" style="background: #484848;">D</div>
+            <div>
+              <strong>Doc</strong>
+              <span>Document Decoder</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="#" class="d2-btn-primary">Meet all assistants</a>
+      </div>
+
+      <div class="d2-chat-preview">
+        <div class="d2-chat-window">
+          <div class="d2-chat-header">
+            <div class="d2-assistant-avatar" style="background: #FF5A5F;">M</div>
+            <div>
+              <strong>Max</strong>
+              <span>Property Expert</span>
+            </div>
+          </div>
+          <div class="d2-chat-messages">
+            <div class="d2-message d2-message-user">
+              <p>Is this property worth the asking price?</p>
+            </div>
+            <div class="d2-message d2-message-ai">
+              <p>Great question! Looking at comparable sales in Paddington over the last 6 months, similar 3-bedroom homes have sold between $850k-$950k. This property is priced competitively at $895k. The recent renovation adds value, though I'd recommend checking the strata report for any upcoming levies. Want me to break down the comparable sales?</p>
+            </div>
+          </div>
+          <div class="d2-chat-input">
+            <input type="text" placeholder="Ask anything...">
+            <button>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="d2-testimonials">
+    <div class="d2-testimonials-inner">
+      <h2>Stories from our community</h2>
+
+      <div class="d2-testimonials-grid">
+        <div class="d2-testimonial-card d2-testimonial-featured">
+          <div class="d2-testimonial-image"></div>
+          <blockquote>
+            "We were nervous about selling without an agent, but Reasy made it feel so easy. We saved $22,000 and actually enjoyed the process. The AI assistants were incredibly helpful—like having a knowledgeable friend on call."
+          </blockquote>
+          <div class="d2-testimonial-author">
+            <strong>Emma & David Chen</strong>
+            <span>Sold their home in Newtown, NSW</span>
+          </div>
+        </div>
+
+        <div class="d2-testimonial-card">
+          <blockquote>
+            "As a first-home buyer, everything felt overwhelming until I found Reasy. Sage walked me through every step, and Nina helped me negotiate confidently. I got my dream apartment!"
+          </blockquote>
+          <div class="d2-testimonial-author">
+            <strong>Priya Sharma</strong>
+            <span>Bought in South Yarra, VIC</span>
+          </div>
+        </div>
+
+        <div class="d2-testimonial-card">
+          <blockquote>
+            "The transparency is refreshing. No hidden agendas, no pressure tactics. Just a straightforward platform that actually puts the buyer and seller first."
+          </blockquote>
+          <div class="d2-testimonial-author">
+            <strong>Marcus Williams</strong>
+            <span>Bought in Bulimba, QLD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="d2-pricing">
+    <div class="d2-pricing-inner">
+      <div class="d2-pricing-header">
+        <h2>Simple, fair pricing</h2>
+        <p>No hidden fees, no commission surprises. Just one flat fee when you sell.</p>
+      </div>
+
+      <div class="d2-pricing-cards">
+        <div class="d2-price-card">
+          <div class="d2-price-header">
+            <h3>For Buyers</h3>
+            <div class="d2-price">Free</div>
+            <p>Always, forever</p>
+          </div>
+          <ul class="d2-price-features">
+            <li>Search all properties</li>
+            <li>Save favourites & alerts</li>
+            <li>AI assistant access</li>
+            <li>Direct messaging</li>
+            <li>Offer management</li>
+          </ul>
+          <a href="#" class="d2-btn-outline">Start browsing</a>
+        </div>
+
+        <div class="d2-price-card d2-price-card-featured">
+          <div class="d2-popular-badge">Most popular</div>
+          <div class="d2-price-header">
+            <h3>For Sellers</h3>
+            <div class="d2-price">$4,990</div>
+            <p>Only when you sell</p>
+          </div>
+          <ul class="d2-price-features">
+            <li>Professional listing</li>
+            <li>AI pricing guidance</li>
+            <li>Negotiation support</li>
+            <li>Contract management</li>
+            <li>Settlement assistance</li>
+            <li>Direct buyer access</li>
+          </ul>
+          <a href="#" class="d2-btn-primary">List your property</a>
+        </div>
+      </div>
+
+      <div class="d2-savings-callout">
+        <div class="d2-savings-icon">💰</div>
+        <div>
+          <strong>Save an average of $15,000</strong>
+          <p>Traditional agents charge 2-3% commission. On an $800k property, that's up to $24,000. With Reasy, you pay $4,990.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="d2-cta">
+    <div class="d2-cta-inner">
+      <h2>Ready to find your way home?</h2>
+      <p>Join thousands of Australians who've discovered a better way to buy and sell property.</p>
+      <div class="d2-cta-actions">
+        <a href="#" class="d2-btn-white">Get started free</a>
+        <a href="#" class="d2-btn-ghost-white">Learn more</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="d2-footer">
+    <div class="d2-footer-inner">
+      <div class="d2-footer-main">
+        <div class="d2-footer-brand">
+          <a href="/" class="d2-logo">
+            <svg class="d2-logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="#FF5A5F"/>
+              <path d="M16 8L22 12V20L16 24L10 20V12L16 8Z" fill="white"/>
+            </svg>
+            <span>Reasy</span>
+          </a>
+          <p>Making property transactions simple, transparent, and human.</p>
+        </div>
+
+        <div class="d2-footer-links-grid">
+          <div class="d2-footer-col">
+            <h4>Explore</h4>
+            <a href="#">Buy a home</a>
+            <a href="#">Sell your home</a>
+            <a href="/how-it-works">How it works</a>
+            <a href="/pricing">Pricing</a>
+          </div>
+          <div class="d2-footer-col">
+            <h4>Resources</h4>
+            <a href="#">Blog</a>
+            <a href="#">Guides</a>
+            <a href="#">FAQ</a>
+            <a href="#">Help centre</a>
+          </div>
+          <div class="d2-footer-col">
+            <h4>Company</h4>
+            <a href="/about">About us</a>
+            <a href="/contact">Contact</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="d2-footer-bottom">
+        <p>&copy; 2025 Reasy Pty Ltd. All rights reserved.</p>
+        <div class="d2-footer-legal">
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

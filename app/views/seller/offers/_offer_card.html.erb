@@ -1,0 +1,74 @@
+<div class="offer-card offer-card-<%= offer.status %>">
+  <div class="offer-card-header">
+    <div class="offer-card-amount">
+      <%= number_to_currency(offer.amount, precision: 0) %>
+    </div>
+    <span class="badge <%= offer_status_badge_class(offer.status) %>">
+      <%= offer.status.humanize %>
+    </span>
+  </div>
+
+  <div class="offer-card-details">
+    <div class="offer-card-detail">
+      <span class="offer-card-label">From</span>
+      <span class="offer-card-value"><%= offer.buyer.full_name || offer.buyer.email %></span>
+    </div>
+
+    <div class="offer-card-detail">
+      <span class="offer-card-label">Finance</span>
+      <span class="offer-card-value"><%= offer.finance_type.humanize %></span>
+    </div>
+
+    <div class="offer-card-detail">
+      <span class="offer-card-label">Settlement</span>
+      <span class="offer-card-value"><%= offer.settlement_days %> days</span>
+    </div>
+
+    <% if offer.deposit_cents.present? && offer.deposit_cents > 0 %>
+      <div class="offer-card-detail">
+        <span class="offer-card-label">Deposit</span>
+        <span class="offer-card-value"><%= number_to_currency(offer.deposit, precision: 0) %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if offer.has_conditions? %>
+    <div class="offer-card-conditions">
+      <span class="offer-card-label">Conditions:</span>
+      <div class="offer-conditions-list">
+        <% offer.conditions_list.each do |condition| %>
+          <span class="badge badge-gray badge-sm"><%= condition %></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if offer.expires_at.present? && offer.active? %>
+    <div class="offer-card-expiry">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <% if offer.expires_at > Time.current %>
+        Expires <%= time_ago_in_words(offer.expires_at) %>
+      <% else %>
+        <span class="text-danger">Expired</span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="offer-card-footer">
+    <%= link_to seller_property_offer_path(property, offer), class: "btn btn-secondary btn-sm" do %>
+      View Details
+    <% end %>
+
+    <% if offer.active? %>
+      <%= button_to accept_seller_property_offer_path(property, offer),
+            method: :post,
+            class: "btn btn-success btn-sm",
+            data: { turbo_confirm: "Accept this offer for #{number_to_currency(offer.amount, precision: 0)}? This will mark your property as under offer." } do %>
+        Accept
+      <% end %>
+    <% end %>
+  </div>
+</div>

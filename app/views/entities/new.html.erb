@@ -1,0 +1,38 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Add New Entity</h1>
+          <p class="page-subtitle">Create a new individual, company, or SMSF for property transactions</p>
+        </div>
+        <div class="page-header-actions">
+          <%= link_to entities_path, class: "btn btn-secondary" do %>
+            Cancel
+          <% end %>
+          <button type="submit" form="entity_form" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Create Entity
+          </button>
+        </div>
+      </div>
+
+      <%= form_with model: @entity, url: entities_path, method: :post, id: "entity_form" do |f| %>
+        <%= render "form", f: f, entity: @entity %>
+
+        <%# Form Actions (Bottom) %>
+        <div class="form-actions form-actions-right">
+          <%= link_to "Cancel", entities_path, class: "btn btn-secondary" %>
+          <%= f.submit "Create Entity", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

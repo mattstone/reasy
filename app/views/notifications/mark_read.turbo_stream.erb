@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "notification-#{@notification.id}" do %>
+  <%= render "notification_item", notification: @notification %>
+<% end %>

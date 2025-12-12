@@ -1,0 +1,59 @@
+<div class="admin-content">
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Legal Documents</h1>
+      <p class="admin-page-subtitle">Manage terms, privacy policy, and other legal documents</p>
+    </div>
+    <div class="admin-page-actions">
+      <%= link_to "New Document", new_admin_legal_document_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Version</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @legal_documents.each do |doc| %>
+            <tr>
+              <td><%= doc.title %></td>
+              <td><span class="badge badge-sm badge-gray"><%= doc.document_type&.humanize %></span></td>
+              <td><%= doc.version %></td>
+              <td>
+                <% if doc.current? %>
+                  <span class="badge badge-sm badge-green">Current</span>
+                <% elsif doc.published_at %>
+                  <span class="badge badge-sm badge-gray">Published</span>
+                <% else %>
+                  <span class="badge badge-sm badge-yellow">Draft</span>
+                <% end %>
+              </td>
+              <td class="text-muted text-sm"><%= doc.updated_at.strftime("%b %d, %Y") %></td>
+              <td>
+                <div class="table-actions">
+                  <%= link_to "View", admin_legal_document_path(doc), class: "btn btn-ghost btn-sm" %>
+                  <%= link_to "Edit", edit_admin_legal_document_path(doc), class: "btn btn-ghost btn-sm" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @pagy.pages > 1 %>
+      <div class="pagination-wrapper">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,234 @@
+<div class="mb-4">
+  <%= link_to service_providers_path, class: "btn btn-ghost btn-sm" do %>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Back to Directory
+  <% end %>
+</div>
+
+<%# Provider Header %>
+<div class="card mb-6">
+  <div style="display: flex; gap: var(--reasy-space-6);">
+    <% if @provider.user.avatar&.attached? %>
+      <%= image_tag @provider.user.avatar, style: "width: 120px; height: 120px; object-fit: cover; border-radius: var(--reasy-radius-lg);" %>
+    <% else %>
+      <div style="width: 120px; height: 120px; background: var(--reasy-blue-100); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: var(--reasy-text-4xl); font-weight: 600; color: var(--reasy-blue-600);">
+          <%= @provider.business_name.first.upcase %>
+        </span>
+      </div>
+    <% end %>
+
+    <div style="flex: 1;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--reasy-space-2);">
+        <div>
+          <h1 style="font-size: var(--reasy-text-2xl); font-weight: 700; margin: 0 0 var(--reasy-space-1) 0;">
+            <%= @provider.business_name %>
+          </h1>
+          <p class="text-muted"><%= @provider.user.name %></p>
+        </div>
+        <div style="display: flex; gap: var(--reasy-space-2);">
+          <% if @provider.currently_featured? %>
+            <span class="badge badge-orange">Featured</span>
+          <% end %>
+          <% if @provider.verified? %>
+            <span class="badge badge-green">Verified</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: var(--reasy-space-4); margin-bottom: var(--reasy-space-3);">
+        <span class="badge badge-blue"><%= @provider.service_type.humanize %></span>
+        <% if @provider.average_rating %>
+          <div style="display: flex; align-items: center; gap: var(--reasy-space-1);">
+            <div style="display: flex; gap: 2px;">
+              <% 5.times do |i| %>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="<%= i < @provider.average_rating.round ? 'var(--reasy-orange)' : 'none' %>" stroke="var(--reasy-orange)" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              <% end %>
+            </div>
+            <span style="font-weight: 600;"><%= @provider.rating_display %></span>
+            <span class="text-muted">(<%= @provider.total_reviews %> reviews)</span>
+          </div>
+        <% else %>
+          <span class="text-muted">New provider - no reviews yet</span>
+        <% end %>
+      </div>
+
+      <% if @provider.tagline.present? %>
+        <p style="font-size: var(--reasy-text-base); color: var(--reasy-gray-700); line-height: 1.6;">
+          <%= @provider.tagline %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-2" style="gap: var(--reasy-space-6);">
+  <%# Main Content %>
+  <div>
+    <%# About %>
+    <% if @provider.bio.present? %>
+      <div class="card mb-6">
+        <h3 class="mb-4">About</h3>
+        <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.7;">
+          <%= @provider.bio %>
+        </p>
+      </div>
+    <% end %>
+
+    <%# Differentiators %>
+    <% if @provider.differentiators.any? %>
+      <div class="card mb-6">
+        <h3 class="mb-4">Why Choose Us</h3>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--reasy-space-3);">
+          <% @provider.differentiators.each do |diff| %>
+            <div style="display: flex; align-items: center; gap: var(--reasy-space-2);">
+              <div style="width: 24px; height: 24px; background: var(--reasy-green-100); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green-600)" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <span style="font-size: var(--reasy-text-sm);"><%= diff.humanize %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Reviews %>
+    <div class="card">
+      <h3 class="mb-4">Reviews (<%= @reviews.count %>)</h3>
+      <% if @reviews.any? %>
+        <% @reviews.each do |review| %>
+          <div style="padding: var(--reasy-space-4) 0; border-bottom: 1px solid var(--reasy-gray-100);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--reasy-space-2);">
+              <div>
+                <span style="font-weight: 500;"><%= review.reviewer&.name || "Anonymous" %></span>
+                <span class="text-sm text-muted ml-2"><%= time_ago_in_words(review.created_at) %> ago</span>
+              </div>
+              <div style="display: flex; gap: 2px;">
+                <% 5.times do |i| %>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="<%= i < review.rating ? 'var(--reasy-orange)' : 'none' %>" stroke="var(--reasy-orange)" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+            <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.6;">
+              <%= review.content %>
+            </p>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-muted text-sm">No reviews yet.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Sidebar %>
+  <div>
+    <%# Contact Info %>
+    <div class="card mb-6">
+      <h3 class="mb-4">Contact Information</h3>
+      <div class="detail-list">
+        <% if @provider.user.email.present? %>
+          <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value"><%= @provider.user.email %></span>
+          </div>
+        <% end %>
+        <% if @provider.phone.present? %>
+          <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value"><%= @provider.phone %></span>
+          </div>
+        <% end %>
+        <% if @provider.website.present? %>
+          <div class="detail-row">
+            <span class="detail-label">Website</span>
+            <span class="detail-value">
+              <%= link_to @provider.website, @provider.website, target: "_blank" %>
+            </span>
+          </div>
+        <% end %>
+        <% if @provider.response_time_commitment.present? %>
+          <div class="detail-row">
+            <span class="detail-label">Response Time</span>
+            <span class="detail-value"><%= @provider.response_time_commitment.humanize %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Service Areas %>
+    <% if @provider.service_areas.any? %>
+      <div class="card mb-6">
+        <h3 class="mb-4">Service Areas</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: var(--reasy-space-2);">
+          <% @provider.service_areas.each do |area| %>
+            <span class="badge badge-gray"><%= area %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Credentials %>
+    <% if @provider.credentials.any? %>
+      <div class="card mb-6">
+        <h3 class="mb-4">Credentials & Qualifications</h3>
+        <% @provider.credentials.each do |credential| %>
+          <div style="display: flex; align-items: center; gap: var(--reasy-space-2); margin-bottom: var(--reasy-space-2);">
+            <% if credential["verified"] %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--reasy-green-500)" stroke="var(--reasy-green-500)" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 12 15 16 10" stroke="white" fill="none"/>
+              </svg>
+            <% else %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-gray-400)" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            <% end %>
+            <span style="font-size: var(--reasy-text-sm);">
+              <%= credential["name"] %>
+              <% if credential["verified"] %>
+                <span class="text-xs text-muted">(Verified)</span>
+              <% end %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Business Info %>
+    <div class="card">
+      <h3 class="mb-4">Business Details</h3>
+      <div class="detail-list">
+        <% if @provider.abn.present? %>
+          <div class="detail-row">
+            <span class="detail-label">ABN</span>
+            <span class="detail-value"><%= @provider.abn %></span>
+          </div>
+        <% end %>
+        <% if @provider.years_experience.present? %>
+          <div class="detail-row">
+            <span class="detail-label">Experience</span>
+            <span class="detail-value"><%= @provider.years_experience %> years</span>
+          </div>
+        <% end %>
+        <div class="detail-row">
+          <span class="detail-label">Accepting Clients</span>
+          <span class="detail-value">
+            <% if @provider.accepting_new_clients? %>
+              <span class="badge badge-sm badge-green">Yes</span>
+            <% else %>
+              <span class="badge badge-sm badge-gray">Not currently</span>
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

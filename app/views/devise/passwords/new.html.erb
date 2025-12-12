@@ -1,0 +1,33 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <%= link_to root_path do %>
+      <%= image_tag "Reasy Logo Blue.png", alt: "Reasy", class: "auth-logo" %>
+    <% end %>
+
+    <h2 class="auth-title">Reset your password</h2>
+    <p class="auth-subtitle">Enter your email and we'll send you a reset link</p>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+      <% if resource.errors.any? %>
+        <div class="alert alert-error">
+          <% resource.errors.full_messages.each do |message| %>
+            <p><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :email, class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input", placeholder: "you@example.com" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.submit "Send reset link", class: "btn btn-primary btn-lg btn-block" %>
+      </div>
+    <% end %>
+
+    <p class="auth-footer">
+      Remember your password? <%= link_to "Log in", new_user_session_path %>
+    </p>
+  </div>
+</div>

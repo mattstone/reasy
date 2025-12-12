@@ -1,0 +1,41 @@
+<div class="notification-item <%= 'notification-item-unread' if notification.unread? %>" id="notification-<%= notification.id %>">
+  <div class="notification-item-icon <%= notification_icon_class(notification.notification_type) %>">
+    <%= notification_icon(notification.notification_type) %>
+  </div>
+
+  <div class="notification-item-content">
+    <div class="notification-item-header">
+      <span class="notification-item-title"><%= notification.title %></span>
+      <span class="notification-item-time">
+        <%= time_ago_in_words(notification.created_at) %> ago
+      </span>
+    </div>
+
+    <% if notification.body.present? %>
+      <p class="notification-item-body"><%= notification.body %></p>
+    <% end %>
+
+    <% if notification.action_url.present? || notification.unread? %>
+      <div class="notification-item-actions">
+        <% if notification.action_url.present? %>
+          <%= link_to notification.action_text || "View",
+                      notification_path(notification),
+                      class: "btn btn-sm btn-primary" %>
+        <% end %>
+
+        <% if notification.unread? %>
+          <%= button_to mark_read_notification_path(notification),
+                        method: :post,
+                        class: "btn btn-sm btn-ghost",
+                        data: { turbo_method: :post } do %>
+            Mark as read
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if notification.unread? %>
+    <div class="notification-item-indicator"></div>
+  <% end %>
+</div>

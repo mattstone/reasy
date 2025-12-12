@@ -1,0 +1,474 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <div class="flex items-center gap-3">
+            <h1 class="page-title"><%= @provider_profile.business_name %></h1>
+            <% if @provider_profile.verified? %>
+              <span class="status-badge status-badge-active">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                Verified
+              </span>
+            <% elsif @provider_profile.pending_verification? %>
+              <span class="status-badge status-badge-pending">Pending Verification</span>
+            <% elsif @provider_profile.verification_status == "submitted" %>
+              <span class="status-badge status-badge-pending">Under Review</span>
+            <% elsif @provider_profile.verification_status == "rejected" %>
+              <span class="status-badge status-badge-error">Verification Rejected</span>
+            <% end %>
+          </div>
+          <p class="page-subtitle">Your public service provider profile</p>
+        </div>
+        <div class="page-header-actions">
+          <%= link_to edit_provider_profile_path, class: "btn btn-primary" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+            Edit Profile
+          <% end %>
+        </div>
+      </div>
+
+      <%# Hero Section %>
+      <div class="dashboard-panel mb-6">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-5">
+            <%# Business Avatar %>
+            <div class="metric-card-icon metric-card-icon-purple" style="width: 80px; height: 80px; font-size: 32px;">
+              <%= @provider_profile.business_name.first.upcase %>
+            </div>
+
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <h2 class="dashboard-panel-title mb-0"><%= @provider_profile.business_name %></h2>
+                <span class="badge badge-purple"><%= @provider_profile.service_type.humanize.titleize %></span>
+              </div>
+
+              <%# Rating %>
+              <div class="flex items-center gap-4 mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="flex items-center">
+                    <% if @provider_profile.average_rating %>
+                      <% full_stars = @provider_profile.average_rating.floor %>
+                      <% half_star = (@provider_profile.average_rating % 1) >= 0.5 %>
+                      <% empty_stars = 5 - full_stars - (half_star ? 1 : 0) %>
+                      <% full_stars.times do %>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-warning)" stroke="var(--color-warning)" stroke-width="2">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                      <% end %>
+                      <% if half_star %>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-gray-200)" stroke="var(--color-warning)" stroke-width="2">
+                          <defs>
+                            <linearGradient id="half">
+                              <stop offset="50%" stop-color="var(--color-warning)"/>
+                              <stop offset="50%" stop-color="var(--color-gray-200)"/>
+                            </linearGradient>
+                          </defs>
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="url(#half)"/>
+                        </svg>
+                      <% end %>
+                      <% empty_stars.times do %>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-gray-200)" stroke="var(--color-gray-300)" stroke-width="2">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                      <% end %>
+                    <% else %>
+                      <% 5.times do %>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-gray-200)" stroke="var(--color-gray-300)" stroke-width="2">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <span class="font-semibold"><%= @provider_profile.rating_display %></span>
+                  <span class="text-muted">(<%= @provider_profile.total_reviews %> <%= "review".pluralize(@provider_profile.total_reviews) %>)</span>
+                </div>
+              </div>
+
+              <%# Contact Info %>
+              <div class="flex items-center gap-4 text-small">
+                <% if @provider_profile.website.present? %>
+                  <a href="<%= @provider_profile.website %>" target="_blank" class="flex items-center gap-1 text-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    Website
+                  </a>
+                <% end %>
+                <% if @provider_profile.phone.present? %>
+                  <span class="flex items-center gap-1 text-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/>
+                    </svg>
+                    <%= @provider_profile.phone %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <%# Accepting Clients Indicator %>
+          <div>
+            <% if @provider_profile.accepting_new_clients? %>
+              <div class="action-card action-card-low" style="border-left-color: var(--color-success);">
+                <div class="action-card-icon" style="background: var(--color-success-pale); color: var(--color-success);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                </div>
+                <div class="action-card-content">
+                  <div class="action-card-title" style="color: var(--color-success-dark);">Accepting New Clients</div>
+                  <div class="action-card-description">Available for new work</div>
+                </div>
+              </div>
+            <% else %>
+              <div class="action-card" style="border-left-color: var(--color-gray-300);">
+                <div class="action-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                  </svg>
+                </div>
+                <div class="action-card-content">
+                  <div class="action-card-title">Not Accepting Clients</div>
+                  <div class="action-card-description">Currently at capacity</div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <%# About Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">About</h2>
+              <p class="dashboard-panel-subtitle">Business description and experience</p>
+            </div>
+          </div>
+
+          <% if @provider_profile.description.present? %>
+            <p class="text-secondary mb-4"><%= @provider_profile.description %></p>
+          <% else %>
+            <p class="text-muted mb-4">No description provided</p>
+          <% end %>
+
+          <div class="stats-summary">
+            <div class="stats-row">
+              <span class="stats-label">Years of Experience</span>
+              <span class="stats-value">
+                <% if @provider_profile.years_experience.present? %>
+                  <%= @provider_profile.years_experience %> <%= "year".pluralize(@provider_profile.years_experience) %>
+                <% else %>
+                  Not specified
+                <% end %>
+              </span>
+            </div>
+            <% if @provider_profile.abn.present? %>
+              <div class="stats-row">
+                <span class="stats-label">ABN</span>
+                <span class="stats-value"><%= @provider_profile.abn %></span>
+              </div>
+            <% end %>
+            <% if @provider_profile.license_number.present? %>
+              <div class="stats-row">
+                <span class="stats-label">License Number</span>
+                <span class="stats-value"><%= @provider_profile.license_number %></span>
+              </div>
+            <% end %>
+            <% if @provider_profile.response_time_commitment.present? %>
+              <div class="stats-row">
+                <span class="stats-label">Response Time</span>
+                <span class="stats-value">
+                  <% case @provider_profile.response_time_commitment %>
+                  <% when "same_day" %>
+                    <span class="badge badge-success">Same Day</span>
+                  <% when "24_hours" %>
+                    <span class="badge badge-blue">Within 24 Hours</span>
+                  <% when "48_hours" %>
+                    <span class="badge badge-orange">Within 48 Hours</span>
+                  <% when "3_days" %>
+                    <span class="badge badge-gray">Within 3 Days</span>
+                  <% end %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Credentials Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Credentials</h2>
+              <p class="dashboard-panel-subtitle">Professional qualifications and certifications</p>
+            </div>
+          </div>
+
+          <% if @provider_profile.credentials.present? && @provider_profile.credentials.any? %>
+            <div class="flex flex-col gap-3">
+              <% @provider_profile.credentials.each do |credential| %>
+                <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                  <div class="flex items-center gap-3">
+                    <% if credential["verified"] %>
+                      <div class="metric-card-icon metric-card-icon-green" style="width: 32px; height: 32px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                          <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                      </div>
+                    <% else %>
+                      <div class="metric-card-icon" style="width: 32px; height: 32px; background: var(--color-gray-100); color: var(--color-gray-400);">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"/>
+                          <path d="M12 16v-4"/>
+                          <path d="M12 8h.01"/>
+                        </svg>
+                      </div>
+                    <% end %>
+                    <div>
+                      <div class="font-semibold"><%= credential["name"] %></div>
+                      <% if credential["issuer"].present? %>
+                        <div class="text-small text-muted"><%= credential["issuer"] %></div>
+                      <% end %>
+                    </div>
+                  </div>
+                  <% if credential["verified"] %>
+                    <span class="badge badge-success">Verified</span>
+                  <% else %>
+                    <span class="badge badge-gray">Pending</span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="card-empty">
+              <div class="card-empty-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="4" width="18" height="16" rx="2"/>
+                  <path d="M7 8h10"/>
+                  <path d="M7 12h6"/>
+                </svg>
+              </div>
+              <div class="card-empty-title">No credentials added</div>
+              <div class="card-empty-description">Add your professional qualifications to build trust</div>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Services & Pricing Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Services & Pricing</h2>
+              <p class="dashboard-panel-subtitle">Your service offerings and rates</p>
+            </div>
+          </div>
+
+          <% if @provider_profile.pricing.present? && @provider_profile.pricing.any? %>
+            <div class="flex flex-col gap-3">
+              <% @provider_profile.pricing.each do |service_key, service_data| %>
+                <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                  <div>
+                    <div class="font-semibold"><%= service_key.humanize.titleize %></div>
+                    <% if service_data["description"].present? %>
+                      <div class="text-small text-muted"><%= service_data["description"] %></div>
+                    <% end %>
+                  </div>
+                  <% if service_data["price_cents"].present? %>
+                    <span class="font-semibold text-primary"><%= number_to_currency(service_data["price_cents"].to_i / 100.0) %></span>
+                  <% elsif service_data["price_range"].present? %>
+                    <span class="font-semibold text-primary"><%= service_data["price_range"] %></span>
+                  <% else %>
+                    <span class="text-muted">Quote on request</span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="card-empty">
+              <div class="card-empty-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <div class="card-empty-title">No services listed</div>
+              <div class="card-empty-description">Add your services and pricing to attract clients</div>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Service Areas Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Service Areas</h2>
+              <p class="dashboard-panel-subtitle">Locations where you provide services</p>
+            </div>
+          </div>
+
+          <% if @provider_profile.service_areas.present? && @provider_profile.service_areas.any? %>
+            <div class="tag-group">
+              <% @provider_profile.service_areas.each do |area| %>
+                <span class="badge badge-blue">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  <%= area %>
+                </span>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="card-empty">
+              <div class="card-empty-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <div class="card-empty-title">No service areas defined</div>
+              <div class="card-empty-description">Add the suburbs or regions you service</div>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Differentiators Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Differentiators</h2>
+              <p class="dashboard-panel-subtitle">What makes your service stand out</p>
+            </div>
+          </div>
+
+          <% if @provider_profile.differentiators.present? && @provider_profile.differentiators.any? %>
+            <div class="tag-group">
+              <% @provider_profile.differentiators.each do |diff| %>
+                <% badge_class = case diff
+                   when "same_day_response" then "badge-success"
+                   when "available_weekends", "after_hours_available" then "badge-blue"
+                   when "same_day_reports", "emergency_service" then "badge-orange"
+                   when "free_consultation", "fixed_pricing" then "badge-green"
+                   when "online_booking" then "badge-purple"
+                   else "badge-gray"
+                   end %>
+                <span class="badge <%= badge_class %>">
+                  <% case diff %>
+                  <% when "same_day_response" %>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                  <% when "available_weekends" %>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                      <line x1="16" y1="2" x2="16" y2="6"/>
+                      <line x1="8" y1="2" x2="8" y2="6"/>
+                    </svg>
+                  <% when "free_consultation" %>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+                    </svg>
+                  <% when "fixed_pricing" %>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                  <% else %>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  <% end %>
+                  <%= diff.humanize.titleize %>
+                </span>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="card-empty">
+              <div class="card-empty-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+              <div class="card-empty-title">No differentiators selected</div>
+              <div class="card-empty-description">Highlight what makes your service unique</div>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Availability Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Availability</h2>
+              <p class="dashboard-panel-subtitle">When you're available for work</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+              <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span class="font-semibold">Weekdays</span>
+              </div>
+              <% if @provider_profile.available_weekdays? %>
+                <span class="status-badge status-badge-active">Available</span>
+              <% else %>
+                <span class="status-badge status-badge-inactive">Unavailable</span>
+              <% end %>
+            </div>
+
+            <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+              <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2"/>
+                  <path d="M12 20v2"/>
+                  <path d="m4.93 4.93 1.41 1.41"/>
+                  <path d="m17.66 17.66 1.41 1.41"/>
+                </svg>
+                <span class="font-semibold">Weekends</span>
+              </div>
+              <% if @provider_profile.availability["weekends"] %>
+                <span class="status-badge status-badge-active">Available</span>
+              <% else %>
+                <span class="status-badge status-badge-inactive">Unavailable</span>
+              <% end %>
+            </div>
+
+            <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+              <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                </svg>
+                <span class="font-semibold">After Hours</span>
+              </div>
+              <% if @provider_profile.available_after_hours? %>
+                <span class="status-badge status-badge-active">Available</span>
+              <% else %>
+                <span class="status-badge status-badge-inactive">Unavailable</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

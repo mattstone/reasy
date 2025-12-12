@@ -1,0 +1,58 @@
+<%
+  other_users = conversation.other_participants(current_user)
+  unread = conversation.unread_count_for(current_user)
+  last_message = conversation.messages.recent.first
+%>
+
+<%= link_to conversation_path(conversation), class: "conversation-item #{'conversation-item-unread' if unread > 0}" do %>
+  <div class="conversation-item-avatar">
+    <% if other_users.first&.avatar&.attached? %>
+      <%= image_tag other_users.first.avatar, class: "avatar avatar-md" %>
+    <% else %>
+      <div class="avatar avatar-md avatar-placeholder">
+        <%= other_users.first&.name&.first&.upcase || "?" %>
+      </div>
+    <% end %>
+    <% if unread > 0 %>
+      <span class="conversation-unread-badge"><%= unread %></span>
+    <% end %>
+  </div>
+
+  <div class="conversation-item-content">
+    <div class="conversation-item-header">
+      <span class="conversation-item-name">
+        <%= other_users.map(&:name).join(", ") %>
+      </span>
+      <span class="conversation-item-time">
+        <%= time_ago_in_words(conversation.last_message_at || conversation.created_at) %> ago
+      </span>
+    </div>
+
+    <% if conversation.property.present? %>
+      <div class="conversation-item-context">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <%= conversation.property.short_address %>
+      </div>
+    <% end %>
+
+    <div class="conversation-item-preview">
+      <% if last_message %>
+        <% if last_message.sender == current_user %>
+          <span class="conversation-item-you">You: </span>
+        <% end %>
+        <%= truncate(last_message.content, length: 80) %>
+      <% else %>
+        <span class="text-muted">No messages yet</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="conversation-item-arrow">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  </div>
+<% end %>

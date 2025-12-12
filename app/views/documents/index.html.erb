@@ -1,0 +1,183 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Documents</h1>
+          <p class="page-subtitle">Manage your property documents and files</p>
+        </div>
+        <div class="page-header-actions">
+          <button type="button" class="btn btn-primary" data-controller="modal" data-action="click->modal#open" data-modal-target-value="upload-modal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Upload Document
+          </button>
+        </div>
+      </div>
+
+      <%# Stats %>
+      <div class="stat-cards-3 mb-6">
+        <div class="metric-card">
+          <div class="metric-card-header">
+            <div class="metric-card-icon metric-card-icon-blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-card-content">
+            <div class="metric-card-value"><%= @total_documents %></div>
+            <div class="metric-card-label">Total Documents</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card-header">
+            <div class="metric-card-icon metric-card-icon-green">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-card-content">
+            <div class="metric-card-value"><%= @documents.select(&:private?).count %></div>
+            <div class="metric-card-label">Private</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card-header">
+            <div class="metric-card-icon metric-card-icon-purple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-card-content">
+            <div class="metric-card-value"><%= @documents.select(&:shared?).count %></div>
+            <div class="metric-card-label">Shared</div>
+          </div>
+        </div>
+      </div>
+
+      <%# Filters %>
+      <div class="document-filters mb-4">
+        <div class="filter-pills">
+          <%= link_to "All", documents_path, class: "filter-pill #{'filter-pill-active' unless params[:type]}" %>
+          <% Document::DOCUMENT_TYPES.first(5).each do |type| %>
+            <%= link_to type.titleize, documents_path(type: type), class: "filter-pill #{'filter-pill-active' if params[:type] == type}" %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Documents List %>
+      <div class="dashboard-panel">
+        <% if @documents.any? %>
+          <div class="document-list" id="documents-list">
+            <% @documents.each do |document| %>
+              <%= render "document_card", document: document %>
+            <% end %>
+          </div>
+
+          <%# Pagination %>
+          <% if @pagy.pages > 1 %>
+            <div class="pagination-wrapper">
+              <%== pagy_nav(@pagy) %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <h3 class="empty-state-title">No documents yet</h3>
+            <p class="empty-state-description">
+              Upload contracts, reports, and other property documents to keep everything organized.
+            </p>
+            <button type="button" class="btn btn-primary" data-controller="modal" data-action="click->modal#open" data-modal-target-value="upload-modal">
+              Upload Your First Document
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%# Upload Modal %>
+<div id="upload-modal" class="modal" data-controller="modal">
+  <div class="modal-backdrop" data-action="click->modal#close"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Upload Document</h2>
+      <button type="button" class="modal-close" data-action="click->modal#close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <%= form_with model: Document.new, url: documents_path, class: "upload-form", multipart: true do |f| %>
+      <div class="modal-body">
+        <div id="upload-errors"></div>
+
+        <div class="form-group">
+          <%= f.label :file, "File", class: "form-label" %>
+          <div class="file-upload-box" data-controller="file-upload">
+            <%= f.file_field :file, required: true, accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png", data: { file_upload_target: "input", action: "change->file-upload#handleChange" } %>
+            <label class="file-upload-label">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span data-file-upload-target="label">Click to upload or drag and drop</span>
+              <span class="file-upload-hint">PDF, DOC, DOCX, JPG, PNG up to 10MB</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :name, "Document Name", class: "form-label" %>
+          <%= f.text_field :name, class: "form-control", placeholder: "e.g., Contract of Sale - 123 Main St", required: true %>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <%= f.label :document_type, "Type", class: "form-label" %>
+            <%= f.select :document_type, Document::DOCUMENT_TYPES.map { |t| [t.titleize, t] }, { include_blank: "Select type" }, class: "form-control", required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :visibility, "Visibility", class: "form-label" %>
+            <%= f.select :visibility, Document::VISIBILITIES.map { |v| [v.titleize, v] }, {}, class: "form-control" %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :description, "Description (Optional)", class: "form-label" %>
+          <%= f.text_area :description, class: "form-control", rows: 2, placeholder: "Add any notes about this document..." %>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-action="click->modal#close">Cancel</button>
+        <%= f.submit "Upload", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

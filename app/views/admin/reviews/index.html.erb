@@ -1,0 +1,123 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Reviews</h1>
+      <p class="admin-page-subtitle">Moderate platform reviews (48-hour hold period)</p>
+    </div>
+  </div>
+
+  <%# Stats %>
+  <div class="stat-cards-4 mb-6">
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= Review.count %></div>
+        <div class="metric-card-label">Total Reviews</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @pending_count %></div>
+        <div class="metric-card-label">Pending</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @held_count %></div>
+        <div class="metric-card-label">On Hold</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @disputed_count %></div>
+        <div class="metric-card-label">Disputed</div>
+      </div>
+    </div>
+  </div>
+
+  <%# Filters %>
+  <div class="admin-filters mb-4">
+    <div class="filter-pills">
+      <%= link_to "All", admin_reviews_path, class: "filter-pill #{'filter-pill-active' if params[:filter].blank?}" %>
+      <%= link_to "Pending", admin_reviews_path(filter: "pending"), class: "filter-pill #{'filter-pill-active' if params[:filter] == 'pending'}" %>
+      <%= link_to "Held", admin_reviews_path(filter: "held"), class: "filter-pill #{'filter-pill-active' if params[:filter] == 'held'}" %>
+      <%= link_to "Disputed", admin_reviews_path(filter: "disputed"), class: "filter-pill #{'filter-pill-active' if params[:filter] == 'disputed'}" %>
+    </div>
+  </div>
+
+  <%# Reviews List %>
+  <div class="admin-panel">
+    <% if @reviews.any? %>
+      <% @reviews.each do |review| %>
+        <div class="admin-review-card">
+          <div class="admin-review-header">
+            <div class="admin-review-meta">
+              <div class="admin-review-participants">
+                <strong><%= review.reviewer&.name || "Anonymous" %></strong>
+                <span style="color: var(--reasy-gray-400);"> reviewed </span>
+                <strong><%= review.reviewee&.name || "Unknown" %></strong>
+              </div>
+              <div class="admin-review-date">
+                <%= review.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+                <% if review.hold_until && review.hold_until > Time.current %>
+                  <span class="badge badge-sm badge-orange ml-2">
+                    Hold expires <%= time_ago_in_words(review.hold_until) %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+            <div class="admin-review-rating">
+              <% 5.times do |i| %>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="<%= i < review.rating ? 'var(--reasy-orange)' : 'none' %>" stroke="var(--reasy-orange)" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="admin-review-content">
+            <%= truncate(review.content, length: 200) %>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="badge-group">
+              <span class="badge badge-sm <%= review.published? ? 'badge-green' : (review.held? ? 'badge-orange' : 'badge-gray') %>">
+                <%= review.status&.humanize || "Pending" %>
+              </span>
+              <% if review.disputed? %>
+                <span class="badge badge-sm badge-red">Disputed</span>
+              <% end %>
+            </div>
+
+            <div class="admin-review-actions">
+              <%= link_to admin_review_path(review), class: "btn btn-ghost btn-sm" do %>
+                View
+              <% end %>
+              <% unless review.published? %>
+                <%= button_to publish_admin_review_path(review), method: :post, class: "btn btn-sm btn-primary" do %>
+                  Publish
+                <% end %>
+              <% end %>
+              <% unless review.held? %>
+                <%= button_to hold_admin_review_path(review), method: :post, class: "btn btn-sm btn-secondary" do %>
+                  Hold
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+        <p class="text-muted">No reviews found.</p>
+      </div>
+    <% end %>
+
+    <%# Pagination %>
+    <% if @pagy.pages > 1 %>
+      <div class="pagination-wrapper">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+/*
+ * Reasy - Main Application Stylesheet
+ * Apple HIG-inspired design system
+ *
+ * This is the manifest file that imports all CSS modules.
+ * The modular architecture follows:
+ * - base/: Design tokens, reset, typography
+ * - components/: Reusable UI components
+ * - layouts/: Page layout patterns
+ * - pages/: Page-specific styles
+ */
+
+/* ============================================
+   Base Layer
+   ============================================ */
+@import "base/variables.css";
+@import "base/reset.css";
+@import "base/typography.css";
+
+/* ============================================
+   Components Layer
+   ============================================ */
+@import "components/buttons.css";
+@import "components/cards.css";
+@import "components/badges.css";
+@import "components/forms.css";
+@import "components/navigation.css";
+@import "components/alerts.css";
+@import "components/tables.css";
+
+/* ============================================
+   Layouts Layer
+   ============================================ */
+@import "layouts/grid.css";
+@import "layouts/dashboard.css";
+
+/* ============================================
+   Pages Layer
+   ============================================ */
+@import "pages/auth.css";
+@import "pages/ai-chat.css";
+@import "pages/map.css";
+@import "pages/home.css";
+@import "pages/offers.css";
+@import "pages/subscription.css";
+@import "pages/messaging.css";
+@import "pages/reviews.css";
+@import "pages/co-users.css";
+@import "pages/documents.css";
+@import "pages/admin.css";
+@import "pages/index1.css";
+@import "pages/index2.css";
+@import "pages/index3.css";
+@import "pages/index4.css";
+@import "pages/index5.css";

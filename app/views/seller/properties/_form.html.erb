@@ -1,0 +1,90 @@
+<%# Display validation errors %>
+<% if property.errors.any? %>
+  <div class="alert alert-error mb-6">
+    <div class="flex items-start gap-3">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="margin-top: 2px;">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" x2="12" y1="8" y2="12"/>
+        <line x1="12" x2="12.01" y1="16" y2="16"/>
+      </svg>
+      <div>
+        <div class="font-semibold mb-1">Please fix the following errors:</div>
+        <ul class="list-disc pl-4">
+          <% property.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%# Render the appropriate step partial %>
+<% case step %>
+<% when "address" %>
+  <%= render "step_address", f: f, property: property %>
+<% when "features" %>
+  <%= render "step_features", f: f, property: property %>
+<% when "description" %>
+  <%= render "step_description", f: f, property: property %>
+<% when "photos" %>
+  <%= render "step_photos", f: f, property: property %>
+<% when "pricing" %>
+  <%= render "step_pricing", f: f, property: property %>
+<% when "entity" %>
+  <%= render "step_entity", f: f, property: property, entities: entities %>
+<% when "intent" %>
+  <%= render "step_intent", f: f, property: property %>
+<% when "preview" %>
+  <%= render "step_preview", f: f, property: property %>
+<% end %>
+
+<%# Form Actions %>
+<div class="form-actions mt-8" style="display: flex; justify-content: space-between; align-items: center;">
+  <div>
+    <% if step != "address" && property.persisted? %>
+      <%
+        steps = %w[address features description photos pricing entity intent preview]
+        current_index = steps.index(step)
+        prev_step = current_index && current_index > 0 ? steps[current_index - 1] : nil
+      %>
+      <% if prev_step %>
+        <%= link_to edit_seller_property_path(property, step: prev_step), class: "btn btn-secondary" do %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Back
+        <% end %>
+      <% end %>
+    <% elsif step != "address" %>
+      <%= link_to seller_properties_path, class: "btn btn-secondary" do %>
+        Cancel
+      <% end %>
+    <% else %>
+      <%= link_to seller_properties_path, class: "btn btn-secondary" do %>
+        Cancel
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <% if property.persisted? && step != "preview" %>
+      <%= f.submit "Save", class: "btn btn-ghost" %>
+    <% end %>
+
+    <% if step == "preview" %>
+      <% if property.draft? %>
+        <%= f.submit "Publish", class: "btn btn-primary" %>
+      <% else %>
+        <%= f.submit "Save Changes", class: "btn btn-primary" %>
+      <% end %>
+    <% else %>
+      <%= f.submit "Save & Continue", class: "btn btn-primary" do %>
+        Save & Continue
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      <% end %>
+    <% end %>
+  </div>
+</div>

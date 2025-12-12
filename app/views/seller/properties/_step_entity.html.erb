@@ -1,0 +1,205 @@
+<%# Step 6: Entity Selection %>
+<div class="dashboard-panel mb-6">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Selling Entity</h2>
+      <p class="dashboard-panel-subtitle">Select which entity will be the seller of this property</p>
+    </div>
+  </div>
+
+  <% if entities.any? %>
+    <div class="space-y-4">
+      <% entities.each do |entity| %>
+        <label class="entity-option" style="cursor: pointer; display: block;">
+          <%= f.radio_button :entity_id, entity.id, class: "hidden" %>
+          <div class="entity-option-inner flex items-center gap-4 p-4" style="
+            background: <%= property.entity_id == entity.id ? 'var(--color-primary-pale)' : 'var(--color-gray-50)' %>;
+            border: 2px solid <%= property.entity_id == entity.id ? 'var(--color-primary)' : 'transparent' %>;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+          ">
+            <%# Entity Type Icon %>
+            <% case entity.entity_type %>
+            <% when "individual" %>
+              <div class="metric-card-icon metric-card-icon-blue" style="width: 44px; height: 44px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+            <% when "company" %>
+              <div class="metric-card-icon metric-card-icon-purple" style="width: 44px; height: 44px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                  <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+                  <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+                </svg>
+              </div>
+            <% when "smsf" %>
+              <div class="metric-card-icon metric-card-icon-teal" style="width: 44px; height: 44px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 9 12 5 2 9l10 4 10-4Z"/>
+                  <path d="M6 10.6V16a6 3 0 0 0 12 0v-5.4"/>
+                  <path d="M22 9v5"/>
+                </svg>
+              </div>
+            <% end %>
+
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold"><%= entity.display_name %></span>
+                <% if entity.is_default? %>
+                  <span class="badge badge-success">Default</span>
+                <% end %>
+                <% if entity.verified? %>
+                  <span class="badge badge-blue">Verified</span>
+                <% end %>
+              </div>
+              <div class="text-small text-muted mt-1">
+                <%= entity.entity_type.humanize.titleize %>
+                <% if entity.company? && entity.abn.present? %>
+                  &middot; ABN: <%= entity.abn %>
+                <% elsif entity.smsf? && entity.fund_abn.present? %>
+                  &middot; Fund ABN: <%= entity.fund_abn %>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="entity-option-check" style="
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              border: 2px solid <%= property.entity_id == entity.id ? 'var(--color-primary)' : 'var(--color-gray-300)' %>;
+              background: <%= property.entity_id == entity.id ? 'var(--color-primary)' : 'transparent' %>;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            ">
+              <% if property.entity_id == entity.id %>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        </label>
+      <% end %>
+    </div>
+
+    <div class="divider my-6"></div>
+
+    <div class="flex items-center justify-between">
+      <div class="text-small text-muted">
+        Need to sell under a different entity?
+      </div>
+      <%= link_to new_entity_path, class: "btn btn-sm btn-secondary", target: "_blank" do %>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add New Entity
+      <% end %>
+    </div>
+  <% else %>
+    <%# No Entities - Empty State %>
+    <div class="empty-state py-8">
+      <div class="empty-state-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M18 21a8 8 0 0 0-16 0"/>
+          <circle cx="10" cy="8" r="5"/>
+          <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
+        </svg>
+      </div>
+      <h3 class="empty-state-title">No entities found</h3>
+      <p class="empty-state-description">
+        You need to create an entity before you can list a property. An entity represents who will be the seller - this could be you as an individual, a company, or an SMSF.
+      </p>
+      <%= link_to new_entity_path, class: "btn btn-primary", target: "_blank" do %>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Create Your First Entity
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<div class="dashboard-panel">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Why do we need this?</h2>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <div class="flex items-start gap-3">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="color: var(--color-primary); margin-top: 2px;">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+      <div>
+        <div class="font-semibold mb-1">Legal protection</div>
+        <p class="text-small text-muted">
+          Contracts of sale need to clearly identify the vendor. This ensures all legal documents are correctly prepared.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="color: var(--color-primary); margin-top: 2px;">
+        <rect width="20" height="14" x="2" y="5" rx="2"/>
+        <line x1="2" x2="22" y1="10" y2="10"/>
+      </svg>
+      <div>
+        <div class="font-semibold mb-1">Tax implications</div>
+        <p class="text-small text-muted">
+          The selling entity affects capital gains tax calculations, GST, and other tax obligations. Choose the right entity for your situation.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="color: var(--color-primary); margin-top: 2px;">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 16v-4"/>
+        <path d="M12 8h.01"/>
+      </svg>
+      <div>
+        <div class="font-semibold mb-1">Need advice?</div>
+        <p class="text-small text-muted">
+          If you're unsure which entity to use, consult with your accountant or solicitor before listing.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const options = document.querySelectorAll('.entity-option input[type="radio"]');
+
+    options.forEach(option => {
+      option.addEventListener('change', function() {
+        // Reset all options
+        document.querySelectorAll('.entity-option-inner').forEach(inner => {
+          inner.style.background = 'var(--color-gray-50)';
+          inner.style.borderColor = 'transparent';
+          const check = inner.querySelector('.entity-option-check');
+          check.style.borderColor = 'var(--color-gray-300)';
+          check.style.background = 'transparent';
+          check.innerHTML = '';
+        });
+
+        // Highlight selected option
+        if (this.checked) {
+          const inner = this.parentElement.querySelector('.entity-option-inner');
+          inner.style.background = 'var(--color-primary-pale)';
+          inner.style.borderColor = 'var(--color-primary)';
+          const check = inner.querySelector('.entity-option-check');
+          check.style.borderColor = 'var(--color-primary)';
+          check.style.background = 'var(--color-primary)';
+          check.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+        }
+      });
+    });
+  });
+</script>

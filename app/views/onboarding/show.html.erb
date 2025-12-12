@@ -1,0 +1,66 @@
+<div class="auth-page">
+  <div class="auth-card" style="max-width: 560px;">
+    <%= link_to root_path do %>
+      <%= image_tag "Reasy Logo Blue.png", alt: "Reasy", class: "auth-logo" %>
+    <% end %>
+
+    <h2 class="auth-title">Tell us about yourself</h2>
+    <p class="auth-subtitle">Help us personalize your Reasy experience</p>
+
+    <%= form_with model: @user, url: onboarding_path, method: :patch do |f| %>
+      <% if @user.errors.any? %>
+        <div class="alert alert-error">
+          <% @user.errors.full_messages.each do |message| %>
+            <p><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :first_name, class: "form-label" %>
+        <%= f.text_field :first_name, class: "form-input", placeholder: "Your first name" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :last_name, class: "form-label" %>
+        <%= f.text_field :last_name, class: "form-input", placeholder: "Your last name" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :phone, class: "form-label" %>
+        <%= f.telephone_field :phone, class: "form-input", placeholder: "04XX XXX XXX" %>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">What brings you to Reasy?</label>
+        <p class="form-hint mb-4">Select all that apply</p>
+
+        <div class="grid grid-2" style="gap: var(--reasy-space-4);">
+          <label class="card card-flat" style="cursor: pointer; display: flex; align-items: center; gap: var(--reasy-space-3); padding: var(--reasy-space-4);">
+            <%= check_box_tag "user[roles][]", "buyer", @user.buyer?, id: "role_buyer" %>
+            <div>
+              <strong>I'm looking to buy</strong>
+              <p class="text-sm text-muted mb-0">Find my next home</p>
+            </div>
+          </label>
+
+          <label class="card card-flat" style="cursor: pointer; display: flex; align-items: center; gap: var(--reasy-space-3); padding: var(--reasy-space-4);">
+            <%= check_box_tag "user[roles][]", "seller", @user.seller?, id: "role_seller" %>
+            <div>
+              <strong>I'm ready to sell</strong>
+              <p class="text-sm text-muted mb-0">List my property</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.submit "Continue", class: "btn btn-primary btn-lg btn-block" %>
+      </div>
+    <% end %>
+
+    <% if @user.first_name.present? %>
+      <%= link_to "Skip for now", complete_onboarding_path, method: :post, class: "btn btn-secondary btn-block" %>
+    <% end %>
+  </div>
+</div>

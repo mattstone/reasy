@@ -1,0 +1,68 @@
+<div class="admin-content">
+  <%# Back Link %>
+  <div class="mb-4">
+    <%= link_to admin_user_path(@user), class: "btn btn-ghost btn-sm" do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to User
+    <% end %>
+  </div>
+
+  <%# Page Header %>
+  <div class="admin-page-header mb-6">
+    <div>
+      <h1 class="admin-page-title">Activity Log</h1>
+      <p class="admin-page-subtitle"><%= @user.name %> (<%= @user.email %>)</p>
+    </div>
+  </div>
+
+  <%# Activity Log %>
+  <div class="admin-panel">
+    <% if @audit_logs.any? %>
+      <% @audit_logs.each do |log| %>
+        <div class="audit-log-entry">
+          <div class="audit-log-header">
+            <span class="audit-log-action">
+              <span class="badge badge-sm <%= log.action == 'create' ? 'badge-green' : (log.action == 'delete' ? 'badge-red' : 'badge-blue') %>">
+                <%= log.action&.upcase || "ACTION" %>
+              </span>
+              <%= log.resource_type&.humanize || "Resource" %>
+              <% if log.resource_id %>
+                #<%= log.resource_id %>
+              <% end %>
+            </span>
+            <span class="audit-log-time"><%= log.created_at.strftime("%B %d, %Y at %I:%M:%S %p") %></span>
+          </div>
+          <div class="audit-log-details">
+            <% if log.changes_made.present? %>
+              <% log.changes_made.each do |field, values| %>
+                <span style="display: inline-block; margin-right: var(--reasy-space-3);">
+                  <strong><%= field.humanize %>:</strong>
+                  <% if values.is_a?(Array) && values.length == 2 %>
+                    <span style="text-decoration: line-through; color: var(--reasy-red-500);"><%= values[0] %></span>
+                    →
+                    <span style="color: var(--reasy-green-600);"><%= values[1] %></span>
+                  <% else %>
+                    <%= values %>
+                  <% end %>
+                </span>
+              <% end %>
+            <% else %>
+              <%= log.description || "No details available" %>
+            <% end %>
+          </div>
+          <% if log.ip_address.present? %>
+            <div class="audit-log-user">
+              IP: <%= log.ip_address %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+        <p class="text-muted">No activity recorded for this user.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

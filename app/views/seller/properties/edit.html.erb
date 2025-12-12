@@ -1,0 +1,39 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <div class="flex items-center gap-2 mb-2">
+            <%= link_to seller_property_path(@property), class: "text-muted" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            <% end %>
+            <span class="text-small text-muted">Back to Property</span>
+          </div>
+          <h1 class="page-title">Edit Listing</h1>
+          <p class="page-subtitle"><%= @property.short_address %></p>
+        </div>
+        <div class="page-header-actions">
+          <% if @property.draft? %>
+            <span class="status-badge status-badge-pending">Draft</span>
+          <% elsif @property.active? %>
+            <span class="status-badge status-badge-active">Active</span>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Wizard Step Indicator %>
+      <%= render "step_indicator", step: @step, step_index: @step_index, property: @property %>
+
+      <%# Form %>
+      <%= form_with model: @property, url: seller_property_path(@property), method: :patch, id: "property_form", data: { turbo: false } do |f| %>
+        <%= hidden_field_tag :step, @step %>
+        <%= render "form", f: f, property: @property, step: @step, entities: @entities %>
+      <% end %>
+    </div>
+  </main>
+</div>

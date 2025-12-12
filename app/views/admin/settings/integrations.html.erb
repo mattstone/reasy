@@ -1,0 +1,134 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Integrations</h1>
+      <p class="admin-page-subtitle">Manage third-party service connections</p>
+    </div>
+    <%= link_to admin_settings_path, class: "btn btn-ghost btn-sm" do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Settings
+    <% end %>
+  </div>
+
+  <div class="admin-grid-3">
+    <%# Stripe Integration %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Stripe</h2>
+        <span class="badge badge-sm <%= @integrations[:stripe][:enabled] ? 'badge-green' : 'badge-red' %>">
+          <%= @integrations[:stripe][:enabled] ? 'Connected' : 'Not Connected' %>
+        </span>
+      </div>
+      <div class="admin-panel-content">
+        <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin-bottom: var(--reasy-space-4);">
+          Process payments, manage subscriptions, and handle billing.
+        </p>
+        <% if @integrations[:stripe][:enabled] %>
+          <div class="admin-detail-row" style="padding: var(--reasy-space-2) 0;">
+            <span class="admin-detail-label">Mode</span>
+            <span class="badge badge-sm <%= @integrations[:stripe][:mode] == 'live' ? 'badge-green' : 'badge-orange' %>">
+              <%= @integrations[:stripe][:mode]&.upcase %>
+            </span>
+          </div>
+          <div style="margin-top: var(--reasy-space-4);">
+            <%= link_to "View in Stripe Dashboard", "https://dashboard.stripe.com", target: "_blank", class: "btn btn-secondary btn-sm" %>
+          </div>
+        <% else %>
+          <p style="font-size: var(--reasy-text-sm); color: var(--reasy-orange); margin-top: var(--reasy-space-2);">
+            Set STRIPE_SECRET_KEY environment variable to enable.
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Anthropic Integration %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Anthropic (Claude)</h2>
+        <span class="badge badge-sm <%= @integrations[:anthropic][:enabled] ? 'badge-green' : 'badge-red' %>">
+          <%= @integrations[:anthropic][:enabled] ? 'Connected' : 'Not Connected' %>
+        </span>
+      </div>
+      <div class="admin-panel-content">
+        <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin-bottom: var(--reasy-space-4);">
+          Power AI assistants for property buying, selling, and support.
+        </p>
+        <% if @integrations[:anthropic][:enabled] %>
+          <div style="margin-top: var(--reasy-space-4);">
+            <%= link_to admin_ai_conversations_path, class: "btn btn-secondary btn-sm" do %>
+              View AI Conversations
+            <% end %>
+          </div>
+        <% else %>
+          <p style="font-size: var(--reasy-text-sm); color: var(--reasy-orange); margin-top: var(--reasy-space-2);">
+            Set ANTHROPIC_API_KEY environment variable to enable.
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Google Maps Integration %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Google Maps</h2>
+        <span class="badge badge-sm <%= @integrations[:google_maps][:enabled] ? 'badge-green' : 'badge-red' %>">
+          <%= @integrations[:google_maps][:enabled] ? 'Connected' : 'Not Connected' %>
+        </span>
+      </div>
+      <div class="admin-panel-content">
+        <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin-bottom: var(--reasy-space-4);">
+          Geocoding, address autocomplete, and map displays for properties.
+        </p>
+        <% unless @integrations[:google_maps][:enabled] %>
+          <p style="font-size: var(--reasy-text-sm); color: var(--reasy-orange); margin-top: var(--reasy-space-2);">
+            Set GOOGLE_MAPS_API_KEY environment variable to enable.
+          </p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# Webhooks %>
+  <div class="admin-panel mt-6">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Webhook Endpoints</h2>
+    </div>
+    <div class="admin-panel-content">
+      <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin-bottom: var(--reasy-space-4);">
+        Configure these webhook URLs in your third-party service dashboards.
+      </p>
+
+      <div class="admin-detail-list" style="padding: 0;">
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Stripe Webhooks</span>
+          <code style="font-size: var(--reasy-text-xs); background: var(--reasy-gray-100); padding: var(--reasy-space-1) var(--reasy-space-2); border-radius: var(--reasy-radius-sm);">
+            <%= request.base_url %>/webhooks/stripe
+          </code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Environment Variables Guide %>
+  <div class="admin-panel mt-6">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Required Environment Variables</h2>
+    </div>
+    <div class="admin-panel-content">
+      <pre style="font-size: var(--reasy-text-xs); background: var(--reasy-gray-900); color: var(--reasy-gray-100); padding: var(--reasy-space-4); border-radius: var(--reasy-radius-md); overflow-x: auto;">
+# Stripe
+STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Anthropic (Claude AI)
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Google Maps
+GOOGLE_MAPS_API_KEY=AIza...</pre>
+    </div>
+  </div>
+</div>

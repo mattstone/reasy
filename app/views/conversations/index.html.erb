@@ -1,0 +1,51 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Messages</h1>
+          <p class="page-subtitle">Your conversations with other users</p>
+        </div>
+        <div class="page-header-actions">
+          <% if @unread_count > 0 %>
+            <span class="badge badge-primary"><%= @unread_count %> unread</span>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Conversations List %>
+      <div class="dashboard-panel">
+        <% if @conversations.any? %>
+          <div class="conversation-list">
+            <% @conversations.each do |conversation| %>
+              <%= render "conversation_item", conversation: conversation %>
+            <% end %>
+          </div>
+
+          <%# Pagination %>
+          <% if @pagy.pages > 1 %>
+            <div class="pagination-wrapper">
+              <%== pagy_nav(@pagy) %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <h3 class="empty-state-title">No conversations yet</h3>
+            <p class="empty-state-description">
+              Start a conversation by enquiring about a property or messaging a user.
+            </p>
+            <%= link_to "Browse Properties", properties_path, class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,84 @@
+<%
+  other_user = perspective == :primary ? relationship.co_user : relationship.primary_user
+%>
+
+<div class="co-user-card">
+  <div class="co-user-card-main">
+    <div class="co-user-card-avatar">
+      <% if other_user.avatar&.attached? %>
+        <%= image_tag other_user.avatar, class: "avatar avatar-lg" %>
+      <% else %>
+        <div class="avatar avatar-lg avatar-placeholder">
+          <%= other_user.name.first.upcase %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="co-user-card-info">
+      <div class="co-user-card-header">
+        <h3 class="co-user-card-name"><%= other_user.name %></h3>
+        <span class="badge badge-sm <%= relationship.active? ? 'badge-green' : 'badge-gray' %>">
+          <%= relationship.status.humanize %>
+        </span>
+      </div>
+      <p class="co-user-card-email"><%= other_user.email %></p>
+      <div class="co-user-card-meta">
+        <span class="badge badge-gray badge-sm"><%= relationship.relationship_display %></span>
+        <span class="text-muted">Added <%= time_ago_in_words(relationship.created_at) %> ago</span>
+      </div>
+    </div>
+  </div>
+
+  <%# Permissions (only shown for primary user) %>
+  <% if perspective == :primary %>
+    <div class="co-user-card-permissions">
+      <h4>Permissions</h4>
+      <div class="permission-list">
+        <div class="permission-item <%= relationship.can_view_listings ? 'permission-granted' : 'permission-denied' %>">
+          <% if relationship.can_view_listings %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <% else %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <% end %>
+          View Listings
+        </div>
+        <div class="permission-item <%= relationship.can_view_offers ? 'permission-granted' : 'permission-denied' %>">
+          <% if relationship.can_view_offers %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <% else %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <% end %>
+          View Offers
+        </div>
+        <div class="permission-item <%= relationship.can_send_messages ? 'permission-granted' : 'permission-denied' %>">
+          <% if relationship.can_send_messages %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <% else %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <% end %>
+          Send Messages
+        </div>
+        <div class="permission-item <%= relationship.can_make_offers ? 'permission-granted' : 'permission-denied' %>">
+          <% if relationship.can_make_offers %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <% else %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <% end %>
+          Make Offers
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Actions %>
+  <div class="co-user-card-actions">
+    <%= link_to co_user_path(relationship), class: "btn btn-sm btn-secondary" do %>
+      View Details
+    <% end %>
+    <% if perspective == :primary && relationship.active? %>
+      <%= button_to co_user_path(relationship), method: :delete, class: "btn btn-sm btn-ghost btn-danger", data: { turbo_confirm: "Are you sure you want to revoke access for #{other_user.name}?" } do %>
+        Revoke Access
+      <% end %>
+    <% end %>
+  </div>
+</div>

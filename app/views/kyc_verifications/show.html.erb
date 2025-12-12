@@ -1,0 +1,215 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Identity Verification</h1>
+          <p class="page-subtitle">Verify your identity to unlock all features</p>
+        </div>
+      </div>
+
+      <%# Status Card %>
+      <div class="dashboard-panel mb-6">
+        <div class="kyc-status-card">
+          <div class="kyc-status-icon kyc-status-icon-<%= current_user.kyc_status %>">
+            <% case current_user.kyc_status %>
+            <% when "pending" %>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            <% when "submitted" %>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            <% when "under_review" %>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            <% when "verified" %>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 12 15 16 10"/>
+              </svg>
+            <% when "rejected" %>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+            <% end %>
+          </div>
+
+          <div class="kyc-status-info">
+            <h2 class="kyc-status-title">
+              <% case current_user.kyc_status %>
+              <% when "pending" %>
+                Verification Required
+              <% when "submitted" %>
+                Documents Submitted
+              <% when "under_review" %>
+                Under Review
+              <% when "verified" %>
+                Identity Verified
+              <% when "rejected" %>
+                Verification Rejected
+              <% end %>
+            </h2>
+
+            <p class="kyc-status-description">
+              <% case current_user.kyc_status %>
+              <% when "pending" %>
+                Complete identity verification to make offers and access all features.
+              <% when "submitted" %>
+                Your documents have been submitted and are awaiting review.
+              <% when "under_review" %>
+                Our team is currently reviewing your verification documents.
+              <% when "verified" %>
+                Your identity has been verified. You have full access to all features.
+              <% when "rejected" %>
+                Your verification was unsuccessful. Please resubmit with valid documents.
+              <% end %>
+            </p>
+
+            <span class="badge badge-lg badge-<%= kyc_status_badge_class(current_user.kyc_status) %>">
+              <%= current_user.kyc_status.humanize %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <%# Benefits/Requirements %>
+      <% if current_user.kyc_pending? || current_user.kyc_status == "rejected" %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <h2 class="dashboard-panel-title">Why Verify?</h2>
+          </div>
+          <div class="kyc-benefits">
+            <div class="kyc-benefit">
+              <div class="kyc-benefit-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div>
+                <h4>Trust & Safety</h4>
+                <p>Verified users are trusted more by sellers and agents</p>
+              </div>
+            </div>
+            <div class="kyc-benefit">
+              <div class="kyc-benefit-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M2 12h20"/>
+                </svg>
+              </div>
+              <div>
+                <h4>Make Offers</h4>
+                <p>Submit legally binding offers on properties</p>
+              </div>
+            </div>
+            <div class="kyc-benefit">
+              <div class="kyc-benefit-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+              </div>
+              <div>
+                <h4>Digital Contracts</h4>
+                <p>Sign contracts and agreements electronically</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%# Verification Form %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <h2 class="dashboard-panel-title">Submit Documents</h2>
+            <p class="dashboard-panel-subtitle">We'll verify your identity within 24 hours</p>
+          </div>
+
+          <%= form_with url: submit_kyc_verification_path, method: :post, multipart: true, class: "kyc-form" do |f| %>
+            <div class="kyc-document-uploads">
+              <div class="kyc-upload-section">
+                <h3>Government ID</h3>
+                <p class="text-muted">Australian Driver's License, Passport, or Medicare Card</p>
+                <div class="kyc-upload-box" data-controller="file-upload">
+                  <input type="file" name="id_document" id="id_document" accept="image/*,.pdf" required data-file-upload-target="input" data-action="change->file-upload#handleChange">
+                  <label for="id_document" class="kyc-upload-label">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span data-file-upload-target="label">Click to upload or drag and drop</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="kyc-upload-section">
+                <h3>Selfie</h3>
+                <p class="text-muted">A clear photo of yourself holding your ID</p>
+                <div class="kyc-upload-box" data-controller="file-upload">
+                  <input type="file" name="selfie" id="selfie" accept="image/*" required data-file-upload-target="input" data-action="change->file-upload#handleChange">
+                  <label for="selfie" class="kyc-upload-label">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span data-file-upload-target="label">Click to upload or drag and drop</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="kyc-requirements">
+              <h4>Photo Requirements</h4>
+              <ul>
+                <li>Clear, high-quality image (no blurry photos)</li>
+                <li>All four corners of the document visible</li>
+                <li>No flash reflection or glare</li>
+                <li>Selfie must show your face clearly alongside the ID</li>
+              </ul>
+            </div>
+
+            <div class="form-actions">
+              <%= f.submit "Submit for Verification", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      <% elsif current_user.kyc_status.in?(%w[submitted under_review]) %>
+        <%# Waiting State %>
+        <div class="dashboard-panel">
+          <div class="kyc-waiting">
+            <div class="kyc-waiting-animation">
+              <div class="kyc-spinner"></div>
+            </div>
+            <h3>We're reviewing your documents</h3>
+            <p>This usually takes less than 24 hours. We'll notify you by email once complete.</p>
+          </div>
+        </div>
+      <% elsif current_user.kyc_verified? %>
+        <%# Verified State %>
+        <div class="dashboard-panel">
+          <div class="kyc-verified">
+            <div class="kyc-verified-badge">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 12 15 16 10"/>
+              </svg>
+            </div>
+            <h3>You're all set!</h3>
+            <p>Your identity has been verified. You can now make offers and sign contracts on the platform.</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

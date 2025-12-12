@@ -1,0 +1,133 @@
+<div class="dashboard-header">
+  <div>
+    <h1>Service Provider Directory</h1>
+    <p class="text-muted">Find trusted professionals for your property transaction</p>
+  </div>
+</div>
+
+<%# Search & Filters %>
+<div class="card mb-6">
+  <%= form_with url: service_providers_path, method: :get, local: true do %>
+    <div class="grid grid-3" style="gap: var(--reasy-space-4);">
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Service Type</label>
+        <select name="service_type" class="form-control">
+          <option value="">All Services</option>
+          <% @service_types.each do |type| %>
+            <option value="<%= type %>" <%= 'selected' if params[:service_type] == type %>><%= type.humanize %></option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Area / Suburb</label>
+        <input type="text" name="area" value="<%= params[:area] %>" class="form-control" placeholder="e.g., Sydney, Parramatta">
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Search</label>
+        <div style="display: flex; gap: var(--reasy-space-2);">
+          <input type="text" name="q" value="<%= params[:q] %>" class="form-control" placeholder="Business name...">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%# Sort Options %>
+<div class="mb-4" style="display: flex; justify-content: flex-end; gap: var(--reasy-space-2);">
+  <span class="text-sm text-muted" style="line-height: 32px;">Sort by:</span>
+  <%= link_to "Featured", service_providers_path(params.permit(:service_type, :area, :q).merge(sort: nil)), class: "btn btn-sm #{params[:sort].blank? ? 'btn-primary' : 'btn-secondary'}" %>
+  <%= link_to "Rating", service_providers_path(params.permit(:service_type, :area, :q).merge(sort: "rating")), class: "btn btn-sm #{params[:sort] == 'rating' ? 'btn-primary' : 'btn-secondary'}" %>
+  <%= link_to "Reviews", service_providers_path(params.permit(:service_type, :area, :q).merge(sort: "reviews")), class: "btn btn-sm #{params[:sort] == 'reviews' ? 'btn-primary' : 'btn-secondary'}" %>
+</div>
+
+<%# Providers Grid %>
+<% if @providers.any? %>
+  <div class="grid grid-2" style="gap: var(--reasy-space-4);">
+    <% @providers.each do |provider| %>
+      <div class="card" style="display: flex; flex-direction: column;">
+        <div style="display: flex; gap: var(--reasy-space-4);">
+          <% if provider.user.avatar&.attached? %>
+            <%= image_tag provider.user.avatar, style: "width: 80px; height: 80px; object-fit: cover; border-radius: var(--reasy-radius-lg);" %>
+          <% else %>
+            <div style="width: 80px; height: 80px; background: var(--reasy-blue-100); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center;">
+              <span style="font-size: var(--reasy-text-2xl); font-weight: 600; color: var(--reasy-blue-600);">
+                <%= provider.business_name.first.upcase %>
+              </span>
+            </div>
+          <% end %>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--reasy-space-1);">
+              <h3 style="font-size: var(--reasy-text-base); font-weight: 600; margin: 0;">
+                <%= link_to provider.business_name, service_provider_path(provider), style: "color: var(--reasy-dark); text-decoration: none;" %>
+              </h3>
+              <% if provider.currently_featured? %>
+                <span class="badge badge-orange">Featured</span>
+              <% end %>
+            </div>
+            <p class="text-sm text-muted mb-2">
+              <span class="badge badge-sm badge-gray"><%= provider.service_type.humanize %></span>
+            </p>
+            <div style="display: flex; align-items: center; gap: var(--reasy-space-2); margin-bottom: var(--reasy-space-2);">
+              <% if provider.average_rating %>
+                <div style="display: flex; align-items: center; gap: var(--reasy-space-1);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--reasy-orange)" stroke="var(--reasy-orange)" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                  <span style="font-weight: 600; font-size: var(--reasy-text-sm);"><%= provider.rating_display %></span>
+                </div>
+                <span class="text-sm text-muted">(<%= provider.total_reviews %> reviews)</span>
+              <% else %>
+                <span class="text-sm text-muted">New provider</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <% if provider.tagline.present? %>
+          <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin: var(--reasy-space-3) 0; line-height: 1.5;">
+            <%= truncate(provider.tagline, length: 120) %>
+          </p>
+        <% end %>
+
+        <%# Differentiators %>
+        <% if provider.differentiators.any? %>
+          <div style="display: flex; gap: var(--reasy-space-2); flex-wrap: wrap; margin-top: auto; padding-top: var(--reasy-space-3); border-top: 1px solid var(--reasy-gray-100);">
+            <% provider.differentiators.first(3).each do |diff| %>
+              <span style="display: inline-flex; align-items: center; gap: var(--reasy-space-1); font-size: var(--reasy-text-xs); color: var(--reasy-green-600);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <%= diff.humanize %>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div style="margin-top: var(--reasy-space-4); display: flex; gap: var(--reasy-space-2);">
+          <%= link_to service_provider_path(provider), class: "btn btn-secondary btn-sm" do %>
+            View Profile
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Pagination %>
+  <% if @pagy.pages > 1 %>
+    <div style="margin-top: var(--reasy-space-6); display: flex; justify-content: center;">
+      <%== pagy_nav(@pagy) %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card">
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--reasy-gray-300); margin-bottom: var(--reasy-space-3);">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <p class="text-muted">No service providers found matching your criteria.</p>
+      <p class="text-sm text-muted">Try adjusting your filters or search terms.</p>
+    </div>
+  </div>
+<% end %>

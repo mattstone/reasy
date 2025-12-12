@@ -1,0 +1,766 @@
+<%= render "shared/nav" %>
+
+<%# Search/Filter Section %>
+<section class="property-search-section">
+  <div class="container">
+    <%= form_with url: properties_path, method: :get, class: "property-search-form", data: { turbo_frame: "properties-results" } do |f| %>
+      <div class="search-filters">
+        <%# Location search %>
+        <div class="search-filter-group search-filter-location">
+          <label class="form-label" for="location">Location</label>
+          <div class="input-with-icon input-with-icon-left">
+            <svg class="input-icon input-icon-left" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <%= text_field_tag :location, params[:location], class: "form-input", placeholder: "Suburb or postcode", id: "location" %>
+          </div>
+        </div>
+
+        <%# Property type %>
+        <div class="search-filter-group">
+          <label class="form-label" for="property_type">Property Type</label>
+          <%= select_tag :property_type,
+              options_for_select([["All Types", ""]] + Property::PROPERTY_TYPES.map { |t| [t.humanize, t] }, params[:property_type]),
+              class: "form-select", id: "property_type" %>
+        </div>
+
+        <%# Bedrooms %>
+        <div class="search-filter-group">
+          <label class="form-label">Bedrooms</label>
+          <div class="filter-range">
+            <%= select_tag :bedrooms_min,
+                options_for_select([["Min", ""]] + (1..6).map { |n| [n.to_s, n] } + [["6+", 6]], params[:bedrooms_min]),
+                class: "form-select form-select-sm" %>
+            <span class="filter-range-separator">-</span>
+            <%= select_tag :bedrooms_max,
+                options_for_select([["Max", ""]] + (1..6).map { |n| [n.to_s, n] } + [["6+", 6]], params[:bedrooms_max]),
+                class: "form-select form-select-sm" %>
+          </div>
+        </div>
+
+        <%# Price range %>
+        <div class="search-filter-group">
+          <label class="form-label">Price</label>
+          <div class="filter-range">
+            <%= select_tag :price_min,
+                options_for_select([["Min", ""]] + [
+                  ["$100K", 100_000],
+                  ["$200K", 200_000],
+                  ["$300K", 300_000],
+                  ["$400K", 400_000],
+                  ["$500K", 500_000],
+                  ["$600K", 600_000],
+                  ["$700K", 700_000],
+                  ["$800K", 800_000],
+                  ["$900K", 900_000],
+                  ["$1M", 1_000_000],
+                  ["$1.5M", 1_500_000],
+                  ["$2M", 2_000_000],
+                  ["$3M", 3_000_000],
+                  ["$5M", 5_000_000]
+                ], params[:price_min]),
+                class: "form-select form-select-sm" %>
+            <span class="filter-range-separator">-</span>
+            <%= select_tag :price_max,
+                options_for_select([["Max", ""]] + [
+                  ["$200K", 200_000],
+                  ["$300K", 300_000],
+                  ["$400K", 400_000],
+                  ["$500K", 500_000],
+                  ["$600K", 600_000],
+                  ["$700K", 700_000],
+                  ["$800K", 800_000],
+                  ["$900K", 900_000],
+                  ["$1M", 1_000_000],
+                  ["$1.5M", 1_500_000],
+                  ["$2M", 2_000_000],
+                  ["$3M", 3_000_000],
+                  ["$5M", 5_000_000],
+                  ["$10M+", 10_000_000]
+                ], params[:price_max]),
+                class: "form-select form-select-sm" %>
+          </div>
+        </div>
+
+        <%# Search button %>
+        <div class="search-filter-group search-filter-actions">
+          <%= submit_tag "Search", class: "btn btn-primary" %>
+          <%= link_to "Map View", properties_path(view: "map", **request.query_parameters.except(:view)), class: "btn btn-secondary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# Results Section %>
+<%= turbo_frame_tag "properties-results" do %>
+  <section class="property-results-section">
+    <div class="container">
+      <%# Results header %>
+      <div class="results-header">
+        <div class="results-count">
+          <% property_count = @properties.respond_to?(:total_count) ? @properties.total_count : @properties.count %>
+          <h2 class="results-title"><%= pluralize(property_count, "property") %> found</h2>
+          <% if params[:location].present? %>
+            <p class="results-subtitle">in <%= params[:location] %></p>
+          <% end %>
+        </div>
+
+        <div class="results-controls">
+          <%# Sort dropdown %>
+          <div class="results-sort">
+            <label class="form-label-inline" for="sort">Sort by:</label>
+            <%= select_tag :sort,
+                options_for_select([
+                  ["Newest", "newest"],
+                  ["Price: Low to High", "price_asc"],
+                  ["Price: High to Low", "price_desc"],
+                  ["Bedrooms", "bedrooms"]
+                ], params[:sort] || "newest"),
+                class: "form-select form-select-sm",
+                id: "sort",
+                onchange: "this.form.submit()",
+                form: "sort-form" %>
+            <%= form_with url: properties_path, method: :get, id: "sort-form", data: { turbo_frame: "properties-results" } do %>
+              <% request.query_parameters.except(:sort).each do |key, value| %>
+                <%= hidden_field_tag key, value %>
+              <% end %>
+            <% end %>
+          </div>
+
+          <%# View toggle %>
+          <div class="view-toggle">
+            <button type="button" class="view-toggle-btn active" data-view="grid" aria-label="Grid view">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+            <button type="button" class="view-toggle-btn" data-view="list" aria-label="List view">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <%# Property cards grid %>
+      <% if @properties.present? && @properties.any? %>
+        <div class="property-grid grid grid-cols-4">
+          <% @properties.each do |property| %>
+            <article class="property-card">
+              <%# Image container %>
+              <div class="property-card-image">
+                <% if property.hero_image.attached? %>
+                  <%= image_tag property.hero_image.variant(resize_to_fill: [400, 250]), alt: property.short_address %>
+                <% elsif property.photos.attached? && property.photos.first.present? %>
+                  <%= image_tag property.photos.first.variant(resize_to_fill: [400, 250]), alt: property.short_address %>
+                <% else %>
+                  <div class="property-card-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                      <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                  </div>
+                <% end %>
+
+                <%# Status badge %>
+                <div class="property-card-badge">
+                  <% case property.status %>
+                  <% when "under_offer" %>
+                    <span class="badge badge-orange">Under Offer</span>
+                  <% when "sold" %>
+                    <span class="badge badge-gray">Sold</span>
+                  <% else %>
+                    <% case property.listing_intent %>
+                    <% when "open_to_offers" %>
+                      <span class="intent-badge intent-badge-offers">Open to Offers</span>
+                    <% when "want_to_sell" %>
+                      <span class="intent-badge intent-badge-sell">For Sale</span>
+                    <% when "just_exploring" %>
+                      <span class="intent-badge intent-badge-exploring">Exploring</span>
+                    <% end %>
+                  <% end %>
+                </div>
+
+                <%# Love button %>
+                <% if user_signed_in? %>
+                  <% if property.loved_by?(current_user) %>
+                    <%= button_to unlove_property_path(property),
+                        method: :delete,
+                        class: "property-card-love loved",
+                        data: { turbo_frame: "_top" },
+                        aria: { label: "Remove from saved" } do %>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                      </svg>
+                    <% end %>
+                  <% else %>
+                    <%= button_to love_property_path(property),
+                        method: :post,
+                        class: "property-card-love",
+                        data: { turbo_frame: "_top" },
+                        aria: { label: "Save property" } do %>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                      </svg>
+                    <% end %>
+                  <% end %>
+                <% else %>
+                  <%= link_to new_user_session_path, class: "property-card-love", aria: { label: "Log in to save" } do %>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                    </svg>
+                  <% end %>
+                <% end %>
+
+                <%# Photo count %>
+                <% photo_count = property.photos.attached? ? property.photos.count : 0 %>
+                <% if photo_count > 0 %>
+                  <div class="property-card-photo-count">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                    <%= photo_count %>
+                  </div>
+                <% end %>
+
+                <%# Link overlay %>
+                <%= link_to property_path(property), class: "property-card-link", aria: { label: "View #{property.short_address}" } do %>
+                  <span class="sr-only">View property details</span>
+                <% end %>
+              </div>
+
+              <%# Card content %>
+              <div class="property-card-content">
+                <div class="property-card-header">
+                  <h3 class="property-card-title"><%= property.headline.presence || property.street_address %></h3>
+                  <% if property.love_count.to_i > 0 %>
+                    <div class="property-card-love-count">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                      </svg>
+                      <%= property.love_count %>
+                    </div>
+                  <% end %>
+                </div>
+
+                <p class="property-card-location"><%= property.suburb %>, <%= property.state %></p>
+
+                <p class="property-card-price"><%= property.price_range_display %></p>
+
+                <div class="property-card-features">
+                  <% if property.bedrooms.present? && property.bedrooms > 0 %>
+                    <div class="property-card-feature">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7v11m0-4h18m0 4V7"/>
+                        <path d="M7 11V7h10v4"/>
+                      </svg>
+                      <span><%= property.bedrooms %></span>
+                    </div>
+                  <% end %>
+
+                  <% if property.bathrooms.present? && property.bathrooms > 0 %>
+                    <div class="property-card-feature">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 12h16"/>
+                        <path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/>
+                        <path d="M6 12V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>
+                      </svg>
+                      <span><%= property.bathrooms %></span>
+                    </div>
+                  <% end %>
+
+                  <% if property.parking_spaces.present? && property.parking_spaces > 0 %>
+                    <div class="property-card-feature">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/>
+                        <path d="M13 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/>
+                        <path d="M5 9v5h14V9l-3-4H8z"/>
+                        <path d="M5 14v3"/>
+                        <path d="M19 14v3"/>
+                      </svg>
+                      <span><%= property.parking_spaces %></span>
+                    </div>
+                  <% end %>
+
+                  <span class="property-card-type badge badge-gray"><%= property.property_type.humanize %></span>
+                </div>
+              </div>
+            </article>
+          <% end %>
+        </div>
+
+        <%# Pagination %>
+        <% if defined?(pagy) && @pagy && @pagy.pages > 1 %>
+          <nav class="pagination-container" aria-label="Property listing pagination">
+            <div class="pagination">
+              <% if @pagy.prev %>
+                <%= link_to properties_path(**request.query_parameters.merge(page: @pagy.prev)), class: "pagination-btn pagination-prev", aria: { label: "Previous page" } do %>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  Previous
+                <% end %>
+              <% else %>
+                <span class="pagination-btn pagination-prev disabled">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  Previous
+                </span>
+              <% end %>
+
+              <div class="pagination-numbers">
+                <% @pagy.series.each do |item| %>
+                  <% case item %>
+                  <% when Integer %>
+                    <%= link_to item, properties_path(**request.query_parameters.merge(page: item)), class: "pagination-number" %>
+                  <% when String %>
+                    <span class="pagination-number active"><%= item %></span>
+                  <% when :gap %>
+                    <span class="pagination-gap">&hellip;</span>
+                  <% end %>
+                <% end %>
+              </div>
+
+              <% if @pagy.next %>
+                <%= link_to properties_path(**request.query_parameters.merge(page: @pagy.next)), class: "pagination-btn pagination-next", aria: { label: "Next page" } do %>
+                  Next
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                <% end %>
+              <% else %>
+                <span class="pagination-btn pagination-next disabled">
+                  Next
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+              <% end %>
+            </div>
+          </nav>
+        <% end %>
+
+      <% else %>
+        <%# Empty state %>
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </div>
+          <h3 class="empty-state-title">No properties found</h3>
+          <p class="empty-state-description">
+            Try adjusting your search filters or browse all available properties.
+          </p>
+          <%= link_to "Clear all filters", properties_path, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<%= render "shared/footer" %>
+
+<style>
+  /* Property Search Section */
+  .property-search-section {
+    background: var(--color-white);
+    padding: calc(var(--space-24) + 80px) 0 var(--space-8);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .property-search-form {
+    width: 100%;
+  }
+
+  .search-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: flex-end;
+  }
+
+  .search-filter-group {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .search-filter-location {
+    flex: 2;
+    min-width: 200px;
+  }
+
+  .search-filter-actions {
+    display: flex;
+    gap: var(--space-3);
+    flex: none;
+    min-width: auto;
+  }
+
+  .filter-range {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .filter-range .form-select {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .filter-range-separator {
+    color: var(--color-text-muted);
+  }
+
+  .form-select-sm {
+    padding: var(--space-2) var(--space-3);
+    padding-right: var(--space-8);
+    font-size: var(--font-size-sm);
+  }
+
+  /* Results Section */
+  .property-results-section {
+    background: var(--color-gray-50);
+    padding: var(--space-8) 0 var(--space-12);
+    min-height: 60vh;
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .results-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .results-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 0;
+  }
+
+  .results-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .results-sort {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .form-label-inline {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+
+  .view-toggle {
+    display: flex;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    padding: var(--space-1);
+  }
+
+  .view-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: all var(--transition-fast);
+  }
+
+  .view-toggle-btn:hover {
+    color: var(--color-text-primary);
+  }
+
+  .view-toggle-btn.active {
+    background: var(--color-white);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Property Grid */
+  .property-grid {
+    margin-bottom: var(--space-8);
+  }
+
+  /* Property Card enhancements */
+  .property-card-image {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, var(--color-primary-pale) 0%, var(--color-beige) 100%);
+    overflow: hidden;
+  }
+
+  .property-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .property-card:hover .property-card-image img {
+    transform: scale(1.05);
+  }
+
+  .property-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+  }
+
+  .property-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .property-card-badge {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    z-index: 2;
+  }
+
+  .property-card-love {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-white);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--color-text-secondary);
+  }
+
+  .property-card-love:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .property-card-love.loved {
+    color: var(--color-error);
+  }
+
+  .property-card-photo-count {
+    position: absolute;
+    bottom: var(--space-3);
+    right: var(--space-3);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--color-white);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-md);
+  }
+
+  .property-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .property-card-love-count {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    flex-shrink: 0;
+  }
+
+  .property-card-type {
+    margin-left: auto;
+  }
+
+  /* Pagination */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--space-6);
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .pagination-btn:hover:not(.disabled) {
+    background: var(--color-gray-50);
+    border-color: var(--color-border-hover);
+  }
+
+  .pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination-numbers {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .pagination-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .pagination-number:hover:not(.active) {
+    background: var(--color-gray-50);
+    color: var(--color-text-primary);
+  }
+
+  .pagination-number.active {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+  }
+
+  .pagination-gap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    color: var(--color-text-muted);
+  }
+
+  /* Screen reader only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .search-filters {
+      flex-wrap: wrap;
+    }
+
+    .search-filter-group {
+      min-width: calc(50% - var(--space-2));
+    }
+
+    .search-filter-location {
+      min-width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .property-search-section {
+      padding-top: calc(var(--space-16) + 60px);
+    }
+
+    .search-filter-group {
+      min-width: 100%;
+    }
+
+    .search-filter-actions {
+      width: 100%;
+      justify-content: stretch;
+    }
+
+    .search-filter-actions .btn {
+      flex: 1;
+    }
+
+    .results-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .results-controls {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .pagination-numbers {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,319 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Edit Buyer Profile</h1>
+          <p class="page-subtitle">Update your property search preferences and financial details</p>
+        </div>
+        <div class="page-header-actions">
+          <%= link_to buyer_profile_path, class: "btn btn-secondary" do %>
+            Cancel
+          <% end %>
+          <button type="submit" form="buyer_profile_form" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Save Changes
+          </button>
+        </div>
+      </div>
+
+      <%= form_with model: @buyer_profile, url: buyer_profile_path, method: :patch, id: "buyer_profile_form" do |f| %>
+        <%# Budget & Finance Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Budget & Finance</h2>
+              <p class="dashboard-panel-subtitle">Your financial position and buying power</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :budget_min, "Minimum Budget", class: "form-label" %>
+              <div class="input-with-icon input-with-icon-left">
+                <span class="input-icon input-icon-left">$</span>
+                <%= f.number_field :budget_min, class: "form-input", placeholder: "e.g. 500000", min: 0, step: 10000 %>
+              </div>
+              <p class="form-help">Your minimum property budget</p>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :budget_max, "Maximum Budget", class: "form-label" %>
+              <div class="input-with-icon input-with-icon-left">
+                <span class="input-icon input-icon-left">$</span>
+                <%= f.number_field :budget_max, class: "form-input", placeholder: "e.g. 800000", min: 0, step: 10000 %>
+              </div>
+              <p class="form-help">Your maximum property budget</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :finance_status, "Finance Status", class: "form-label" %>
+              <%= f.select :finance_status,
+                    options_for_select(
+                      BuyerProfile::FINANCE_STATUSES.map { |s| [s.humanize.titleize, s] },
+                      @buyer_profile.finance_status
+                    ),
+                    { include_blank: "Select finance status..." },
+                    class: "form-select" %>
+              <p class="form-help">Your current financial situation</p>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :buying_timeline, "Buying Timeline", class: "form-label" %>
+              <%= f.select :buying_timeline,
+                    options_for_select(
+                      BuyerProfile::BUYING_TIMELINES.map { |t| [t.humanize.titleize, t] },
+                      @buyer_profile.buying_timeline
+                    ),
+                    { include_blank: "Select timeline..." },
+                    class: "form-select" %>
+              <p class="form-help">When are you looking to buy?</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-check">
+              <%= f.check_box :first_home_buyer, class: "form-check-input" %>
+              <%= f.label :first_home_buyer, "I am a first home buyer", class: "form-check-label" %>
+            </div>
+            <p class="form-help">First home buyers may be eligible for government grants and stamp duty concessions</p>
+          </div>
+        </div>
+
+        <%# Pre-approval Section %>
+        <div class="dashboard-panel mb-6" id="pre-approval-section">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Pre-approval Details</h2>
+              <p class="dashboard-panel-subtitle">Only applicable if you have finance pre-approval</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :pre_approval_amount, "Pre-approval Amount", class: "form-label" %>
+              <div class="input-with-icon input-with-icon-left">
+                <span class="input-icon input-icon-left">$</span>
+                <%= f.number_field :pre_approval_amount, class: "form-input", placeholder: "e.g. 750000", min: 0, step: 10000 %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :pre_approval_lender, "Lender", class: "form-label" %>
+              <%= f.text_field :pre_approval_lender, class: "form-input", placeholder: "e.g. Commonwealth Bank" %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :pre_approval_expires_at, "Expiry Date", class: "form-label" %>
+            <%= f.date_field :pre_approval_expires_at, class: "form-input", style: "max-width: 300px;" %>
+            <p class="form-help">Pre-approvals typically last 3-6 months</p>
+          </div>
+        </div>
+
+        <%# Property Preferences Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Property Preferences</h2>
+              <p class="dashboard-panel-subtitle">What type of property are you looking for?</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :property_types, "Property Types", class: "form-label" %>
+            <div class="form-check-group form-check-group-inline">
+              <% BuyerProfile::PROPERTY_TYPES.each do |type| %>
+                <div class="form-check">
+                  <%= check_box_tag "buyer_profile[property_types][]", type,
+                        @buyer_profile.property_types&.include?(type),
+                        id: "property_type_#{type}",
+                        class: "form-check-input" %>
+                  <%= label_tag "property_type_#{type}", type.humanize.titleize, class: "form-check-label" %>
+                </div>
+              <% end %>
+            </div>
+            <%= hidden_field_tag "buyer_profile[property_types][]", "" %>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :bedrooms_min, "Minimum Bedrooms", class: "form-label" %>
+              <%= f.select :bedrooms_min,
+                    options_for_select((1..10).map { |n| [n, n] }, @buyer_profile.bedrooms_min),
+                    { include_blank: "Any" },
+                    class: "form-select" %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :bedrooms_max, "Maximum Bedrooms", class: "form-label" %>
+              <%= f.select :bedrooms_max,
+                    options_for_select((1..10).map { |n| [n, n] }, @buyer_profile.bedrooms_max),
+                    { include_blank: "Any" },
+                    class: "form-select" %>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :bathrooms_min, "Minimum Bathrooms", class: "form-label" %>
+              <%= f.select :bathrooms_min,
+                    options_for_select((1..10).map { |n| [n, n] }, @buyer_profile.bathrooms_min),
+                    { include_blank: "Any" },
+                    class: "form-select" %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :bathrooms_max, "Maximum Bathrooms", class: "form-label" %>
+              <%= f.select :bathrooms_max,
+                    options_for_select((1..10).map { |n| [n, n] }, @buyer_profile.bathrooms_max),
+                    { include_blank: "Any" },
+                    class: "form-select" %>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :parking_min, "Minimum Parking Spaces", class: "form-label" %>
+              <%= f.select :parking_min,
+                    options_for_select((0..5).map { |n| [n, n] }, @buyer_profile.parking_min),
+                    { include_blank: "Any" },
+                    class: "form-select" %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :parking_max, "Maximum Parking Spaces", class: "form-label" %>
+              <%= f.select :parking_max,
+                    options_for_select((0..5).map { |n| [n, n] }, @buyer_profile.parking_max),
+                    { include_blank: "Any" },
+                    class: "form-select" %>
+            </div>
+          </div>
+        </div>
+
+        <%# Features Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Features</h2>
+              <p class="dashboard-panel-subtitle">Property features that matter to you</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6">
+            <div class="form-group">
+              <%= f.label :must_have_features, "Must-have Features", class: "form-label" %>
+              <p class="form-help mb-3">Features your property must have</p>
+              <div class="form-check-group">
+                <% BuyerProfile::FEATURES.each do |feature| %>
+                  <div class="form-check">
+                    <%= check_box_tag "buyer_profile[must_have_features][]", feature,
+                          @buyer_profile.must_have_features&.include?(feature),
+                          id: "must_have_#{feature}",
+                          class: "form-check-input" %>
+                    <%= label_tag "must_have_#{feature}", feature.humanize.titleize, class: "form-check-label" %>
+                  </div>
+                <% end %>
+              </div>
+              <%= hidden_field_tag "buyer_profile[must_have_features][]", "" %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :nice_to_have_features, "Nice-to-have Features", class: "form-label" %>
+              <p class="form-help mb-3">Features that would be a bonus</p>
+              <div class="form-check-group">
+                <% BuyerProfile::FEATURES.each do |feature| %>
+                  <div class="form-check">
+                    <%= check_box_tag "buyer_profile[nice_to_have_features][]", feature,
+                          @buyer_profile.nice_to_have_features&.include?(feature),
+                          id: "nice_to_have_#{feature}",
+                          class: "form-check-input" %>
+                    <%= label_tag "nice_to_have_#{feature}", feature.humanize.titleize, class: "form-check-label" %>
+                  </div>
+                <% end %>
+              </div>
+              <%= hidden_field_tag "buyer_profile[nice_to_have_features][]", "" %>
+            </div>
+          </div>
+        </div>
+
+        <%# Location Section %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Location Preferences</h2>
+              <p class="dashboard-panel-subtitle">Where you want to live</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :preferred_suburbs, "Preferred Suburbs", class: "form-label" %>
+            <%= f.text_field :preferred_suburbs,
+                  value: @buyer_profile.preferred_suburbs&.join(", "),
+                  class: "form-input",
+                  placeholder: "e.g. Paddington, Woollahra, Bondi" %>
+            <p class="form-help">Enter suburb names separated by commas</p>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :max_commute_minutes, "Max Commute Time (minutes)", class: "form-label" %>
+              <%= f.number_field :max_commute_minutes, class: "form-input", placeholder: "e.g. 30", min: 0, max: 180 %>
+              <p class="form-help">Maximum commute time to work</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Proximity Preferences</label>
+            <p class="form-help mb-3">I want to be near:</p>
+            <div class="form-check-group form-check-group-inline">
+              <div class="form-check">
+                <%= check_box_tag "buyer_profile[location_preferences][near_primary_school][enabled]", "true",
+                      @buyer_profile.near_primary_school?,
+                      id: "near_primary_school",
+                      class: "form-check-input" %>
+                <%= label_tag "near_primary_school", "Primary School", class: "form-check-label" %>
+              </div>
+              <div class="form-check">
+                <%= check_box_tag "buyer_profile[location_preferences][near_secondary_school][enabled]", "true",
+                      @buyer_profile.near_secondary_school?,
+                      id: "near_secondary_school",
+                      class: "form-check-input" %>
+                <%= label_tag "near_secondary_school", "Secondary School", class: "form-check-label" %>
+              </div>
+              <div class="form-check">
+                <%= check_box_tag "buyer_profile[location_preferences][near_train_station][enabled]", "true",
+                      @buyer_profile.near_train_station?,
+                      id: "near_train_station",
+                      class: "form-check-input" %>
+                <%= label_tag "near_train_station", "Train Station", class: "form-check-label" %>
+              </div>
+              <div class="form-check">
+                <%= check_box_tag "buyer_profile[location_preferences][near_bus_stop][enabled]", "true",
+                      @buyer_profile.near_bus_stop?,
+                      id: "near_bus_stop",
+                      class: "form-check-input" %>
+                <%= label_tag "near_bus_stop", "Bus Stop", class: "form-check-label" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%# Form Actions (Bottom) %>
+        <div class="form-actions form-actions-right">
+          <%= link_to "Cancel", buyer_profile_path, class: "btn btn-secondary" %>
+          <%= f.submit "Save Changes", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

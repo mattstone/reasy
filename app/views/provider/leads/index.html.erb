@@ -1,0 +1,99 @@
+<div class="dashboard-header">
+  <div>
+    <h1>My Leads</h1>
+    <p class="text-muted">Manage your incoming service requests</p>
+  </div>
+</div>
+
+<%# Stats %>
+<div class="stat-cards-3 mb-6">
+  <div class="metric-card metric-card-sm">
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @new_count %></div>
+      <div class="metric-card-label">New Leads</div>
+    </div>
+  </div>
+  <div class="metric-card metric-card-sm">
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @active_count %></div>
+      <div class="metric-card-label">Active</div>
+    </div>
+  </div>
+  <div class="metric-card metric-card-sm">
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @accepted_count %></div>
+      <div class="metric-card-label">Accepted</div>
+    </div>
+  </div>
+</div>
+
+<%# Filters %>
+<div class="card mb-4">
+  <div style="display: flex; gap: var(--reasy-space-3); flex-wrap: wrap;">
+    <%= link_to "All", provider_leads_path, class: "btn btn-sm #{params[:filter].blank? ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "New", provider_leads_path(filter: "new"), class: "btn btn-sm #{params[:filter] == 'new' ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "Active", provider_leads_path(filter: "active"), class: "btn btn-sm #{params[:filter] == 'active' ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "Closed", provider_leads_path(filter: "closed"), class: "btn btn-sm #{params[:filter] == 'closed' ? 'btn-primary' : 'btn-secondary'}" %>
+  </div>
+</div>
+
+<%# Leads List %>
+<div class="card">
+  <% if @leads.any? %>
+    <% @leads.each do |lead| %>
+      <div class="card-row" style="display: flex; justify-content: space-between; align-items: flex-start; padding: var(--reasy-space-4); border-bottom: 1px solid var(--reasy-gray-100);">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: var(--reasy-space-2); margin-bottom: var(--reasy-space-2);">
+            <span class="badge <%= lead.status_badge_class %>"><%= lead.status.humanize %></span>
+            <span class="badge badge-gray"><%= lead.service_type.humanize %></span>
+            <% if lead.expiring_soon? %>
+              <span class="badge badge-red">Expiring Soon</span>
+            <% end %>
+          </div>
+          <h3 style="font-size: var(--reasy-text-base); font-weight: 600; margin: 0 0 var(--reasy-space-1) 0;">
+            <%= link_to lead.user.name, provider_lead_path(lead), style: "color: var(--reasy-dark); text-decoration: none;" %>
+          </h3>
+          <% if lead.property %>
+            <p class="text-sm text-muted mb-1">
+              Property: <%= lead.property.address %>
+            </p>
+          <% end %>
+          <p class="text-sm text-muted">
+            Received <%= time_ago_in_words(lead.created_at) %> ago
+            <% if lead.expires_at %>
+              · Expires <%= time_ago_in_words(lead.expires_at) %>
+            <% end %>
+          </p>
+        </div>
+        <div style="display: flex; gap: var(--reasy-space-2);">
+          <%= link_to provider_lead_path(lead), class: "btn btn-sm btn-secondary" do %>
+            View Details
+          <% end %>
+          <% if lead.new_lead? %>
+            <%= button_to provider_lead_path(lead, action_type: "contact"), method: :patch, class: "btn btn-sm btn-primary" do %>
+              Contact
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Pagination %>
+    <% if @pagy.pages > 1 %>
+      <div style="padding: var(--reasy-space-4); display: flex; justify-content: center;">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--reasy-gray-300); margin-bottom: var(--reasy-space-3);">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <p class="text-muted">No leads found.</p>
+      <p class="text-sm text-muted">New leads will appear here when clients request your services.</p>
+    </div>
+  <% end %>
+</div>

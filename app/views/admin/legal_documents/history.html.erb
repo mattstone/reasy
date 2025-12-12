@@ -1,0 +1,33 @@
+<div class="admin-content">
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Document History</h1>
+      <p class="admin-page-subtitle">All versions of legal documents</p>
+    </div>
+    <div class="admin-page-actions">
+      <%= link_to "Back to Documents", admin_legal_documents_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <% @grouped.each do |doc_type, documents| %>
+    <div class="admin-panel mb-4">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title"><%= doc_type&.humanize || "Other" %></h2>
+      </div>
+      <div class="admin-panel-content">
+        <% documents.each do |doc| %>
+          <div class="flex items-center justify-between py-2 border-b" style="border-color: var(--reasy-gray-200);">
+            <div>
+              <span class="text-sm font-medium"><%= doc.title %></span>
+              <span class="text-sm text-muted ml-2">v<%= doc.version %></span>
+              <% if doc.current? %>
+                <span class="badge badge-sm badge-green ml-2">Current</span>
+              <% end %>
+            </div>
+            <span class="text-sm text-muted"><%= doc.created_at.strftime("%b %d, %Y") %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

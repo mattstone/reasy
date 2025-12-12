@@ -1,0 +1,190 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Entities</h1>
+          <p class="page-subtitle">Manage your individuals, companies, and SMSFs for property transactions</p>
+        </div>
+        <div class="page-header-actions">
+          <%= link_to new_entity_path, class: "btn btn-primary" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Add Entity
+          <% end %>
+        </div>
+      </div>
+
+      <% if @entities.any? %>
+        <div class="grid grid-cols-2 gap-6">
+          <% @entities.each do |entity| %>
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-header">
+                <div class="flex items-center gap-3">
+                  <%# Entity Type Badge %>
+                  <% case entity.entity_type %>
+                  <% when "individual" %>
+                    <div class="metric-card-icon metric-card-icon-blue" style="width: 44px; height: 44px;">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                    </div>
+                  <% when "company" %>
+                    <div class="metric-card-icon metric-card-icon-purple" style="width: 44px; height: 44px;">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                        <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+                        <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+                        <path d="M10 6h4"/>
+                        <path d="M10 10h4"/>
+                        <path d="M10 14h4"/>
+                        <path d="M10 18h4"/>
+                      </svg>
+                    </div>
+                  <% when "smsf" %>
+                    <div class="metric-card-icon metric-card-icon-teal" style="width: 44px; height: 44px;">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 9 12 5 2 9l10 4 10-4Z"/>
+                        <path d="M6 10.6V16a6 3 0 0 0 12 0v-5.4"/>
+                        <path d="M22 9v5"/>
+                      </svg>
+                    </div>
+                  <% end %>
+
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h3 class="dashboard-panel-title mb-0"><%= entity.display_name %></h3>
+                      <% if entity.is_default? %>
+                        <span class="badge badge-success">Default</span>
+                      <% end %>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span class="badge badge-gray"><%= entity.entity_type.humanize.titleize %></span>
+                      <% case entity.verification_status %>
+                      <% when "verified" %>
+                        <span class="status-badge status-badge-active">Verified</span>
+                      <% when "pending" %>
+                        <span class="status-badge status-badge-inactive">Pending</span>
+                      <% when "submitted", "under_review" %>
+                        <span class="status-badge status-badge-pending">Under Review</span>
+                      <% when "rejected" %>
+                        <span class="status-badge status-badge-error">Rejected</span>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <%# Entity Details %>
+              <div class="stats-summary mb-4">
+                <% if entity.individual? && entity.date_of_birth.present? %>
+                  <div class="stats-row">
+                    <span class="stats-label">Date of Birth</span>
+                    <span class="stats-value"><%= entity.date_of_birth.strftime("%d %B %Y") %></span>
+                  </div>
+                <% end %>
+
+                <% if entity.company? %>
+                  <% if entity.abn.present? %>
+                    <div class="stats-row">
+                      <span class="stats-label">ABN</span>
+                      <span class="stats-value"><%= entity.abn %></span>
+                    </div>
+                  <% end %>
+                  <% if entity.acn.present? %>
+                    <div class="stats-row">
+                      <span class="stats-label">ACN</span>
+                      <span class="stats-value"><%= entity.acn %></span>
+                    </div>
+                  <% end %>
+                <% end %>
+
+                <% if entity.smsf? %>
+                  <% if entity.fund_abn.present? %>
+                    <div class="stats-row">
+                      <span class="stats-label">Fund ABN</span>
+                      <span class="stats-value"><%= entity.fund_abn %></span>
+                    </div>
+                  <% end %>
+                <% end %>
+
+                <% if entity.address_line_1.present? %>
+                  <div class="stats-row">
+                    <span class="stats-label">Address</span>
+                    <span class="stats-value text-small">
+                      <%= entity.address_line_1 %><% if entity.suburb.present? %>, <%= entity.suburb %><% end %>
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+
+              <%# Actions %>
+              <div class="card-footer" style="border-top: 1px solid var(--color-border-light); padding-top: var(--space-4); margin-top: var(--space-4);">
+                <div class="flex items-center gap-2">
+                  <%= link_to entity_path(entity), class: "btn btn-sm btn-ghost" do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    View
+                  <% end %>
+                  <%= link_to edit_entity_path(entity), class: "btn btn-sm btn-ghost" do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                    </svg>
+                    Edit
+                  <% end %>
+                  <% unless entity.is_default? %>
+                    <%= button_to make_default_entity_path(entity), method: :patch, class: "btn btn-sm btn-ghost" do %>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                      </svg>
+                      Make Default
+                    <% end %>
+                  <% end %>
+                </div>
+                <%= button_to entity_path(entity), method: :delete, class: "btn btn-sm btn-ghost", style: "color: var(--color-error);", data: { turbo_confirm: "Are you sure you want to delete this entity? This action cannot be undone." } do %>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18"/>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                  </svg>
+                  Delete
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <%# Empty State %>
+        <div class="dashboard-panel">
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 21a8 8 0 0 0-16 0"/>
+                <circle cx="10" cy="8" r="5"/>
+                <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
+              </svg>
+            </div>
+            <h3 class="empty-state-title">No entities yet</h3>
+            <p class="empty-state-description">
+              Entities represent the individuals, companies, or SMSFs that will buy or sell property.
+              Add your first entity to get started.
+            </p>
+            <%= link_to new_entity_path, class: "btn btn-primary" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+              </svg>
+              Add Your First Entity
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

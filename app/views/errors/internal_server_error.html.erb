@@ -1,0 +1,14 @@
+<%= render "shared/nav" %>
+
+<div class="page-hero" style="min-height: 60vh; display: flex; align-items: center; justify-content: center;">
+  <div class="text-center">
+    <h1 style="font-size: var(--reasy-text-6xl); color: var(--reasy-orange);">500</h1>
+    <h2>Something went wrong</h2>
+    <p class="text-lg text-muted mb-8">
+      We're sorry, but something went wrong on our end. Please try again later.
+    </p>
+    <%= link_to "Go back home", root_path, class: "btn btn-primary btn-lg" %>
+  </div>
+</div>
+
+<%= render "shared/footer" %>

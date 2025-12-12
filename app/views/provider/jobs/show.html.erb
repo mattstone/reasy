@@ -1,0 +1,232 @@
+<div class="mb-4">
+  <%= link_to provider_jobs_path, class: "btn btn-ghost btn-sm" do %>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Back to Jobs
+  <% end %>
+</div>
+
+<div class="dashboard-header">
+  <div>
+    <div style="display: flex; align-items: center; gap: var(--reasy-space-2); margin-bottom: var(--reasy-space-2);">
+      <span class="badge <%= @job.status_badge_class %>"><%= @job.status.humanize %></span>
+      <span class="badge badge-gray"><%= @job.service_type.humanize %></span>
+      <% if @job.past_due? %>
+        <span class="badge badge-red">Past Due</span>
+      <% end %>
+    </div>
+    <h1><%= @job.title %></h1>
+    <p class="text-muted">Client: <%= @job.client.name %></p>
+  </div>
+  <div style="display: flex; gap: var(--reasy-space-2);">
+    <% case @job.status %>
+    <% when "pending" %>
+      <button type="button" class="btn btn-primary" onclick="document.getElementById('schedule-form').style.display = 'block'">
+        Schedule Job
+      </button>
+    <% when "scheduled" %>
+      <%= button_to provider_job_path(@job, action_type: "start"), method: :patch, class: "btn btn-primary" do %>
+        Start Job
+      <% end %>
+    <% when "in_progress" %>
+      <button type="button" class="btn btn-primary" onclick="document.getElementById('complete-form').style.display = 'block'">
+        Complete Job
+      </button>
+    <% end %>
+    <% if @job.active? %>
+      <%= button_to provider_job_path(@job, action_type: "cancel"), method: :patch, class: "btn btn-secondary", data: { turbo_confirm: "Are you sure you want to cancel this job?" } do %>
+        Cancel
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# Schedule Form (Hidden by default) %>
+<div id="schedule-form" class="card mt-4" style="display: <%= @job.pending? ? 'none' : 'none' %>; background: var(--reasy-blue-50); border-color: var(--reasy-blue-200);">
+  <h3 class="mb-4">Schedule Job</h3>
+  <%= form_with url: provider_job_path(@job), method: :patch, local: true do %>
+    <input type="hidden" name="action_type" value="schedule">
+    <div class="form-group">
+      <label class="form-label">Scheduled Date</label>
+      <input type="date" name="scheduled_date" class="form-control" min="<%= Date.current %>" required>
+    </div>
+    <div style="display: flex; gap: var(--reasy-space-2);">
+      <%= submit_tag "Schedule", class: "btn btn-primary" %>
+      <button type="button" class="btn btn-secondary" onclick="document.getElementById('schedule-form').style.display = 'none'">Cancel</button>
+    </div>
+  <% end %>
+</div>
+
+<%# Complete Form (Hidden by default) %>
+<div id="complete-form" class="card mt-4" style="display: none; background: var(--reasy-green-50); border-color: var(--reasy-green-200);">
+  <h3 class="mb-4">Complete Job</h3>
+  <%= form_with url: provider_job_path(@job), method: :patch, local: true do %>
+    <input type="hidden" name="action_type" value="complete">
+    <div class="form-group">
+      <label class="form-label">Final Price (cents)</label>
+      <input type="number" name="final_price_cents" class="form-control" value="<%= @job.quoted_price_cents %>" placeholder="e.g., 50000 for $500">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Completion Notes</label>
+      <textarea name="completion_notes" class="form-control" rows="3" placeholder="Notes about the completed job..."></textarea>
+    </div>
+    <div style="display: flex; gap: var(--reasy-space-2);">
+      <%= submit_tag "Mark Complete", class: "btn btn-primary" %>
+      <button type="button" class="btn btn-secondary" onclick="document.getElementById('complete-form').style.display = 'none'">Cancel</button>
+    </div>
+  <% end %>
+</div>
+
+<div class="grid grid-2 mt-6">
+  <%# Job Details %>
+  <div class="card">
+    <h3 class="mb-4">Job Details</h3>
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-label">Service Type</span>
+        <span class="detail-value"><%= @job.service_type.humanize %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="badge <%= @job.status_badge_class %>"><%= @job.status.humanize %></span>
+      </div>
+      <% if @job.scheduled_date %>
+        <div class="detail-row">
+          <span class="detail-label">Scheduled Date</span>
+          <span class="detail-value"><%= @job.scheduled_date.strftime("%B %d, %Y") %></span>
+        </div>
+      <% end %>
+      <% if @job.started_at %>
+        <div class="detail-row">
+          <span class="detail-label">Started</span>
+          <span class="detail-value"><%= @job.started_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+      <% end %>
+      <% if @job.completed_at %>
+        <div class="detail-row">
+          <span class="detail-label">Completed</span>
+          <span class="detail-value"><%= @job.completed_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+      <% end %>
+      <div class="detail-row">
+        <span class="detail-label">Quoted Price</span>
+        <span class="detail-value">
+          <% if @job.quoted_price_cents %>
+            <%= number_to_currency(@job.quoted_price_cents / 100) %>
+          <% else %>
+            Not quoted
+          <% end %>
+        </span>
+      </div>
+      <% if @job.final_price_cents %>
+        <div class="detail-row">
+          <span class="detail-label">Final Price</span>
+          <span class="detail-value"><%= number_to_currency(@job.final_price_cents / 100) %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Client Information %>
+  <div class="card">
+    <h3 class="mb-4">Client Information</h3>
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-label">Name</span>
+        <span class="detail-value"><%= @job.client.name %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Email</span>
+        <span class="detail-value"><%= @job.client.email %></span>
+      </div>
+      <% if @job.client.phone.present? %>
+        <div class="detail-row">
+          <span class="detail-label">Phone</span>
+          <span class="detail-value"><%= @job.client.phone %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @job.property %>
+  <div class="card mt-6">
+    <h3 class="mb-4">Property Information</h3>
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-label">Address</span>
+        <span class="detail-value"><%= @job.property.address %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Type</span>
+        <span class="detail-value"><%= @job.property.property_type&.humanize || "House" %></span>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if @job.description.present? || @job.requirements.present? %>
+  <div class="card mt-6">
+    <h3 class="mb-4">Description & Requirements</h3>
+    <% if @job.description.present? %>
+      <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.6; margin-bottom: var(--reasy-space-4);">
+        <%= @job.description %>
+      </p>
+    <% end %>
+    <% if @job.requirements.present? %>
+      <h4 style="font-size: var(--reasy-text-sm); font-weight: 600; margin-bottom: var(--reasy-space-2);">Requirements:</h4>
+      <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.6;">
+        <%= @job.requirements %>
+      </p>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @job.completed? %>
+  <div class="card mt-6">
+    <h3 class="mb-4">Completion Details</h3>
+    <% if @job.completion_notes.present? %>
+      <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.6; margin-bottom: var(--reasy-space-4);">
+        <%= @job.completion_notes %>
+      </p>
+    <% end %>
+    <% if @job.client_rating %>
+      <div style="display: flex; align-items: center; gap: var(--reasy-space-2);">
+        <span style="font-size: var(--reasy-text-sm); font-weight: 500;">Client Rating:</span>
+        <div style="display: flex; gap: var(--reasy-space-1);">
+          <% 5.times do |i| %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="<%= i < @job.client_rating ? 'var(--reasy-orange)' : 'none' %>" stroke="var(--reasy-orange)" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          <% end %>
+        </div>
+      </div>
+      <% if @job.client_review.present? %>
+        <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.6; margin-top: var(--reasy-space-2); font-style: italic;">
+          "<%= @job.client_review %>"
+        </p>
+      <% end %>
+    <% else %>
+      <p class="text-muted text-sm">Awaiting client rating.</p>
+    <% end %>
+  </div>
+<% end %>
+
+<%# Update Quote %>
+<% if @job.active? %>
+  <div class="card mt-6">
+    <h3 class="mb-4">Update Job Details</h3>
+    <%= form_with model: @job, url: provider_job_path(@job), method: :patch, local: true do |f| %>
+      <div class="form-group">
+        <label class="form-label">Quoted Price (cents)</label>
+        <%= f.number_field :quoted_price_cents, class: "form-control", placeholder: "e.g., 50000 for $500" %>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <%= f.text_area :description, class: "form-control", rows: 3 %>
+      </div>
+      <%= f.submit "Update Job", class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+<% end %>

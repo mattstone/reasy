@@ -1,0 +1,442 @@
+/*
+ * Offers Page Styles
+ * Offer cards, status displays, and response forms
+ */
+
+/* ============================================
+   Offers List
+   ============================================ */
+.offers-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ============================================
+   Offer Card
+   ============================================ */
+.offer-card {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  transition: all var(--transition-fast);
+}
+
+.offer-card:hover {
+  border-color: var(--color-border-hover);
+}
+
+.offer-card-submitted,
+.offer-card-viewed {
+  border-left: 4px solid var(--color-primary);
+}
+
+.offer-card-accepted {
+  border-left: 4px solid var(--color-success);
+}
+
+.offer-card-rejected {
+  border-left: 4px solid var(--color-error);
+}
+
+.offer-card-countered {
+  border-left: 4px solid var(--color-warning);
+}
+
+.offer-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.offer-card-amount {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.offer-card-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .offer-card-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.offer-card-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.offer-card-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.offer-card-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.offer-card-conditions {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.offer-conditions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.offer-card-expiry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.offer-card-footer {
+  display: flex;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ============================================
+   Offer Status Banner
+   ============================================ */
+.offer-status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+}
+
+.offer-status-submitted,
+.offer-status-viewed {
+  background: var(--color-primary-pale);
+  color: var(--color-primary);
+}
+
+.offer-status-accepted {
+  background: var(--color-success-pale);
+  color: var(--color-success);
+}
+
+.offer-status-rejected {
+  background: var(--color-error-pale);
+  color: var(--color-error);
+}
+
+.offer-status-countered {
+  background: var(--color-warning-pale);
+  color: var(--color-warning);
+}
+
+.offer-status-withdrawn,
+.offer-status-expired {
+  background: var(--color-gray-100);
+  color: var(--color-text-muted);
+}
+
+.offer-status-icon {
+  flex-shrink: 0;
+}
+
+.offer-status-content {
+  flex: 1;
+}
+
+.offer-status-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-1);
+}
+
+.offer-status-description {
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+}
+
+/* ============================================
+   Offer Summary
+   ============================================ */
+.offer-summary {
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.offer-summary-amount {
+  text-align: center;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.offer-summary-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.offer-summary-value {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.offer-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.offer-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.offer-summary-item-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.offer-summary-item-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   Conditions List
+   ============================================ */
+.conditions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.condition-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.condition-item svg {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Message Box
+   ============================================ */
+.message-box {
+  padding: var(--space-4);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--color-primary);
+}
+
+.message-box p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   Response Actions
+   ============================================ */
+.response-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.response-form {
+  padding: var(--space-4);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+}
+
+.response-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.response-divider::before,
+.response-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.response-divider span {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+/* ============================================
+   Buyer Info
+   ============================================ */
+.buyer-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.buyer-avatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-pale);
+  color: var(--color-primary);
+  border-radius: 50%;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.buyer-details {
+  flex: 1;
+}
+
+.buyer-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.buyer-email {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.entity-info {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ============================================
+   Property Mini Card
+   ============================================ */
+.property-mini-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.property-mini-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.property-mini-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.property-mini-details {
+  padding: var(--space-3);
+}
+
+.property-mini-price {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.property-mini-address {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   Cooling-Off Panel
+   ============================================ */
+.cooling-off-panel {
+  border: 2px solid var(--color-warning);
+  background: var(--color-warning-pale);
+}
+
+.cooling-off-countdown {
+  text-align: center;
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+}
+
+.countdown-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.countdown-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-warning);
+}
+
+.countdown-complete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-success);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================
+   Input with Prefix
+   ============================================ */
+.input-with-prefix {
+  position: relative;
+}
+
+.input-prefix {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.input-with-prefix .form-input {
+  padding-left: var(--space-8);
+}

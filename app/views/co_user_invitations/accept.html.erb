@@ -1,0 +1,87 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <div class="accept-invitation-wrapper">
+        <div class="dashboard-panel">
+          <div class="accept-invitation">
+            <div class="accept-invitation-header">
+              <div class="accept-invitation-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="8.5" cy="7" r="4"/>
+                  <polyline points="17 11 19 13 23 9"/>
+                </svg>
+              </div>
+              <h1 class="accept-invitation-title">Co-User Invitation</h1>
+            </div>
+
+            <div class="accept-invitation-from">
+              <% if @invitation.inviter.avatar&.attached? %>
+                <%= image_tag @invitation.inviter.avatar, class: "avatar avatar-xl" %>
+              <% else %>
+                <div class="avatar avatar-xl avatar-placeholder">
+                  <%= @invitation.inviter.name.first.upcase %>
+                </div>
+              <% end %>
+              <div class="accept-invitation-from-info">
+                <h3><%= @invitation.inviter.name %></h3>
+                <p>has invited you to be a co-user</p>
+              </div>
+            </div>
+
+            <% if @invitation.relationship.present? %>
+              <div class="accept-invitation-relationship">
+                <span class="badge badge-lg badge-gray"><%= @invitation.relationship.humanize %></span>
+              </div>
+            <% end %>
+
+            <% if @invitation.personal_message.present? %>
+              <div class="accept-invitation-message">
+                <p>"<%= @invitation.personal_message %>"</p>
+              </div>
+            <% end %>
+
+            <div class="accept-invitation-benefits">
+              <h4>As a co-user, you'll be able to:</h4>
+              <ul>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  View and save properties together
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Collaborate on offers and negotiations
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Communicate with agents and sellers
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Get 80% off your subscription
+                </li>
+              </ul>
+            </div>
+
+            <div class="accept-invitation-actions">
+              <%= button_to confirm_path(@invitation.invitation_token),
+                            method: :post,
+                            class: "btn btn-primary btn-lg btn-block" do %>
+                Accept Invitation
+              <% end %>
+              <%= link_to "Decline", dashboard_path, class: "btn btn-ghost btn-block" %>
+            </div>
+
+            <div class="accept-invitation-footer">
+              <p class="text-muted text-sm">
+                This invitation expires in <%= @invitation.days_until_expiry %> days
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

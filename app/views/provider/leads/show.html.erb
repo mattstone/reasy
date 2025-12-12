@@ -1,0 +1,150 @@
+<div class="mb-4">
+  <%= link_to provider_leads_path, class: "btn btn-ghost btn-sm" do %>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Back to Leads
+  <% end %>
+</div>
+
+<div class="dashboard-header">
+  <div>
+    <div style="display: flex; align-items: center; gap: var(--reasy-space-2); margin-bottom: var(--reasy-space-2);">
+      <span class="badge <%= @lead.status_badge_class %>"><%= @lead.status.humanize %></span>
+      <span class="badge badge-gray"><%= @lead.service_type.humanize %></span>
+      <% if @lead.expiring_soon? %>
+        <span class="badge badge-red">Expiring Soon</span>
+      <% end %>
+    </div>
+    <h1>Lead from <%= @lead.user.name %></h1>
+    <p class="text-muted">Received <%= time_ago_in_words(@lead.created_at) %> ago</p>
+  </div>
+  <div style="display: flex; gap: var(--reasy-space-2);">
+    <% case @lead.status %>
+    <% when "new" %>
+      <%= button_to provider_lead_path(@lead, action_type: "contact"), method: :patch, class: "btn btn-primary" do %>
+        Mark as Contacted
+      <% end %>
+    <% when "contacted" %>
+      <%= button_to provider_lead_path(@lead, action_type: "quote"), method: :patch, class: "btn btn-primary" do %>
+        Send Quote
+      <% end %>
+    <% when "quoted" %>
+      <%= button_to provider_lead_path(@lead, action_type: "accept", create_job: true), method: :patch, class: "btn btn-primary" do %>
+        Accept & Create Job
+      <% end %>
+    <% end %>
+    <% if @lead.active? %>
+      <%= button_to provider_lead_path(@lead, action_type: "decline"), method: :patch, class: "btn btn-secondary", data: { turbo_confirm: "Are you sure you want to decline this lead?" } do %>
+        Decline
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-2 mt-6">
+  <%# Client Information %>
+  <div class="card">
+    <h3 class="mb-4">Client Information</h3>
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-label">Name</span>
+        <span class="detail-value"><%= @lead.user.name %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Email</span>
+        <span class="detail-value"><%= @lead.user.email %></span>
+      </div>
+      <% if @lead.user.phone.present? %>
+        <div class="detail-row">
+          <span class="detail-label">Phone</span>
+          <span class="detail-value"><%= @lead.user.phone %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Lead Details %>
+  <div class="card">
+    <h3 class="mb-4">Lead Details</h3>
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-label">Service Type</span>
+        <span class="detail-value"><%= @lead.service_type.humanize %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Source</span>
+        <span class="detail-value"><%= @lead.source&.humanize || "Platform" %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Priority</span>
+        <span class="detail-value">
+          <% if @lead.priority >= 5 %>
+            <span class="badge badge-orange">High</span>
+          <% else %>
+            <span class="badge badge-gray">Normal</span>
+          <% end %>
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Expires</span>
+        <span class="detail-value">
+          <% if @lead.expires_at %>
+            <%= @lead.expires_at.strftime("%B %d, %Y at %I:%M %p") %>
+          <% else %>
+            No expiry
+          <% end %>
+        </span>
+      </div>
+      <% if @lead.contacted_at %>
+        <div class="detail-row">
+          <span class="detail-label">Contacted</span>
+          <span class="detail-value"><%= @lead.contacted_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @lead.property %>
+  <div class="card mt-6">
+    <h3 class="mb-4">Property Information</h3>
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-label">Address</span>
+        <span class="detail-value"><%= @lead.property.address %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Type</span>
+        <span class="detail-value"><%= @lead.property.property_type&.humanize || "House" %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Bedrooms</span>
+        <span class="detail-value"><%= @lead.property.bedrooms %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Price</span>
+        <span class="detail-value"><%= number_to_currency(@lead.property.price_cents / 100, precision: 0) %></span>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if @lead.requirements.present? %>
+  <div class="card mt-6">
+    <h3 class="mb-4">Client Requirements</h3>
+    <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.6;">
+      <%= @lead.requirements %>
+    </p>
+  </div>
+<% end %>
+
+<div class="card mt-6">
+  <h3 class="mb-4">Notes</h3>
+  <%= form_with model: @lead, url: provider_lead_path(@lead), method: :patch, local: true do |f| %>
+    <div class="form-group">
+      <%= f.text_area :notes, class: "form-control", rows: 4, placeholder: "Add notes about this lead..." %>
+    </div>
+    <%= f.submit "Save Notes", class: "btn btn-secondary" %>
+  <% end %>
+</div>

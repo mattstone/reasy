@@ -1,0 +1,151 @@
+<div class="admin-content">
+  <%# Back Link %>
+  <div class="mb-4">
+    <%= link_to admin_users_path, class: "btn btn-ghost btn-sm" do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Users
+    <% end %>
+  </div>
+
+  <%# User Header %>
+  <div class="admin-user-header mb-6">
+    <div class="admin-user-header-main">
+      <% if @user.avatar&.attached? %>
+        <%= image_tag @user.avatar, class: "avatar avatar-xl" %>
+      <% else %>
+        <div class="avatar avatar-xl avatar-placeholder">
+          <%= @user.name.first.upcase %>
+        </div>
+      <% end %>
+      <div class="admin-user-header-info">
+        <h1 class="admin-user-name"><%= @user.name %></h1>
+        <p class="admin-user-email"><%= @user.email %></p>
+        <div class="admin-user-badges">
+          <% @user.roles.each do |role| %>
+            <span class="badge badge-gray"><%= role.humanize %></span>
+          <% end %>
+          <span class="badge <%= kyc_status_badge_class(@user.kyc_status) %>">
+            KYC: <%= @user.kyc_status.humanize %>
+          </span>
+          <span class="badge <%= subscription_status_badge_class(@user.subscription_status) %>">
+            <%= @user.subscription_status.humanize %>
+          </span>
+          <% if @user.suspended_at.present? %>
+            <span class="badge badge-red">Suspended</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="admin-user-header-actions">
+      <%= link_to edit_admin_user_path(@user), class: "btn btn-secondary" do %>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      <% end %>
+      <%= button_to impersonate_admin_user_path(@user), method: :post, class: "btn btn-secondary" do %>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Impersonate
+      <% end %>
+      <% if @user.suspended_at.present? %>
+        <%= button_to unsuspend_admin_user_path(@user), method: :post, class: "btn btn-primary" do %>
+          Unsuspend
+        <% end %>
+      <% else %>
+        <%= button_to suspend_admin_user_path(@user), method: :post, class: "btn btn-danger", data: { turbo_confirm: "Are you sure you want to suspend #{@user.name}?" } do %>
+          Suspend
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="admin-grid-2">
+    <%# User Details %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Details</h2>
+      </div>
+      <div class="admin-detail-list">
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">ID</span>
+          <span class="admin-detail-value"><%= @user.id %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Phone</span>
+          <span class="admin-detail-value"><%= @user.phone || "Not provided" %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Created</span>
+          <span class="admin-detail-value"><%= @user.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Last Sign In</span>
+          <span class="admin-detail-value"><%= @user.last_sign_in_at&.strftime("%B %d, %Y at %I:%M %p") || "Never" %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Sign In Count</span>
+          <span class="admin-detail-value"><%= @user.sign_in_count %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Stripe Customer</span>
+          <span class="admin-detail-value"><%= @user.stripe_customer_id || "None" %></span>
+        </div>
+      </div>
+    </div>
+
+    <%# Subscription Details %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Subscription</h2>
+      </div>
+      <div class="admin-detail-list">
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Status</span>
+          <span class="badge <%= subscription_status_badge_class(@user.subscription_status) %>">
+            <%= @user.subscription_status.humanize %>
+          </span>
+        </div>
+        <% if @user.trial? && @user.trial_ends_at %>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Trial Ends</span>
+            <span class="admin-detail-value"><%= @user.trial_ends_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+          </div>
+        <% end %>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">KYC Status</span>
+          <span class="badge <%= kyc_status_badge_class(@user.kyc_status) %>">
+            <%= @user.kyc_status.humanize %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Quick Links %>
+  <div class="admin-panel mt-6">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Quick Links</h2>
+    </div>
+    <div class="admin-quick-links">
+      <%= link_to activity_admin_user_path(@user), class: "admin-quick-link" do %>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+        View Activity Log
+      <% end %>
+      <%= link_to ai_conversations_admin_user_path(@user), class: "admin-quick-link" do %>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        View AI Conversations
+      <% end %>
+    </div>
+  </div>
+</div>

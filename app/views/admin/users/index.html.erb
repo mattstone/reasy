@@ -1,0 +1,135 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Users</h1>
+      <p class="admin-page-subtitle">Manage platform users</p>
+    </div>
+  </div>
+
+  <%# Stats %>
+  <div class="stat-cards-4 mb-6">
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @total_users %></div>
+        <div class="metric-card-label">Total Users</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @buyers_count %></div>
+        <div class="metric-card-label">Buyers</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @sellers_count %></div>
+        <div class="metric-card-label">Sellers</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @providers_count %></div>
+        <div class="metric-card-label">Providers</div>
+      </div>
+    </div>
+  </div>
+
+  <%# Filters %>
+  <div class="admin-filters mb-4">
+    <div class="filter-pills">
+      <%= link_to "All", admin_users_path, class: "filter-pill #{'filter-pill-active' if action_name == 'index' && params[:kyc_status].blank?}" %>
+      <%= link_to "Buyers", buyers_admin_users_path, class: "filter-pill #{'filter-pill-active' if action_name == 'buyers'}" %>
+      <%= link_to "Sellers", sellers_admin_users_path, class: "filter-pill #{'filter-pill-active' if action_name == 'sellers'}" %>
+      <%= link_to "Providers", providers_admin_users_path, class: "filter-pill #{'filter-pill-active' if action_name == 'providers'}" %>
+      <%= link_to "Admins", admins_admin_users_path, class: "filter-pill #{'filter-pill-active' if action_name == 'admins'}" %>
+    </div>
+
+    <%= form_with url: admin_users_path, method: :get, class: "admin-search-form" do %>
+      <input type="text" name="q" value="<%= params[:q] %>" placeholder="Search users..." class="form-control form-control-sm">
+      <button type="submit" class="btn btn-sm btn-primary">Search</button>
+    <% end %>
+  </div>
+
+  <%# Users Table %>
+  <div class="admin-panel">
+    <div class="admin-table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Roles</th>
+            <th>KYC Status</th>
+            <th>Subscription</th>
+            <th>Joined</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <% if user.avatar&.attached? %>
+                    <%= image_tag user.avatar, class: "avatar avatar-sm" %>
+                  <% else %>
+                    <div class="avatar avatar-sm avatar-placeholder">
+                      <%= user.name.first.upcase %>
+                    </div>
+                  <% end %>
+                  <div>
+                    <%= link_to user.name, admin_user_path(user), class: "user-cell-name" %>
+                    <span class="user-cell-email"><%= user.email %></span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="badge-group">
+                  <% user.roles.each do |role| %>
+                    <span class="badge badge-sm badge-gray"><%= role.humanize %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td>
+                <span class="badge badge-sm <%= kyc_status_badge_class(user.kyc_status) %>">
+                  <%= user.kyc_status.humanize %>
+                </span>
+              </td>
+              <td>
+                <span class="badge badge-sm <%= subscription_status_badge_class(user.subscription_status) %>">
+                  <%= user.subscription_status.humanize %>
+                </span>
+              </td>
+              <td class="text-muted text-sm">
+                <%= user.created_at.strftime("%b %d, %Y") %>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <%= link_to admin_user_path(user), class: "btn btn-ghost btn-sm" do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  <% end %>
+                  <%= button_to impersonate_admin_user_path(user), method: :post, class: "btn btn-ghost btn-sm", data: { turbo_confirm: "Impersonate #{user.name}?" } do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%# Pagination %>
+    <% if @pagy.pages > 1 %>
+      <div class="pagination-wrapper">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

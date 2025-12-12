@@ -1,0 +1,129 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Platform Settings</h1>
+      <p class="admin-page-subtitle">Configure platform-wide settings</p>
+    </div>
+  </div>
+
+  <div class="admin-grid-2">
+    <%# General Settings %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">General Settings</h2>
+      </div>
+      <div class="admin-settings-form">
+        <%= form_with url: admin_settings_path, method: :patch, local: true do |f| %>
+          <div class="admin-settings-section">
+            <div class="form-group">
+              <label class="form-label">Platform Name</label>
+              <input type="text" name="settings[platform_name]" value="<%= @settings[:platform_name] %>" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Support Email</label>
+              <input type="email" name="settings[support_email]" value="<%= @settings[:support_email] %>" class="form-control">
+            </div>
+          </div>
+
+          <div class="admin-settings-section">
+            <h3 class="admin-settings-section-title">Property Settings</h3>
+            <div class="form-group">
+              <label class="form-label">Max Property Images</label>
+              <input type="number" name="settings[max_property_images]" value="<%= @settings[:max_property_images] %>" class="form-control" min="1" max="50">
+              <span class="form-hint">Maximum number of images per property listing</span>
+            </div>
+          </div>
+
+          <div class="admin-settings-section">
+            <h3 class="admin-settings-section-title">Subscription Settings</h3>
+            <div class="form-group">
+              <label class="form-label">Trial Period (Hours)</label>
+              <input type="number" name="settings[trial_period_hours]" value="<%= @settings[:trial_period_hours] %>" class="form-control" min="1" max="168">
+              <span class="form-hint">Free trial duration for new buyers</span>
+            </div>
+          </div>
+
+          <div class="admin-settings-section">
+            <h3 class="admin-settings-section-title">Review Settings</h3>
+            <div class="form-group">
+              <label class="form-label">Moderation Hold Period (Hours)</label>
+              <input type="number" name="settings[review_moderation_hours]" value="<%= @settings[:review_moderation_hours] %>" class="form-control" min="1" max="168">
+              <span class="form-hint">Hours to hold reviews for moderation before auto-publishing</span>
+            </div>
+          </div>
+
+          <div class="admin-settings-section">
+            <h3 class="admin-settings-section-title">Transaction Settings</h3>
+            <div class="form-group">
+              <label class="form-label">Cooling-Off Period (Days)</label>
+              <input type="number" name="settings[cooling_off_period_days]" value="<%= @settings[:cooling_off_period_days] %>" class="form-control" min="0" max="14">
+              <span class="form-hint">NSW statutory cooling-off period for property contracts</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save Settings</button>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Quick Actions %>
+    <div>
+      <div class="admin-panel mb-6">
+        <div class="admin-panel-header">
+          <h2 class="admin-panel-title">Quick Actions</h2>
+        </div>
+        <div class="admin-quick-links">
+          <%= link_to integrations_admin_settings_path, class: "admin-quick-link" do %>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Manage Integrations
+          <% end %>
+          <%= link_to admin_audit_logs_path, class: "admin-quick-link" do %>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            View Audit Logs
+          <% end %>
+        </div>
+      </div>
+
+      <%# System Info %>
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2 class="admin-panel-title">System Information</h2>
+        </div>
+        <div class="admin-detail-list">
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Rails Version</span>
+            <span class="admin-detail-value"><%= Rails.version %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Ruby Version</span>
+            <span class="admin-detail-value"><%= RUBY_VERSION %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Environment</span>
+            <span class="admin-detail-value">
+              <span class="badge badge-sm <%= Rails.env.production? ? 'badge-red' : 'badge-green' %>">
+                <%= Rails.env %>
+              </span>
+            </span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Database</span>
+            <span class="admin-detail-value">PostgreSQL</span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Server Time</span>
+            <span class="admin-detail-value"><%= Time.current.strftime("%B %d, %Y %I:%M %p %Z") %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

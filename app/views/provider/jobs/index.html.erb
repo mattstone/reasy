@@ -1,0 +1,116 @@
+<div class="dashboard-header">
+  <div>
+    <h1>My Jobs</h1>
+    <p class="text-muted">Manage your active and completed jobs</p>
+  </div>
+</div>
+
+<%# Stats %>
+<div class="stat-cards-3 mb-6">
+  <div class="metric-card metric-card-sm">
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @active_count %></div>
+      <div class="metric-card-label">Active Jobs</div>
+    </div>
+  </div>
+  <div class="metric-card metric-card-sm">
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @upcoming_count %></div>
+      <div class="metric-card-label">Upcoming</div>
+    </div>
+  </div>
+  <div class="metric-card metric-card-sm">
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @completed_count %></div>
+      <div class="metric-card-label">Completed</div>
+    </div>
+  </div>
+</div>
+
+<%# Filters %>
+<div class="card mb-4">
+  <div style="display: flex; gap: var(--reasy-space-3); flex-wrap: wrap;">
+    <%= link_to "All", provider_jobs_path, class: "btn btn-sm #{params[:filter].blank? ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "Active", provider_jobs_path(filter: "active"), class: "btn btn-sm #{params[:filter] == 'active' ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "Scheduled", provider_jobs_path(filter: "scheduled"), class: "btn btn-sm #{params[:filter] == 'scheduled' ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "In Progress", provider_jobs_path(filter: "in_progress"), class: "btn btn-sm #{params[:filter] == 'in_progress' ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "Completed", provider_jobs_path(filter: "completed"), class: "btn btn-sm #{params[:filter] == 'completed' ? 'btn-primary' : 'btn-secondary'}" %>
+  </div>
+</div>
+
+<%# Jobs List %>
+<div class="card">
+  <% if @jobs.any? %>
+    <% @jobs.each do |job| %>
+      <div class="card-row" style="display: flex; justify-content: space-between; align-items: flex-start; padding: var(--reasy-space-4); border-bottom: 1px solid var(--reasy-gray-100);">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: var(--reasy-space-2); margin-bottom: var(--reasy-space-2);">
+            <span class="badge <%= job.status_badge_class %>"><%= job.status.humanize %></span>
+            <span class="badge badge-gray"><%= job.service_type.humanize %></span>
+            <% if job.past_due? %>
+              <span class="badge badge-red">Past Due</span>
+            <% end %>
+          </div>
+          <h3 style="font-size: var(--reasy-text-base); font-weight: 600; margin: 0 0 var(--reasy-space-1) 0;">
+            <%= link_to job.title, provider_job_path(job), style: "color: var(--reasy-dark); text-decoration: none;" %>
+          </h3>
+          <p class="text-sm text-muted mb-1">
+            Client: <%= job.client.name %>
+          </p>
+          <% if job.property %>
+            <p class="text-sm text-muted mb-1">
+              Property: <%= job.property.address %>
+            </p>
+          <% end %>
+          <p class="text-sm text-muted">
+            <% if job.scheduled_date %>
+              Scheduled: <%= job.scheduled_date.strftime("%B %d, %Y") %>
+            <% else %>
+              Created <%= time_ago_in_words(job.created_at) %> ago
+            <% end %>
+            <% if job.quoted_price_cents %>
+              · Quote: <%= number_to_currency(job.quoted_price_cents / 100) %>
+            <% end %>
+          </p>
+        </div>
+        <div style="display: flex; gap: var(--reasy-space-2);">
+          <%= link_to provider_job_path(job), class: "btn btn-sm btn-secondary" do %>
+            View Details
+          <% end %>
+          <% case job.status %>
+          <% when "pending" %>
+            <%= link_to provider_job_path(job), class: "btn btn-sm btn-primary" do %>
+              Schedule
+            <% end %>
+          <% when "scheduled" %>
+            <%= button_to provider_job_path(job, action_type: "start"), method: :patch, class: "btn btn-sm btn-primary" do %>
+              Start Job
+            <% end %>
+          <% when "in_progress" %>
+            <%= link_to provider_job_path(job), class: "btn btn-sm btn-primary" do %>
+              Complete
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Pagination %>
+    <% if @pagy.pages > 1 %>
+      <div style="padding: var(--reasy-space-4); display: flex; justify-content: center;">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--reasy-gray-300); margin-bottom: var(--reasy-space-3);">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <p class="text-muted">No jobs found.</p>
+      <p class="text-sm text-muted">Jobs will appear here when you accept leads.</p>
+    </div>
+  <% end %>
+</div>

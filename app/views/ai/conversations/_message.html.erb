@@ -1,0 +1,46 @@
+<%# Message partial for individual chat messages %>
+<%# locals: message, conversation %>
+
+<% is_user = message.role == "user" %>
+<% assistant_key = conversation.assistant.to_sym %>
+<% assistant_info = AI::AssistantService::ASSISTANTS[assistant_key] %>
+
+<div class="ai-message <%= is_user ? 'ai-message--user' : 'ai-message--assistant' %>" id="<%= dom_id(message) %>">
+  <div class="ai-message-avatar">
+    <% if is_user %>
+      <%= current_user.name.first.upcase %>
+    <% else %>
+      <% case conversation.assistant %>
+      <% when "max" %>🏠
+      <% when "sage" %>🧭
+      <% when "nina" %>🤝
+      <% when "doc" %>📄
+      <% when "scout" %>📊
+      <% when "ally" %>👥
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="ai-message-content">
+    <div class="ai-message-bubble">
+      <% if is_user %>
+        <%= simple_format(message.content, {}, wrapper_tag: "div") %>
+      <% else %>
+        <%# Render markdown for assistant messages %>
+        <div class="ai-message-text">
+          <%= simple_format(message.content, {}, wrapper_tag: "div") %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="ai-message-time">
+      <% if message.created_at.today? %>
+        <%= message.created_at.strftime("%l:%M %p").strip %>
+      <% elsif message.created_at > 1.week.ago %>
+        <%= message.created_at.strftime("%A at %l:%M %p").strip %>
+      <% else %>
+        <%= message.created_at.strftime("%d %b %Y at %l:%M %p").strip %>
+      <% end %>
+    </div>
+  </div>
+</div>

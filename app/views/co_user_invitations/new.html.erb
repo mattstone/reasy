@@ -1,0 +1,104 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Back Link %>
+      <div class="mb-4">
+        <%= link_to co_users_path, class: "btn btn-ghost btn-sm" do %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Back to Co-Users
+        <% end %>
+      </div>
+
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Invite Co-User</h1>
+          <p class="page-subtitle">Share your property journey with a partner, family member, or advisor</p>
+        </div>
+      </div>
+
+      <%# Benefits Info %>
+      <div class="info-banner mb-6">
+        <div class="info-banner-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          </svg>
+        </div>
+        <div class="info-banner-content">
+          <strong>Better Together</strong>
+          <p>Co-users can view saved properties, collaborate on offers, and help manage your property journey - all with an 80% discount on their subscription.</p>
+        </div>
+      </div>
+
+      <%# Invitation Form %>
+      <div class="dashboard-panel">
+        <%= form_with model: @invitation, url: co_user_invitations_path, class: "invitation-form" do |f| %>
+          <% if @invitation.errors.any? %>
+            <div class="alert alert-error mb-6">
+              <ul>
+                <% @invitation.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="form-section">
+            <div class="form-group">
+              <%= f.label :email, "Email Address", class: "form-label" %>
+              <%= f.email_field :email, class: "form-control", placeholder: "partner@example.com", required: true, autofocus: true %>
+              <p class="form-hint">They'll receive an email with instructions to join</p>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-group">
+              <%= f.label :relationship, "Relationship", class: "form-label" %>
+              <%= f.select :relationship,
+                           CoUserInvitation::RELATIONSHIPS.map { |r| [r.humanize, r] },
+                           { include_blank: "Select relationship type" },
+                           class: "form-control" %>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-group">
+              <%= f.label :personal_message, "Personal Message (Optional)", class: "form-label" %>
+              <%= f.text_area :personal_message, class: "form-control", rows: 3, placeholder: "Add a personal message to your invitation...", maxlength: 500 %>
+            </div>
+          </div>
+
+          <%# Permissions Info %>
+          <div class="form-section">
+            <h3 class="form-section-title">Default Permissions</h3>
+            <p class="form-section-description">Your co-user will be able to:</p>
+            <div class="permission-preview">
+              <div class="permission-preview-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                View your saved properties and searches
+              </div>
+              <div class="permission-preview-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                View offers and negotiations
+              </div>
+              <div class="permission-preview-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Send messages on your behalf
+              </div>
+            </div>
+            <p class="form-hint mt-3">You can adjust these permissions after they accept</p>
+          </div>
+
+          <div class="form-actions">
+            <%= link_to "Cancel", co_users_path, class: "btn btn-secondary" %>
+            <%= f.submit "Send Invitation", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,111 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Co-Users</h1>
+          <p class="page-subtitle">Manage access for partners and family members</p>
+        </div>
+        <div class="page-header-actions">
+          <% if current_user.can_add_co_users? %>
+            <%= link_to new_co_user_invitation_path, class: "btn btn-primary" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+              Invite Co-User
+            <% end %>
+          <% end %>
+          <%= link_to co_users_invitations_path, class: "btn btn-secondary" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            Invitations
+          <% end %>
+        </div>
+      </div>
+
+      <%# Co-User Pricing Info %>
+      <div class="info-banner mb-6">
+        <div class="info-banner-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+        </div>
+        <div class="info-banner-content">
+          <strong>Co-User Discount</strong>
+          <p>Co-users receive an 80% discount on their subscription. Perfect for partners, family members, or advisors who help with your property journey.</p>
+        </div>
+      </div>
+
+      <%# My Co-Users (where I'm primary) %>
+      <% if @as_primary.any? %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">My Co-Users</h2>
+              <p class="dashboard-panel-subtitle">People you've invited to share your account</p>
+            </div>
+          </div>
+
+          <div class="co-user-list">
+            <% @as_primary.each do |relationship| %>
+              <%= render "co_user_card", relationship: relationship, perspective: :primary %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <%# Accounts I'm Co-User On %>
+      <% if @as_co_user.any? %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Linked Accounts</h2>
+              <p class="dashboard-panel-subtitle">Accounts where you're a co-user</p>
+            </div>
+          </div>
+
+          <div class="co-user-list">
+            <% @as_co_user.each do |relationship| %>
+              <%= render "co_user_card", relationship: relationship, perspective: :co_user %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <%# Empty State %>
+      <% if @relationships.empty? %>
+        <div class="dashboard-panel">
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+            </div>
+            <h3 class="empty-state-title">No co-users yet</h3>
+            <p class="empty-state-description">
+              Invite a partner, family member, or advisor to collaborate on your property journey with an 80% subscription discount.
+            </p>
+            <% if current_user.can_add_co_users? %>
+              <%= link_to new_co_user_invitation_path, class: "btn btn-primary" do %>
+                Invite Your First Co-User
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

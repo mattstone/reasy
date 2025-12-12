@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Reasy Development Server Script
+# Restarts the Rails server and tails the development log
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "🔄 Stopping any running Rails servers..."
+pkill -f "puma.*reasy" 2>/dev/null || true
+pkill -f "rails server" 2>/dev/null || true
+
+# Give processes time to stop
+sleep 1
+
+echo "🧹 Clearing logs..."
+> log/development.log
+
+echo "🚀 Starting Rails server on port 3002..."
+bin/rails server -d -p 3002
+
+# Wait for server to start
+sleep 2
+
+echo "✅ Server started on http://localhost:3002"
+echo ""
+echo "📋 Tailing development log (Ctrl+C to stop)..."
+echo "================================================"
+echo ""
+
+tail -f log/development.log

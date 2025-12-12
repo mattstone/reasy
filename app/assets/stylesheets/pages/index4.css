@@ -1,0 +1,1263 @@
+/*
+ * Reasy Official Brand Design
+ * Based on Reasy Style Guide 2025
+ * Typography: Gilroy | Colors: Brand palette
+ */
+
+/* ============================================
+   Brand Design Tokens (from Style Guide)
+   ============================================ */
+:root {
+  /* Primary Colors */
+  --reasy-blue: #4F7DDD;
+  --reasy-blue-dark: #3D6BC7;
+  --reasy-blue-light: #6B91E5;
+
+  /* Secondary Colors */
+  --reasy-orange: #FF785D;
+  --reasy-orange-dark: #E5624A;
+  --reasy-green: #3DD6A0;
+  --reasy-green-dark: #2BC08A;
+
+  /* Neutral Colors */
+  --reasy-beige: #F0E9DF;
+  --reasy-beige-light: #F7F3ED;
+  --reasy-dark: #212650;
+  --reasy-dark-light: #2D3366;
+
+  /* Additional UI Colors */
+  --reasy-peach: #FFCBB8;
+  --reasy-yellow: #FFC947;
+  --reasy-white: #FFFFFF;
+  --reasy-gray-100: #F8F9FA;
+  --reasy-gray-200: #E9ECEF;
+  --reasy-gray-300: #DEE2E6;
+  --reasy-gray-500: #6C757D;
+  --reasy-gray-700: #495057;
+
+  /* Typography - Gilroy fallback to system fonts */
+  --reasy-font: 'Gilroy', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+
+  /* Font Sizes */
+  --reasy-text-xs: 0.75rem;
+  --reasy-text-sm: 0.875rem;
+  --reasy-text-base: 1rem;
+  --reasy-text-lg: 1.125rem;
+  --reasy-text-xl: 1.25rem;
+  --reasy-text-2xl: 1.5rem;
+  --reasy-text-3xl: 2rem;
+  --reasy-text-4xl: 2.5rem;
+  --reasy-text-5xl: 3.5rem;
+  --reasy-text-6xl: 4.5rem;
+
+  /* Spacing */
+  --reasy-space-1: 0.25rem;
+  --reasy-space-2: 0.5rem;
+  --reasy-space-3: 0.75rem;
+  --reasy-space-4: 1rem;
+  --reasy-space-5: 1.25rem;
+  --reasy-space-6: 1.5rem;
+  --reasy-space-8: 2rem;
+  --reasy-space-10: 2.5rem;
+  --reasy-space-12: 3rem;
+  --reasy-space-16: 4rem;
+  --reasy-space-20: 5rem;
+  --reasy-space-24: 6rem;
+
+  /* Border Radius - rounded, friendly */
+  --reasy-radius-sm: 0.5rem;
+  --reasy-radius-md: 0.75rem;
+  --reasy-radius-lg: 1rem;
+  --reasy-radius-xl: 1.5rem;
+  --reasy-radius-2xl: 2rem;
+  --reasy-radius-full: 9999px;
+
+  /* Shadows */
+  --reasy-shadow-sm: 0 1px 2px rgba(33, 38, 80, 0.05);
+  --reasy-shadow-md: 0 4px 12px rgba(33, 38, 80, 0.08);
+  --reasy-shadow-lg: 0 8px 24px rgba(33, 38, 80, 0.12);
+  --reasy-shadow-xl: 0 16px 48px rgba(33, 38, 80, 0.16);
+
+  /* Transitions */
+  --reasy-transition-fast: 0.15s ease;
+  --reasy-transition-base: 0.2s ease;
+  --reasy-transition-slow: 0.3s ease;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+.reasy-page {
+  font-family: var(--reasy-font);
+  background: var(--reasy-beige);
+  color: var(--reasy-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.reasy-page *,
+.reasy-page *::before,
+.reasy-page *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+.reasy-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: var(--reasy-space-4) var(--reasy-space-6);
+  background: rgba(240, 233, 223, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(33, 38, 80, 0.05);
+}
+
+.reasy-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reasy-logo {
+  height: 32px;
+  width: auto;
+}
+
+.reasy-nav-links {
+  display: flex;
+  gap: var(--reasy-space-8);
+}
+
+.reasy-nav-links a {
+  color: var(--reasy-dark);
+  text-decoration: none;
+  font-size: var(--reasy-text-sm);
+  font-weight: 500;
+  opacity: 0.8;
+  transition: opacity var(--reasy-transition-fast);
+}
+
+.reasy-nav-links a:hover {
+  opacity: 1;
+}
+
+.reasy-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--reasy-space-3);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.reasy-btn-ghost {
+  padding: var(--reasy-space-2) var(--reasy-space-4);
+  color: var(--reasy-dark);
+  text-decoration: none;
+  font-size: var(--reasy-text-sm);
+  font-weight: 500;
+  border-radius: var(--reasy-radius-full);
+  transition: all var(--reasy-transition-fast);
+}
+
+.reasy-btn-ghost:hover {
+  background: rgba(33, 38, 80, 0.05);
+}
+
+.reasy-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--reasy-space-2);
+  padding: var(--reasy-space-3) var(--reasy-space-6);
+  background: var(--reasy-blue);
+  color: var(--reasy-white);
+  text-decoration: none;
+  font-size: var(--reasy-text-sm);
+  font-weight: 600;
+  border-radius: var(--reasy-radius-full);
+  border: none;
+  cursor: pointer;
+  transition: all var(--reasy-transition-fast);
+  box-shadow: var(--reasy-shadow-sm);
+}
+
+.reasy-btn-primary:hover {
+  background: var(--reasy-blue-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--reasy-shadow-md);
+}
+
+.reasy-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--reasy-space-2);
+  padding: var(--reasy-space-3) var(--reasy-space-6);
+  background: var(--reasy-white);
+  color: var(--reasy-dark);
+  text-decoration: none;
+  font-size: var(--reasy-text-sm);
+  font-weight: 600;
+  border-radius: var(--reasy-radius-full);
+  border: 2px solid var(--reasy-dark);
+  cursor: pointer;
+  transition: all var(--reasy-transition-fast);
+}
+
+.reasy-btn-secondary:hover {
+  background: var(--reasy-dark);
+  color: var(--reasy-white);
+}
+
+.reasy-btn-lg {
+  padding: var(--reasy-space-4) var(--reasy-space-8);
+  font-size: var(--reasy-text-base);
+}
+
+.reasy-btn-xl {
+  padding: var(--reasy-space-5) var(--reasy-space-10);
+  font-size: var(--reasy-text-lg);
+}
+
+.reasy-btn-block {
+  width: 100%;
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+.reasy-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--reasy-space-16);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--reasy-space-24) var(--reasy-space-6);
+  padding-top: calc(var(--reasy-space-24) + 80px);
+  min-height: 100vh;
+  align-items: center;
+}
+
+.reasy-hero-content h1 {
+  font-size: var(--reasy-text-6xl);
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0 0 var(--reasy-space-6);
+  letter-spacing: -0.03em;
+  color: var(--reasy-dark);
+}
+
+.reasy-text-orange {
+  color: var(--reasy-orange);
+}
+
+.reasy-text-beige {
+  color: var(--reasy-beige);
+}
+
+.reasy-hero-subtitle {
+  font-size: var(--reasy-text-xl);
+  color: var(--reasy-gray-700);
+  margin: 0 0 var(--reasy-space-8);
+  max-width: 480px;
+  line-height: 1.5;
+}
+
+.reasy-hero-actions {
+  display: flex;
+  gap: var(--reasy-space-4);
+  margin-bottom: var(--reasy-space-10);
+}
+
+.reasy-hero-trust {
+  display: flex;
+  align-items: center;
+  gap: var(--reasy-space-4);
+}
+
+.reasy-trust-avatars {
+  display: flex;
+}
+
+.reasy-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--reasy-blue);
+  color: var(--reasy-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--reasy-text-sm);
+  font-weight: 600;
+  border: 3px solid var(--reasy-beige);
+  margin-left: -12px;
+}
+
+.reasy-avatar:first-child {
+  margin-left: 0;
+}
+
+.reasy-avatar:nth-child(2) {
+  background: var(--reasy-orange);
+}
+
+.reasy-avatar:nth-child(3) {
+  background: var(--reasy-green);
+}
+
+.reasy-avatar:nth-child(4) {
+  background: var(--reasy-dark);
+}
+
+.reasy-hero-trust span {
+  font-size: var(--reasy-text-sm);
+  color: var(--reasy-gray-500);
+}
+
+.reasy-hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.reasy-hero-card {
+  background: var(--reasy-blue);
+  border-radius: var(--reasy-radius-2xl);
+  padding: var(--reasy-space-12);
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  overflow: hidden;
+}
+
+/* The distinctive "a" graphic from the brand */
+.reasy-a-graphic {
+  position: absolute;
+  bottom: -20%;
+  left: -10%;
+  width: 90%;
+  height: 90%;
+  background: var(--reasy-orange);
+  border-radius: 50%;
+  clip-path: polygon(
+    0% 100%,
+    0% 30%,
+    30% 0%,
+    70% 0%,
+    100% 30%,
+    100% 100%,
+    70% 100%,
+    70% 50%,
+    50% 50%,
+    50% 70%,
+    30% 70%,
+    30% 50%,
+    50% 50%,
+    70% 50%,
+    70% 100%
+  );
+}
+
+/* Simplified "a" graphic using circles */
+.reasy-a-graphic {
+  position: absolute;
+  bottom: -15%;
+  left: -5%;
+  width: 80%;
+  height: 80%;
+}
+
+.reasy-a-graphic::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: var(--reasy-orange);
+  border-radius: 50%;
+}
+
+.reasy-a-graphic::after {
+  content: '';
+  position: absolute;
+  width: 40%;
+  height: 40%;
+  top: 30%;
+  left: 30%;
+  background: var(--reasy-blue);
+  border-radius: 50%;
+}
+
+/* ============================================
+   Value Prop Pills
+   ============================================ */
+.reasy-pills {
+  padding: var(--reasy-space-8) var(--reasy-space-6);
+  background: var(--reasy-dark);
+  overflow: hidden;
+}
+
+.reasy-pills-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--reasy-space-4);
+  justify-content: center;
+  align-items: center;
+}
+
+.reasy-pill {
+  padding: var(--reasy-space-3) var(--reasy-space-6);
+  border-radius: var(--reasy-radius-full);
+  font-size: var(--reasy-text-lg);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.reasy-pill-blue {
+  background: var(--reasy-blue);
+  color: var(--reasy-white);
+}
+
+.reasy-pill-orange {
+  background: var(--reasy-orange);
+  color: var(--reasy-white);
+}
+
+.reasy-pill-peach {
+  background: var(--reasy-peach);
+  color: var(--reasy-dark);
+}
+
+.reasy-pill-beige {
+  background: var(--reasy-beige);
+  color: var(--reasy-dark);
+}
+
+.reasy-pill-outline {
+  background: transparent;
+  color: var(--reasy-white);
+  border: 2px solid var(--reasy-white);
+}
+
+.reasy-pill-gradient {
+  background: linear-gradient(135deg, var(--reasy-orange) 0%, var(--reasy-blue) 100%);
+  color: var(--reasy-white);
+}
+
+.reasy-pill-icon,
+.reasy-pill-icon-heart,
+.reasy-pill-icon-chart {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--reasy-beige);
+  color: var(--reasy-dark);
+  font-size: var(--reasy-text-xl);
+}
+
+.reasy-pill-icon-heart::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  background: var(--reasy-blue);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.reasy-pill-icon-chart::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  background: var(--reasy-dark);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M18 17V9'/%3E%3Cpath d='M13 17V5'/%3E%3Cpath d='M8 17v-3'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+/* ============================================
+   Sections
+   ============================================ */
+.reasy-section {
+  padding: var(--reasy-space-24) var(--reasy-space-6);
+}
+
+.reasy-section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reasy-section-beige {
+  background: var(--reasy-beige);
+}
+
+.reasy-section-dark {
+  background: var(--reasy-dark);
+  color: var(--reasy-white);
+}
+
+.reasy-section-blue {
+  background: var(--reasy-orange);
+  color: var(--reasy-white);
+}
+
+.reasy-label {
+  display: inline-block;
+  padding: var(--reasy-space-1) var(--reasy-space-3);
+  background: rgba(33, 38, 80, 0.1);
+  color: var(--reasy-dark);
+  font-size: var(--reasy-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--reasy-radius-sm);
+  margin-bottom: var(--reasy-space-4);
+}
+
+.reasy-label-blue {
+  background: rgba(79, 125, 221, 0.15);
+  color: var(--reasy-blue);
+}
+
+.reasy-label-light {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--reasy-white);
+}
+
+.reasy-section-title {
+  font-size: var(--reasy-text-4xl);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 var(--reasy-space-12);
+  letter-spacing: -0.02em;
+}
+
+/* ============================================
+   Two Column Layout
+   ============================================ */
+.reasy-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--reasy-space-16);
+  align-items: center;
+}
+
+.reasy-col h2 {
+  font-size: var(--reasy-text-3xl);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 var(--reasy-space-6);
+}
+
+.reasy-col p {
+  font-size: var(--reasy-text-lg);
+  opacity: 0.85;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.reasy-problem-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--reasy-space-4);
+}
+
+.reasy-stat-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--reasy-radius-lg);
+  padding: var(--reasy-space-6);
+}
+
+.reasy-stat-number {
+  display: block;
+  font-size: var(--reasy-text-4xl);
+  font-weight: 700;
+  color: var(--reasy-orange);
+  margin-bottom: var(--reasy-space-2);
+}
+
+.reasy-stat-label {
+  font-size: var(--reasy-text-base);
+  opacity: 0.8;
+}
+
+/* ============================================
+   Features Grid
+   ============================================ */
+.reasy-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--reasy-space-6);
+}
+
+.reasy-feature-card {
+  background: var(--reasy-white);
+  border-radius: var(--reasy-radius-xl);
+  padding: var(--reasy-space-8);
+  box-shadow: var(--reasy-shadow-sm);
+  transition: all var(--reasy-transition-base);
+}
+
+.reasy-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--reasy-shadow-lg);
+}
+
+.reasy-feature-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--reasy-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--reasy-space-5);
+}
+
+.reasy-feature-icon-blue {
+  background: rgba(79, 125, 221, 0.1);
+  color: var(--reasy-blue);
+}
+
+.reasy-feature-icon-orange {
+  background: rgba(255, 120, 93, 0.1);
+  color: var(--reasy-orange);
+}
+
+.reasy-feature-icon-green {
+  background: rgba(61, 214, 160, 0.1);
+  color: var(--reasy-green);
+}
+
+.reasy-feature-card h3 {
+  font-size: var(--reasy-text-xl);
+  font-weight: 600;
+  margin: 0 0 var(--reasy-space-3);
+  color: var(--reasy-dark);
+}
+
+.reasy-feature-card p {
+  margin: 0;
+  color: var(--reasy-gray-500);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Steps / How It Works
+   ============================================ */
+.reasy-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--reasy-space-4);
+}
+
+.reasy-step {
+  flex: 1;
+  max-width: 280px;
+  text-align: center;
+}
+
+.reasy-step-number {
+  width: 64px;
+  height: 64px;
+  background: var(--reasy-blue);
+  color: var(--reasy-white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--reasy-text-2xl);
+  font-weight: 700;
+  margin: 0 auto var(--reasy-space-5);
+}
+
+.reasy-step h3 {
+  font-size: var(--reasy-text-xl);
+  font-weight: 600;
+  margin: 0 0 var(--reasy-space-3);
+}
+
+.reasy-step p {
+  margin: 0;
+  color: var(--reasy-gray-500);
+  font-size: var(--reasy-text-base);
+}
+
+.reasy-step-connector {
+  width: 80px;
+  height: 2px;
+  background: var(--reasy-gray-300);
+  margin-top: 32px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Savings Section
+   ============================================ */
+.reasy-section-blue .reasy-section-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--reasy-space-16);
+  align-items: center;
+}
+
+.reasy-savings-intro {
+  font-size: var(--reasy-text-lg);
+  margin: 0 0 var(--reasy-space-2);
+  opacity: 0.9;
+}
+
+.reasy-savings-headline {
+  font-size: var(--reasy-text-5xl);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 var(--reasy-space-8);
+}
+
+.reasy-savings-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--reasy-space-3);
+}
+
+.reasy-savings-pill {
+  padding: var(--reasy-space-2) var(--reasy-space-4);
+  border-radius: var(--reasy-radius-full);
+  font-size: var(--reasy-text-sm);
+  font-weight: 500;
+}
+
+.reasy-savings-pill-green {
+  background: var(--reasy-green);
+  color: var(--reasy-dark);
+}
+
+.reasy-savings-pill-blue {
+  background: var(--reasy-blue);
+  color: var(--reasy-white);
+}
+
+.reasy-savings-pill-yellow {
+  background: var(--reasy-yellow);
+  color: var(--reasy-dark);
+}
+
+.reasy-savings-calculator {
+  background: var(--reasy-white);
+  border-radius: var(--reasy-radius-xl);
+  padding: var(--reasy-space-8);
+  color: var(--reasy-dark);
+}
+
+.reasy-savings-calculator h4 {
+  font-size: var(--reasy-text-lg);
+  font-weight: 600;
+  margin: 0 0 var(--reasy-space-6);
+}
+
+.reasy-calc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--reasy-space-3) 0;
+  border-bottom: 1px solid var(--reasy-gray-200);
+  font-size: var(--reasy-text-base);
+}
+
+.reasy-calc-row span {
+  color: var(--reasy-gray-500);
+}
+
+.reasy-calc-row strong {
+  font-weight: 600;
+}
+
+.reasy-calc-old strong {
+  color: var(--reasy-gray-500);
+  text-decoration: line-through;
+}
+
+.reasy-calc-new strong {
+  color: var(--reasy-green);
+}
+
+.reasy-calc-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--reasy-space-4) 0;
+  margin-top: var(--reasy-space-2);
+  font-size: var(--reasy-text-lg);
+}
+
+.reasy-calc-total span {
+  font-weight: 600;
+  color: var(--reasy-dark);
+}
+
+.reasy-calc-total strong {
+  font-size: var(--reasy-text-2xl);
+  font-weight: 700;
+  color: var(--reasy-green);
+}
+
+/* ============================================
+   Testimonials
+   ============================================ */
+.reasy-testimonials {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--reasy-space-6);
+}
+
+.reasy-testimonial {
+  background: var(--reasy-white);
+  border-radius: var(--reasy-radius-xl);
+  padding: var(--reasy-space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.reasy-testimonial-content {
+  flex: 1;
+  margin-bottom: var(--reasy-space-6);
+}
+
+.reasy-testimonial-content p {
+  margin: 0;
+  font-size: var(--reasy-text-base);
+  color: var(--reasy-gray-700);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.reasy-testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: var(--reasy-space-3);
+  padding-top: var(--reasy-space-4);
+  border-top: 1px solid var(--reasy-gray-200);
+}
+
+.reasy-author-avatar {
+  width: 44px;
+  height: 44px;
+  background: var(--reasy-blue);
+  color: var(--reasy-white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--reasy-text-sm);
+  font-weight: 600;
+}
+
+.reasy-testimonial:nth-child(2) .reasy-author-avatar {
+  background: var(--reasy-orange);
+}
+
+.reasy-testimonial:nth-child(3) .reasy-author-avatar {
+  background: var(--reasy-green);
+}
+
+.reasy-testimonial-author strong {
+  display: block;
+  font-size: var(--reasy-text-sm);
+  font-weight: 600;
+}
+
+.reasy-testimonial-author span {
+  font-size: var(--reasy-text-xs);
+  color: var(--reasy-gray-500);
+}
+
+/* ============================================
+   Pricing Cards
+   ============================================ */
+.reasy-pricing-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--reasy-space-6);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.reasy-price-card {
+  background: var(--reasy-white);
+  border-radius: var(--reasy-radius-xl);
+  padding: var(--reasy-space-8);
+  text-align: center;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.reasy-price-card-featured {
+  border-color: var(--reasy-blue);
+  box-shadow: var(--reasy-shadow-lg);
+}
+
+.reasy-price-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--reasy-blue);
+  color: var(--reasy-white);
+  font-size: var(--reasy-text-xs);
+  font-weight: 600;
+  padding: var(--reasy-space-1) var(--reasy-space-4);
+  border-radius: var(--reasy-radius-full);
+}
+
+.reasy-price-card h3 {
+  font-size: var(--reasy-text-xl);
+  font-weight: 600;
+  margin: 0 0 var(--reasy-space-4);
+}
+
+.reasy-price {
+  margin-bottom: var(--reasy-space-4);
+}
+
+.reasy-price-amount {
+  font-size: var(--reasy-text-5xl);
+  font-weight: 700;
+  color: var(--reasy-dark);
+}
+
+.reasy-price-note {
+  display: block;
+  font-size: var(--reasy-text-sm);
+  color: var(--reasy-gray-500);
+  margin-top: var(--reasy-space-1);
+}
+
+.reasy-price-card p {
+  font-size: var(--reasy-text-base);
+  color: var(--reasy-gray-500);
+  margin: 0 0 var(--reasy-space-6);
+}
+
+/* ============================================
+   Final CTA
+   ============================================ */
+.reasy-cta {
+  background: var(--reasy-blue);
+  padding: var(--reasy-space-24) var(--reasy-space-6);
+  overflow: hidden;
+}
+
+.reasy-cta-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--reasy-space-12);
+  align-items: center;
+}
+
+.reasy-cta-graphic {
+  position: relative;
+  height: 300px;
+}
+
+.reasy-a-graphic-large {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.reasy-a-graphic-large::before {
+  background: var(--reasy-orange);
+}
+
+.reasy-a-graphic-large::after {
+  background: var(--reasy-blue);
+}
+
+.reasy-cta-content {
+  color: var(--reasy-white);
+}
+
+.reasy-cta-content h2 {
+  font-size: var(--reasy-text-5xl);
+  font-weight: 700;
+  margin: 0 0 var(--reasy-space-4);
+  line-height: 1.1;
+}
+
+.reasy-cta-content p {
+  font-size: var(--reasy-text-xl);
+  opacity: 0.9;
+  margin: 0 0 var(--reasy-space-8);
+  max-width: 500px;
+}
+
+.reasy-cta .reasy-btn-primary {
+  background: var(--reasy-white);
+  color: var(--reasy-blue);
+}
+
+.reasy-cta .reasy-btn-primary:hover {
+  background: var(--reasy-beige);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.reasy-footer {
+  background: var(--reasy-dark);
+  color: var(--reasy-white);
+  padding: var(--reasy-space-16) var(--reasy-space-6);
+}
+
+.reasy-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reasy-footer-grid {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, 1fr);
+  gap: var(--reasy-space-12);
+  margin-bottom: var(--reasy-space-12);
+}
+
+.reasy-footer-logo {
+  height: 28px;
+  width: auto;
+  margin-bottom: var(--reasy-space-4);
+}
+
+.reasy-footer-brand p {
+  font-size: var(--reasy-text-sm);
+  opacity: 0.7;
+  margin: 0;
+  max-width: 280px;
+}
+
+.reasy-footer-col h4 {
+  font-size: var(--reasy-text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.5;
+  margin: 0 0 var(--reasy-space-4);
+}
+
+.reasy-footer-col a {
+  display: block;
+  color: var(--reasy-white);
+  text-decoration: none;
+  font-size: var(--reasy-text-sm);
+  padding: var(--reasy-space-1) 0;
+  opacity: 0.8;
+  transition: opacity var(--reasy-transition-fast);
+}
+
+.reasy-footer-col a:hover {
+  opacity: 1;
+}
+
+.reasy-footer-bottom {
+  padding-top: var(--reasy-space-8);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reasy-footer-bottom p {
+  margin: 0;
+  font-size: var(--reasy-text-sm);
+  opacity: 0.5;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 1024px) {
+  .reasy-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: var(--reasy-space-12);
+  }
+
+  .reasy-hero-content h1 {
+    font-size: var(--reasy-text-5xl);
+  }
+
+  .reasy-hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .reasy-hero-actions {
+    justify-content: center;
+  }
+
+  .reasy-hero-trust {
+    justify-content: center;
+  }
+
+  .reasy-hero-card {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .reasy-section-blue .reasy-section-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .reasy-savings-headline {
+    font-size: var(--reasy-text-4xl);
+  }
+
+  .reasy-savings-pills {
+    justify-content: center;
+  }
+
+  .reasy-cta-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .reasy-cta-graphic {
+    order: 2;
+    height: 200px;
+  }
+
+  .reasy-cta-content {
+    order: 1;
+  }
+
+  .reasy-cta-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .reasy-two-col {
+    grid-template-columns: 1fr;
+    gap: var(--reasy-space-10);
+  }
+
+  .reasy-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reasy-testimonials {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .reasy-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--reasy-space-8);
+  }
+
+  .reasy-footer-brand {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .reasy-nav-links {
+    display: none;
+  }
+
+  .reasy-hero-content h1 {
+    font-size: var(--reasy-text-4xl);
+  }
+
+  .reasy-hero-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reasy-hero-trust {
+    flex-direction: column;
+    gap: var(--reasy-space-3);
+  }
+
+  .reasy-section-title {
+    font-size: var(--reasy-text-3xl);
+  }
+
+  .reasy-steps {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reasy-step-connector {
+    width: 2px;
+    height: 40px;
+    margin: 0;
+  }
+
+  .reasy-pricing-cards {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+
+  .reasy-pills-inner {
+    gap: var(--reasy-space-2);
+  }
+
+  .reasy-pill {
+    padding: var(--reasy-space-2) var(--reasy-space-4);
+    font-size: var(--reasy-text-base);
+  }
+}
+
+@media (max-width: 500px) {
+  .reasy-hero {
+    padding-top: calc(var(--reasy-space-16) + 70px);
+    padding-left: var(--reasy-space-4);
+    padding-right: var(--reasy-space-4);
+  }
+
+  .reasy-hero-content h1 {
+    font-size: var(--reasy-text-3xl);
+  }
+
+  .reasy-section {
+    padding: var(--reasy-space-16) var(--reasy-space-4);
+  }
+
+  .reasy-section-title {
+    font-size: var(--reasy-text-2xl);
+  }
+
+  .reasy-savings-headline {
+    font-size: var(--reasy-text-3xl);
+  }
+
+  .reasy-cta-content h2 {
+    font-size: var(--reasy-text-3xl);
+  }
+
+  .reasy-footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reasy-footer-brand {
+    grid-column: auto;
+  }
+}

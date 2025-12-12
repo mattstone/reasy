@@ -1,0 +1,116 @@
+<%# Step 3: Description & Features %>
+<div class="dashboard-panel mb-6">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Property Description</h2>
+      <p class="dashboard-panel-subtitle">Write a compelling description to attract buyers</p>
+    </div>
+  </div>
+
+  <div class="form-group mb-6">
+    <%= f.label :headline, "Headline", class: "form-label form-label-required" %>
+    <%= f.text_field :headline, class: "form-input", placeholder: "e.g. Stunning Family Home with Pool", maxlength: 100 %>
+    <p class="form-help">A short, attention-grabbing title (max 100 characters)</p>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Full Description", class: "form-label" %>
+    <%= f.text_area :description, class: "form-input", rows: 8, placeholder: "Describe your property's key features, location benefits, and what makes it special..." %>
+    <p class="form-help">Provide a detailed description of the property. Highlight unique features, recent renovations, and lifestyle benefits.</p>
+  </div>
+</div>
+
+<div class="dashboard-panel">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Property Features</h2>
+      <p class="dashboard-panel-subtitle">Select the features that apply to your property</p>
+    </div>
+  </div>
+
+  <%
+    feature_categories = {
+      "Indoor Features" => %w[air_conditioning heating ducted_vacuum alarm_system intercom built_in_wardrobes walk_in_robe ensuite study gym],
+      "Outdoor Features" => %w[swimming_pool spa outdoor_entertaining garden courtyard balcony deck bbq_area shed],
+      "Climate & Energy" => %w[solar_panels solar_hot_water water_tank rainwater_tank insulation double_glazing],
+      "Parking & Storage" => %w[garage carport secure_parking ev_charging storage],
+      "Views & Aspect" => %w[water_views city_views garden_views mountain_views north_facing]
+    }
+    current_features = property.features || []
+  %>
+
+  <% feature_categories.each do |category, features| %>
+    <div class="mb-6">
+      <h3 class="font-semibold mb-3"><%= category %></h3>
+      <div class="grid grid-cols-4 gap-3">
+        <% features.each do |feature| %>
+          <label class="feature-checkbox" style="cursor: pointer;">
+            <input type="checkbox"
+                   name="property[features][]"
+                   value="<%= feature %>"
+                   <%= 'checked' if current_features.include?(feature) %>
+                   class="hidden">
+            <div class="feature-checkbox-inner p-3" style="
+              background: <%= current_features.include?(feature) ? 'var(--color-primary-pale)' : 'var(--color-gray-50)' %>;
+              border: 2px solid <%= current_features.include?(feature) ? 'var(--color-primary)' : 'transparent' %>;
+              border-radius: var(--radius-md);
+              transition: all var(--transition-fast);
+              display: flex;
+              align-items: center;
+              gap: var(--space-2);
+            ">
+              <div class="feature-check" style="
+                width: 18px;
+                height: 18px;
+                border-radius: 4px;
+                border: 2px solid <%= current_features.include?(feature) ? 'var(--color-primary)' : 'var(--color-gray-300)' %>;
+                background: <%= current_features.include?(feature) ? 'var(--color-primary)' : 'transparent' %>;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+              ">
+                <% if current_features.include?(feature) %>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                <% end %>
+              </div>
+              <span class="text-small"><%= feature.humanize.titleize %></span>
+            </div>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Hidden field to ensure empty array is submitted when no features selected %>
+  <input type="hidden" name="property[features][]" value="">
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.feature-checkbox input[type="checkbox"]');
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const inner = this.parentElement.querySelector('.feature-checkbox-inner');
+        const check = inner.querySelector('.feature-check');
+
+        if (this.checked) {
+          inner.style.background = 'var(--color-primary-pale)';
+          inner.style.borderColor = 'var(--color-primary)';
+          check.style.borderColor = 'var(--color-primary)';
+          check.style.background = 'var(--color-primary)';
+          check.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else {
+          inner.style.background = 'var(--color-gray-50)';
+          inner.style.borderColor = 'transparent';
+          check.style.borderColor = 'var(--color-gray-300)';
+          check.style.background = 'transparent';
+          check.innerHTML = '';
+        }
+      });
+    });
+  });
+</script>

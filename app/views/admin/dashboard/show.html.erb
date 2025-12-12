@@ -1,0 +1,211 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Admin Dashboard</h1>
+      <p class="admin-page-subtitle">Platform overview and quick actions</p>
+    </div>
+    <span class="badge badge-green">System Online</span>
+  </div>
+
+  <%# Key Metrics %>
+  <div class="stat-cards-4 mb-6">
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @total_users %></div>
+        <div class="metric-card-label">Total Users</div>
+        <div class="metric-card-change metric-card-change-up">+<%= @new_users_today %> today</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @total_properties %></div>
+        <div class="metric-card-label">Properties</div>
+        <div class="metric-card-change"><%= @active_properties %> active</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @pending_reviews %></div>
+        <div class="metric-card-label">Pending Reviews</div>
+        <div class="metric-card-change" style="color: var(--reasy-orange);"><%= @disputed_reviews %> disputed</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @pending_kyc %></div>
+        <div class="metric-card-label">KYC Pending</div>
+        <div class="metric-card-change">Awaiting verification</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-grid-2">
+    <%# Action Items %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Action Items</h2>
+      </div>
+      <% if @action_items.values.sum > 0 %>
+        <% if @action_items[:pending_reviews] > 0 %>
+          <%= link_to admin_reviews_path(filter: "pending"), class: "action-item-link" do %>
+            <span class="action-item-text">Reviews pending moderation</span>
+            <span class="action-item-count"><%= @action_items[:pending_reviews] %></span>
+          <% end %>
+        <% end %>
+        <% if @action_items[:disputed_reviews] > 0 %>
+          <%= link_to admin_reviews_path(filter: "disputed"), class: "action-item-link" do %>
+            <span class="action-item-text">Disputed reviews</span>
+            <span class="action-item-count"><%= @action_items[:disputed_reviews] %></span>
+          <% end %>
+        <% end %>
+        <% if @action_items[:pending_kyc] > 0 %>
+          <%= link_to admin_users_path(kyc_status: "submitted"), class: "action-item-link" do %>
+            <span class="action-item-text">KYC verifications pending</span>
+            <span class="action-item-count"><%= @action_items[:pending_kyc] %></span>
+          <% end %>
+        <% end %>
+        <% if @action_items[:pending_properties] > 0 %>
+          <%= link_to pending_admin_properties_path, class: "action-item-link" do %>
+            <span class="action-item-text">Properties awaiting approval</span>
+            <span class="action-item-count"><%= @action_items[:pending_properties] %></span>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-6);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green-500)" stroke-width="2" style="margin: 0 auto var(--reasy-space-3);">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <p class="text-muted">All caught up! No action items.</p>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Quick Actions %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Quick Actions</h2>
+      </div>
+      <div class="admin-quick-links">
+        <%= link_to admin_users_path, class: "admin-quick-link" do %>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Manage Users
+        <% end %>
+        <%= link_to admin_properties_path, class: "admin-quick-link" do %>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          View Properties
+        <% end %>
+        <%= link_to admin_transactions_path, class: "admin-quick-link" do %>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Transactions
+        <% end %>
+        <%= link_to admin_reviews_path, class: "admin-quick-link" do %>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          Moderate Reviews
+        <% end %>
+        <%= link_to admin_ai_conversations_path, class: "admin-quick-link" do %>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          AI Conversations
+        <% end %>
+        <%= link_to admin_audit_logs_path, class: "admin-quick-link" do %>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          Audit Logs
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-grid-2 mt-6">
+    <%# Recent Users %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Recent Users</h2>
+        <%= link_to "View All", admin_users_path, class: "btn btn-ghost btn-sm" %>
+      </div>
+      <% if @recent_users.any? %>
+        <ul class="recent-activity-list">
+          <% @recent_users.each do |user| %>
+            <li class="recent-activity-item">
+              <% if user.avatar&.attached? %>
+                <%= image_tag user.avatar, class: "avatar avatar-sm" %>
+              <% else %>
+                <div class="avatar avatar-sm avatar-placeholder">
+                  <%= user.name.first.upcase %>
+                </div>
+              <% end %>
+              <div class="recent-activity-info">
+                <%= link_to user.name, admin_user_path(user), class: "recent-activity-name" %>
+                <span class="recent-activity-meta"><%= user.email %></span>
+              </div>
+              <span class="recent-activity-time"><%= time_ago_in_words(user.created_at) %> ago</span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-6);">
+          <p class="text-muted">No users yet.</p>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Recent Properties %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Recent Properties</h2>
+        <%= link_to "View All", admin_properties_path, class: "btn btn-ghost btn-sm" %>
+      </div>
+      <% if @recent_properties.any? %>
+        <ul class="recent-activity-list">
+          <% @recent_properties.each do |property| %>
+            <li class="recent-activity-item">
+              <% if property.hero_image.attached? %>
+                <%= image_tag property.hero_image, style: "width: 40px; height: 40px; object-fit: cover; border-radius: var(--reasy-radius-md);" %>
+              <% else %>
+                <div style="width: 40px; height: 40px; background: var(--reasy-gray-100); border-radius: var(--reasy-radius-md); display: flex; align-items: center; justify-content: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-gray-400)" stroke-width="2">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                </div>
+              <% end %>
+              <div class="recent-activity-info">
+                <%= link_to truncate(property.address, length: 35), admin_property_path(property), class: "recent-activity-name" %>
+                <span class="recent-activity-meta">
+                  <%= number_to_currency(property.price_cents / 100, precision: 0) %>
+                  <span class="badge badge-sm <%= property_status_badge_class(property.status) %>" style="margin-left: var(--reasy-space-2);">
+                    <%= property.status&.humanize || "Draft" %>
+                  </span>
+                </span>
+              </div>
+              <span class="recent-activity-time"><%= time_ago_in_words(property.created_at) %> ago</span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-6);">
+          <p class="text-muted">No properties yet.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,439 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <div class="flex items-center gap-2 mb-2">
+            <%= link_to property_path(@property), class: "text-muted" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            <% end %>
+            <span class="text-small text-muted">Back to Property</span>
+          </div>
+          <h1 class="page-title">Make an Offer</h1>
+          <p class="page-subtitle">Submit your offer for this property</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6">
+        <%# Main Form - 2 columns %>
+        <div class="col-span-2">
+          <%= form_with model: @offer, url: property_offers_path(@property), method: :post, id: "offer_form" do |f| %>
+            <%# Validation Errors %>
+            <% if @offer.errors.any? %>
+              <div class="alert alert-error mb-6">
+                <div class="flex items-start gap-3">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="margin-top: 2px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" x2="12" y1="8" y2="12"/>
+                    <line x1="12" x2="12.01" y1="16" y2="16"/>
+                  </svg>
+                  <div>
+                    <div class="font-semibold mb-1">Please fix the following errors:</div>
+                    <ul class="list-disc pl-4">
+                      <% @offer.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <%# Offer Amount %>
+            <div class="dashboard-panel mb-6">
+              <div class="dashboard-panel-header">
+                <div>
+                  <h2 class="dashboard-panel-title">Your Offer</h2>
+                  <p class="dashboard-panel-subtitle">How much would you like to offer?</p>
+                </div>
+              </div>
+
+              <div class="form-group mb-6">
+                <%= f.label :amount, "Offer Amount", class: "form-label form-label-required" %>
+                <div class="flex items-center gap-2">
+                  <span class="text-2xl font-bold">$</span>
+                  <%= f.number_field :amount, class: "form-input", min: 0, step: 1000, placeholder: "e.g. 850000", style: "font-size: var(--font-size-xl); font-weight: 600;", required: true %>
+                </div>
+                <p class="form-help">Enter your offer in dollars</p>
+              </div>
+
+              <div class="form-group">
+                <%= f.label :deposit, "Deposit Amount (Optional)", class: "form-label" %>
+                <div class="flex items-center gap-2">
+                  <span class="text-lg font-semibold">$</span>
+                  <%= f.number_field :deposit, class: "form-input", min: 0, step: 1000, placeholder: "e.g. 50000" %>
+                </div>
+                <p class="form-help">Typically 5-10% of the purchase price. Leave blank to negotiate later.</p>
+              </div>
+            </div>
+
+            <%# Settlement & Finance %>
+            <div class="dashboard-panel mb-6">
+              <div class="dashboard-panel-header">
+                <div>
+                  <h2 class="dashboard-panel-title">Settlement & Finance</h2>
+                  <p class="dashboard-panel-subtitle">Settlement timeline and how you'll pay</p>
+                </div>
+              </div>
+
+              <div class="form-group mb-6">
+                <%= f.label :settlement_days, "Settlement Period", class: "form-label form-label-required" %>
+                <%= f.select :settlement_days,
+                      options_for_select([
+                        ["30 days", 30],
+                        ["42 days (Standard)", 42],
+                        ["45 days", 45],
+                        ["60 days", 60],
+                        ["90 days", 90]
+                      ], @offer.settlement_days || 42),
+                      {},
+                      class: "form-select" %>
+                <p class="form-help">Number of days from contract signing to settlement</p>
+              </div>
+
+              <div class="form-group">
+                <%= f.label :finance_type, "Finance Type", class: "form-label form-label-required" %>
+                <div class="grid grid-cols-3 gap-4">
+                  <% Offer::FINANCE_TYPES.each do |type| %>
+                    <label class="finance-type-card" style="cursor: pointer;">
+                      <%= f.radio_button :finance_type, type, class: "hidden" %>
+                      <div class="finance-type-card-inner p-4" style="
+                        background: <%= @offer.finance_type == type ? 'var(--color-primary-pale)' : 'var(--color-gray-50)' %>;
+                        border: 2px solid <%= @offer.finance_type == type ? 'var(--color-primary)' : 'transparent' %>;
+                        border-radius: var(--radius-lg);
+                        transition: all var(--transition-fast);
+                        text-align: center;
+                      ">
+                        <% case type %>
+                        <% when "cash" %>
+                          <div class="mb-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto; color: var(--color-success);">
+                              <rect width="20" height="14" x="2" y="5" rx="2"/>
+                              <line x1="2" x2="22" y1="10" y2="10"/>
+                            </svg>
+                          </div>
+                          <div class="font-medium">Cash</div>
+                          <div class="text-small text-muted">No finance needed</div>
+                        <% when "pre_approved" %>
+                          <div class="mb-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto; color: var(--color-primary);">
+                              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                              <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                          </div>
+                          <div class="font-medium">Pre-Approved</div>
+                          <div class="text-small text-muted">Finance ready</div>
+                        <% when "subject_to_finance" %>
+                          <div class="mb-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto; color: var(--color-warning);">
+                              <circle cx="12" cy="12" r="10"/>
+                              <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                          </div>
+                          <div class="font-medium">Subject to Finance</div>
+                          <div class="text-small text-muted">Need approval</div>
+                        <% end %>
+                      </div>
+                    </label>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <%# Conditions %>
+            <div class="dashboard-panel mb-6">
+              <div class="dashboard-panel-header">
+                <div>
+                  <h2 class="dashboard-panel-title">Conditions</h2>
+                  <p class="dashboard-panel-subtitle">Subject to the following conditions</p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div class="form-check p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                  <%= f.check_box :subject_to_finance, class: "form-check-input", id: "offer_subject_to_finance" %>
+                  <label for="offer_subject_to_finance" class="form-check-label" style="cursor: pointer;">
+                    <span class="font-medium">Subject to Finance</span>
+                    <span class="text-small text-muted block">Offer is conditional on obtaining finance approval</span>
+                  </label>
+                </div>
+
+                <div class="form-check p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                  <%= f.check_box :subject_to_building_inspection, class: "form-check-input", id: "offer_subject_to_building_inspection" %>
+                  <label for="offer_subject_to_building_inspection" class="form-check-label" style="cursor: pointer;">
+                    <span class="font-medium">Subject to Building Inspection</span>
+                    <span class="text-small text-muted block">Offer is conditional on a satisfactory building inspection</span>
+                  </label>
+                </div>
+
+                <div class="form-check p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                  <%= f.check_box :subject_to_pest_inspection, class: "form-check-input", id: "offer_subject_to_pest_inspection" %>
+                  <label for="offer_subject_to_pest_inspection" class="form-check-label" style="cursor: pointer;">
+                    <span class="font-medium">Subject to Pest Inspection</span>
+                    <span class="text-small text-muted block">Offer is conditional on a satisfactory pest inspection</span>
+                  </label>
+                </div>
+
+                <div class="form-check p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                  <%= f.check_box :subject_to_valuation, class: "form-check-input", id: "offer_subject_to_valuation" %>
+                  <label for="offer_subject_to_valuation" class="form-check-label" style="cursor: pointer;">
+                    <span class="font-medium">Subject to Valuation</span>
+                    <span class="text-small text-muted block">Offer is conditional on the property valuing at the offer price or above</span>
+                  </label>
+                </div>
+
+                <div class="form-check p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                  <%= f.check_box :subject_to_sale_of_property, class: "form-check-input", id: "offer_subject_to_sale_of_property" %>
+                  <label for="offer_subject_to_sale_of_property" class="form-check-label" style="cursor: pointer;">
+                    <span class="font-medium">Subject to Sale of Property</span>
+                    <span class="text-small text-muted block">Offer is conditional on the sale of your existing property</span>
+                  </label>
+                </div>
+
+                <div class="form-group mt-4">
+                  <%= f.label :other_conditions, "Other Conditions", class: "form-label" %>
+                  <%= f.text_area :other_conditions, class: "form-input", rows: 3, placeholder: "Any other conditions you'd like to include..." %>
+                </div>
+              </div>
+            </div>
+
+            <%# Buying Entity %>
+            <% if @entities.any? %>
+              <div class="dashboard-panel mb-6">
+                <div class="dashboard-panel-header">
+                  <div>
+                    <h2 class="dashboard-panel-title">Buying Entity</h2>
+                    <p class="dashboard-panel-subtitle">Who will be purchasing the property?</p>
+                  </div>
+                </div>
+
+                <div class="space-y-3">
+                  <% @entities.each do |entity| %>
+                    <label class="entity-option" style="cursor: pointer; display: block;">
+                      <%= f.radio_button :buyer_entity_id, entity.id, class: "hidden" %>
+                      <div class="entity-option-inner flex items-center gap-4 p-4" style="
+                        background: <%= @offer.buyer_entity_id == entity.id ? 'var(--color-primary-pale)' : 'var(--color-gray-50)' %>;
+                        border: 2px solid <%= @offer.buyer_entity_id == entity.id ? 'var(--color-primary)' : 'transparent' %>;
+                        border-radius: var(--radius-lg);
+                        transition: all var(--transition-fast);
+                      ">
+                        <% case entity.entity_type %>
+                        <% when "individual" %>
+                          <div class="metric-card-icon metric-card-icon-blue" style="width: 40px; height: 40px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                              <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                          </div>
+                        <% when "company" %>
+                          <div class="metric-card-icon metric-card-icon-purple" style="width: 40px; height: 40px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                              <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+                              <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+                            </svg>
+                          </div>
+                        <% when "smsf" %>
+                          <div class="metric-card-icon metric-card-icon-teal" style="width: 40px; height: 40px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M22 9 12 5 2 9l10 4 10-4Z"/>
+                              <path d="M6 10.6V16a6 3 0 0 0 12 0v-5.4"/>
+                            </svg>
+                          </div>
+                        <% end %>
+
+                        <div class="flex-1">
+                          <div class="font-medium"><%= entity.display_name %></div>
+                          <div class="text-small text-muted"><%= entity.entity_type.humanize.titleize %></div>
+                        </div>
+
+                        <div class="entity-option-check" style="
+                          width: 20px;
+                          height: 20px;
+                          border-radius: 50%;
+                          border: 2px solid <%= @offer.buyer_entity_id == entity.id ? 'var(--color-primary)' : 'var(--color-gray-300)' %>;
+                          background: <%= @offer.buyer_entity_id == entity.id ? 'var(--color-primary)' : 'transparent' %>;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        ">
+                          <% if @offer.buyer_entity_id == entity.id %>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          <% end %>
+                        </div>
+                      </div>
+                    </label>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <%# Message %>
+            <div class="dashboard-panel mb-6">
+              <div class="dashboard-panel-header">
+                <div>
+                  <h2 class="dashboard-panel-title">Message to Seller</h2>
+                  <p class="dashboard-panel-subtitle">Optional personal message</p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <%= f.text_area :message, class: "form-input", rows: 4, placeholder: "Introduce yourself and explain why you love this property..." %>
+                <p class="form-help">A personal message can help your offer stand out</p>
+              </div>
+            </div>
+
+            <%# Submit Actions %>
+            <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center;">
+              <%= link_to property_path(@property), class: "btn btn-secondary" do %>
+                Cancel
+              <% end %>
+              <%= f.submit "Submit Offer", class: "btn btn-primary btn-lg" %>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Sidebar - Property Summary %>
+        <div>
+          <div class="dashboard-panel sticky" style="top: var(--space-6);">
+            <%# Property Image %>
+            <div style="height: 180px; background: var(--color-gray-100); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: var(--space-4);">
+              <% if @property.hero_image.attached? %>
+                <%= image_tag @property.hero_image, style: "width: 100%; height: 100%; object-fit: cover;" %>
+              <% elsif @property.photos.attached? %>
+                <%= image_tag @property.photos.first, style: "width: 100%; height: 100%; object-fit: cover;" %>
+              <% else %>
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-gray-400);">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                </div>
+              <% end %>
+            </div>
+
+            <%# Property Details %>
+            <div class="mb-4">
+              <div class="text-lg font-bold mb-1" style="color: var(--color-primary);">
+                <%= @property.price_range_display %>
+              </div>
+              <h3 class="font-semibold"><%= @property.headline.presence || @property.short_address %></h3>
+              <p class="text-small text-muted"><%= @property.location %></p>
+            </div>
+
+            <% if @property.bedrooms || @property.bathrooms || @property.parking_spaces %>
+              <div class="flex items-center gap-3 text-small text-muted mb-4">
+                <% if @property.bedrooms %>
+                  <span><%= @property.bedrooms %> bed</span>
+                <% end %>
+                <% if @property.bathrooms %>
+                  <span><%= @property.bathrooms %> bath</span>
+                <% end %>
+                <% if @property.parking_spaces %>
+                  <span><%= @property.parking_spaces %> park</span>
+                <% end %>
+              </div>
+            <% end %>
+
+            <div class="divider my-4"></div>
+
+            <%# Offer Tips %>
+            <div class="space-y-3">
+              <div class="flex items-start gap-2 text-small">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="color: var(--color-primary); margin-top: 2px;">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 16v-4"/>
+                  <path d="M12 8h.01"/>
+                </svg>
+                <span class="text-muted">Offers expire after 5 days if not responded to</span>
+              </div>
+              <div class="flex items-start gap-2 text-small">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="color: var(--color-primary); margin-top: 2px;">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 16v-4"/>
+                  <path d="M12 8h.01"/>
+                </svg>
+                <span class="text-muted">You can withdraw your offer before it's accepted</span>
+              </div>
+              <div class="flex items-start gap-2 text-small">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="color: var(--color-primary); margin-top: 2px;">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 16v-4"/>
+                  <path d="M12 8h.01"/>
+                </svg>
+                <span class="text-muted">Fewer conditions make your offer more attractive</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<style>
+  .finance-type-card input:checked + .finance-type-card-inner {
+    border-color: var(--color-primary);
+    background: var(--color-primary-pale);
+  }
+
+  .entity-option input:checked + .entity-option-inner {
+    border-color: var(--color-primary);
+    background: var(--color-primary-pale);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Finance type selection
+    const financeRadios = document.querySelectorAll('.finance-type-card input[type="radio"]');
+    financeRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        document.querySelectorAll('.finance-type-card-inner').forEach(inner => {
+          inner.style.borderColor = 'transparent';
+          inner.style.background = 'var(--color-gray-50)';
+        });
+        if (this.checked) {
+          const inner = this.parentElement.querySelector('.finance-type-card-inner');
+          inner.style.borderColor = 'var(--color-primary)';
+          inner.style.background = 'var(--color-primary-pale)';
+        }
+      });
+    });
+
+    // Entity selection
+    const entityRadios = document.querySelectorAll('.entity-option input[type="radio"]');
+    entityRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        document.querySelectorAll('.entity-option-inner').forEach(inner => {
+          inner.style.borderColor = 'transparent';
+          inner.style.background = 'var(--color-gray-50)';
+          const check = inner.querySelector('.entity-option-check');
+          if (check) {
+            check.style.borderColor = 'var(--color-gray-300)';
+            check.style.background = 'transparent';
+            check.innerHTML = '';
+          }
+        });
+        if (this.checked) {
+          const inner = this.parentElement.querySelector('.entity-option-inner');
+          inner.style.borderColor = 'var(--color-primary)';
+          inner.style.background = 'var(--color-primary-pale)';
+          const check = inner.querySelector('.entity-option-check');
+          if (check) {
+            check.style.borderColor = 'var(--color-primary)';
+            check.style.background = 'var(--color-primary)';
+            check.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+          }
+        }
+      });
+    });
+  });
+</script>

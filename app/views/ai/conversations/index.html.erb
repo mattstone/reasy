@@ -1,0 +1,185 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">AI Assistants</h1>
+          <p class="page-subtitle">Get expert guidance from our team of AI assistants, each specialised in different aspects of your property journey</p>
+        </div>
+      </div>
+
+      <%# Assistant Cards Grid %>
+      <div class="grid grid-cols-3 gap-6 mb-8">
+        <%# Max - Property Expert %>
+        <div class="dashboard-panel">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="ai-chat-assistant-avatar ai-avatar-max" style="width: 56px; height: 56px; font-size: 28px;">
+              <span>🏠</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="dashboard-panel-title mb-1">Max</h3>
+              <span class="badge badge-blue">Property Expert</span>
+            </div>
+          </div>
+          <p class="text-secondary text-small mb-4">Your friendly property guru who knows buildings inside and out. Ask about property features, valuations, inspections, renovations, and zoning.</p>
+          <%= link_to ai_conversations_path(assistant: :max), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+            </svg>
+            Start Chat
+          <% end %>
+        </div>
+
+        <%# Sage - Journey Guide %>
+        <div class="dashboard-panel">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="ai-chat-assistant-avatar ai-avatar-sage" style="width: 56px; height: 56px; font-size: 28px;">
+              <span>🧭</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="dashboard-panel-title mb-1">Sage</h3>
+              <span class="badge badge-green">Journey Guide</span>
+            </div>
+          </div>
+          <p class="text-secondary text-small mb-4">Your wise companion through the property journey. Get help with process guidance, timelines, checklists, and milestones.</p>
+          <%= link_to ai_conversations_path(assistant: :sage), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+            </svg>
+            Start Chat
+          <% end %>
+        </div>
+
+        <%# Nina - Negotiation Advisor %>
+        <div class="dashboard-panel">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="ai-chat-assistant-avatar ai-avatar-nina" style="width: 56px; height: 56px; font-size: 28px;">
+              <span>🤝</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="dashboard-panel-title mb-1">Nina</h3>
+              <span class="badge badge-orange">Negotiation Advisor</span>
+            </div>
+          </div>
+          <p class="text-secondary text-small mb-4">Your strategic partner in getting the best deal. Expert advice on offers, negotiation tactics, pricing strategy, and deal-making.</p>
+          <%= link_to ai_conversations_path(assistant: :nina), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+            </svg>
+            Start Chat
+          <% end %>
+        </div>
+
+        <%# Doc - Document Decoder %>
+        <div class="dashboard-panel">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="ai-chat-assistant-avatar ai-avatar-doc" style="width: 56px; height: 56px; font-size: 28px;">
+              <span>📄</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="dashboard-panel-title mb-1">Doc</h3>
+              <span class="badge badge-gray">Document Decoder</span>
+            </div>
+          </div>
+          <p class="text-secondary text-small mb-4">Makes legal jargon understandable. Get help understanding contracts, legal documents, terms and conditions, and due diligence requirements.</p>
+          <%= link_to ai_conversations_path(assistant: :doc), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+            </svg>
+            Start Chat
+          <% end %>
+        </div>
+
+        <%# Scout - Market Researcher %>
+        <div class="dashboard-panel">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="ai-chat-assistant-avatar ai-avatar-scout" style="width: 56px; height: 56px; font-size: 28px;">
+              <span>📊</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="dashboard-panel-title mb-1">Scout</h3>
+              <span class="badge badge-teal">Market Researcher</span>
+            </div>
+          </div>
+          <p class="text-secondary text-small mb-4">Your data-driven market analyst. Get insights on market data, comparable sales, suburb insights, and property market trends.</p>
+          <%= link_to ai_conversations_path(assistant: :scout), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+            </svg>
+            Start Chat
+          <% end %>
+        </div>
+
+        <%# Ally - Service Provider Assistant %>
+        <div class="dashboard-panel">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="ai-chat-assistant-avatar ai-avatar-ally" style="width: 56px; height: 56px; font-size: 28px;">
+              <span>👥</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="dashboard-panel-title mb-1">Ally</h3>
+              <span class="badge badge-purple">Service Provider Assistant</span>
+            </div>
+          </div>
+          <p class="text-secondary text-small mb-4">Connects you with trusted professionals. Get help finding conveyancers, inspectors, mortgage brokers, and other service providers.</p>
+          <%= link_to ai_conversations_path(assistant: :ally), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+            </svg>
+            Start Chat
+          <% end %>
+        </div>
+      </div>
+
+      <%# Recent Conversations Section %>
+      <div class="dashboard-panel">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 class="dashboard-panel-title">Recent Conversations</h2>
+            <p class="dashboard-panel-subtitle">Continue where you left off</p>
+          </div>
+        </div>
+
+        <% @conversations = current_user.ai_conversations.recent.limit(10) if current_user.respond_to?(:ai_conversations) %>
+        <% if @conversations&.any? %>
+          <div class="flex flex-col gap-2">
+            <% @conversations.each do |conversation| %>
+              <% assistant_key = conversation.assistant.to_sym %>
+              <% assistant_info = AI::AssistantService::ASSISTANTS[assistant_key] %>
+              <%= link_to ai_conversation_path(conversation), class: "ai-conversation-item" do %>
+                <div class="ai-conversation-avatar ai-avatar-<%= conversation.assistant %>">
+                  <% case conversation.assistant %>
+                  <% when "max" %>🏠
+                  <% when "sage" %>🧭
+                  <% when "nina" %>🤝
+                  <% when "doc" %>📄
+                  <% when "scout" %>📊
+                  <% when "ally" %>👥
+                  <% end %>
+                </div>
+                <div class="ai-conversation-content">
+                  <div class="ai-conversation-name"><%= assistant_info&.dig(:name) || conversation.assistant.titleize %></div>
+                  <div class="ai-conversation-preview"><%= conversation.preview || "No messages yet" %></div>
+                </div>
+                <div class="ai-conversation-time"><%= time_ago_in_words(conversation.started_at) %> ago</div>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="card-empty">
+            <div class="card-empty-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+              </svg>
+            </div>
+            <div class="card-empty-title">No conversations yet</div>
+            <div class="card-empty-description">Start a chat with any assistant above to get expert guidance</div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>

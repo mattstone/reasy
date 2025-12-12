@@ -1,0 +1,211 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Comprehensive Browser Test Script
+# This script tests ALL routes by making actual HTTP requests
+# and checking for 500 errors or template errors.
+
+require "net/http"
+require "uri"
+require "json"
+
+BASE_URL = ENV.fetch("BASE_URL", "http://localhost:3002")
+
+class BrowserTester
+  attr_reader :successes, :errors, :redirects
+
+  def initialize
+    @successes = []
+    @errors = []
+    @redirects = []
+  end
+
+  def test_url(path, expected_codes: [200, 302, 303, 401])
+    uri = URI("#{BASE_URL}#{path}")
+    response = Net::HTTP.get_response(uri)
+    code = response.code.to_i
+
+    if code >= 500
+      body = response.body.to_s
+      error_match = body.match(/undefined method.*?(?=<|$)/m) ||
+                    body.match(/NoMethodError.*?(?=<|$)/m) ||
+                    body.match(/NameError.*?(?=<|$)/m) ||
+                    body.match(/ActionView::Template::Error.*?(?=<|$)/m) ||
+                    body.match(/Pundit::.*?Error.*?(?=<|$)/m) ||
+                    body.match(/PG::.*?Error.*?(?=<|$)/m) ||
+                    body.match(/ActiveRecord::.*?Error.*?(?=<|$)/m)
+      error_detail = error_match ? error_match[0].strip[0..150] : "HTTP #{code}"
+      @errors << { path: path, code: code, error: error_detail }
+    elsif code >= 400 && !expected_codes.include?(code)
+      @errors << { path: path, code: code, error: "HTTP #{code}" }
+    elsif code >= 300
+      @redirects << { path: path, code: code }
+    else
+      @successes << path
+    end
+  rescue StandardError => e
+    @errors << { path: path, code: 0, error: e.message }
+  end
+
+  def print_results
+    puts "\n" + "=" * 60
+    puts "BROWSER TEST RESULTS"
+    puts "=" * 60
+
+    puts "\n✅ SUCCESSFUL: #{@successes.count}"
+
+    puts "\n↪️  REDIRECTS: #{@redirects.count}"
+    @redirects.each { |r| puts "   #{r[:path]} -> #{r[:code]}" }
+
+    if @errors.any?
+      puts "\n❌ ERRORS: #{@errors.count}"
+      @errors.each do |e|
+        puts "   #{e[:path]}"
+        puts "      Code: #{e[:code]}"
+        puts "      Error: #{e[:error]}"
+      end
+    else
+      puts "\n✅ NO ERRORS FOUND"
+    end
+
+    puts "\n" + "=" * 60
+    puts "Total: #{@successes.count + @redirects.count + @errors.count} routes tested"
+    puts "=" * 60
+
+    @errors.empty?
+  end
+end
+
+# All public routes that should work without authentication
+PUBLIC_ROUTES = [
+  "/",
+  "/about",
+  "/pricing",
+  "/how-it-works",
+  "/contact",
+  "/terms",
+  "/privacy",
+  "/properties",
+  "/map",
+  "/search",
+  "/providers",
+  "/users/sign_in",
+  "/users/sign_up",
+  "/users/password/new",
+  "/index1",
+  "/index2",
+  "/index3",
+  "/index4",
+  "/index5",
+].freeze
+
+# Routes that require authentication (will redirect to sign in)
+AUTH_ROUTES = [
+  # Dashboard & Onboarding
+  "/dashboard",
+  "/onboarding",
+
+  # Profile & User Settings
+  "/profile",
+  "/subscription",
+  "/kyc",
+
+  # Entities
+  "/entities",
+
+  # Notifications
+  "/notifications",
+
+  # Conversations (Messaging)
+  "/conversations",
+
+  # Documents
+  "/documents",
+
+  # Reviews
+  "/reviews",
+
+  # Co-users
+  "/co_users",
+  "/co_users/invitations",
+  "/co_user_invitations/new",
+
+  # Buyer namespace
+  "/buyer/profile",
+  "/buyer/saved_properties",
+  "/buyer/saved_searches",
+
+  # Seller namespace
+  "/seller/profile",
+  "/seller/properties",
+
+  # Provider namespace
+  "/provider/profile",
+  "/provider/leads",
+  "/provider/jobs",
+
+  # AI conversations
+  "/ai/conversations",
+].freeze
+
+# Admin routes (will redirect to sign in or root)
+ADMIN_ROUTES = [
+  "/admin",
+  "/admin/dashboard",
+  "/admin/users",
+  "/admin/users/buyers",
+  "/admin/users/sellers",
+  "/admin/users/providers",
+  "/admin/users/admins",
+  "/admin/properties",
+  "/admin/properties/pending",
+  "/admin/properties/reported",
+  "/admin/transactions",
+  "/admin/transactions/active",
+  "/admin/transactions/completed",
+  "/admin/transactions/disputes",
+  "/admin/reviews",
+  "/admin/reviews/pending",
+  "/admin/reviews/held",
+  "/admin/review_disputes",
+  "/admin/audit_logs",
+  "/admin/settings",
+  "/admin/legal_documents",
+  "/admin/legal_documents/history",
+  "/admin/analytics",
+  "/admin/analytics/users",
+  "/admin/analytics/properties",
+  "/admin/analytics/transactions",
+  "/admin/kyc_verifications",
+  "/admin/provider_verifications",
+  "/admin/ai/conversations",
+  "/admin/ai/voice_settings",
+  "/admin/ai/analytics",
+].freeze
+
+puts "Starting comprehensive browser tests..."
+puts "Base URL: #{BASE_URL}"
+puts ""
+
+tester = BrowserTester.new
+
+puts "Testing public routes..."
+PUBLIC_ROUTES.each do |path|
+  print "."
+  tester.test_url(path)
+end
+
+puts "\nTesting auth-required routes (expecting redirects)..."
+AUTH_ROUTES.each do |path|
+  print "."
+  tester.test_url(path, expected_codes: [200, 302, 303, 401])
+end
+
+puts "\nTesting admin routes (expecting redirects)..."
+ADMIN_ROUTES.each do |path|
+  print "."
+  tester.test_url(path, expected_codes: [200, 302, 303, 401])
+end
+
+success = tester.print_results
+exit(success ? 0 : 1)

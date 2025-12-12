@@ -1,0 +1,250 @@
+<%# Step 8: Preview & Publish %>
+<div class="dashboard-panel mb-6">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Listing Preview</h2>
+      <p class="dashboard-panel-subtitle">Review your listing before publishing</p>
+    </div>
+  </div>
+
+  <%# Property Card Preview %>
+  <div class="mb-6" style="max-width: 600px; margin: 0 auto;">
+    <div style="border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg); overflow: hidden; background: white;">
+      <%# Image %>
+      <div style="height: 280px; background: var(--color-gray-100); position: relative;">
+        <% if property.hero_image.attached? %>
+          <%= image_tag property.hero_image, style: "width: 100%; height: 100%; object-fit: cover;" %>
+        <% elsif property.photos.attached? %>
+          <%= image_tag property.photos.first, style: "width: 100%; height: 100%; object-fit: cover;" %>
+        <% else %>
+          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-gray-400);">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+        <% end %>
+
+        <%# Status Badges %>
+        <div style="position: absolute; top: var(--space-3); left: var(--space-3); display: flex; gap: var(--space-2);">
+          <% case property.listing_intent %>
+          <% when "want_to_sell" %>
+            <span class="badge badge-success">Want to Sell</span>
+          <% when "open_to_offers" %>
+            <span class="badge badge-blue">Open to Offers</span>
+          <% when "just_exploring" %>
+            <span class="badge badge-warning">Just Exploring</span>
+          <% end %>
+        </div>
+
+        <% if property.photos.attached? %>
+          <div style="position: absolute; bottom: var(--space-3); right: var(--space-3);">
+            <span class="badge" style="background: rgba(0,0,0,0.6); color: white;">
+              <%= property.photos.count %> photos
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Details %>
+      <div class="p-5">
+        <div class="mb-3">
+          <div class="text-lg font-bold" style="color: var(--color-primary);">
+            <%= property.price_range_display %>
+          </div>
+        </div>
+
+        <h3 class="font-semibold text-lg mb-1">
+          <%= property.headline.presence || property.short_address %>
+        </h3>
+        <p class="text-muted mb-3"><%= property.full_address %></p>
+
+        <% if property.bedrooms || property.bathrooms || property.parking_spaces %>
+          <div class="flex items-center gap-4 text-muted">
+            <% if property.bedrooms %>
+              <span class="flex items-center gap-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 4v16"/>
+                  <path d="M2 8h18a2 2 0 0 1 2 2v10"/>
+                  <path d="M2 17h20"/>
+                  <path d="M6 8v9"/>
+                </svg>
+                <span class="font-medium"><%= property.bedrooms %></span> bed
+              </span>
+            <% end %>
+            <% if property.bathrooms %>
+              <span class="flex items-center gap-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>
+                  <line x1="10" x2="8" y1="5" y2="7"/>
+                  <line x1="2" x2="22" y1="12" y2="12"/>
+                </svg>
+                <span class="font-medium"><%= property.bathrooms %></span> bath
+              </span>
+            <% end %>
+            <% if property.parking_spaces %>
+              <span class="flex items-center gap-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="18" height="18" x="3" y="3" rx="2"/>
+                  <path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>
+                </svg>
+                <span class="font-medium"><%= property.parking_spaces %></span> park
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <p class="text-small text-muted text-center mt-3">This is how your listing will appear in search results</p>
+  </div>
+</div>
+
+<%# Checklist %>
+<div class="dashboard-panel mb-6">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Publishing Checklist</h2>
+      <p class="dashboard-panel-subtitle">Make sure everything is ready before going live</p>
+    </div>
+  </div>
+
+  <%
+    checklist = [
+      { label: "Address & property type", complete: property.street_address.present? && property.property_type.present?, step: "address" },
+      { label: "Bedrooms, bathrooms & parking", complete: property.bedrooms.present?, step: "features" },
+      { label: "Headline & description", complete: property.headline.present?, step: "description" },
+      { label: "At least one photo", complete: property.photos.attached? || property.hero_image.attached?, step: "photos" },
+      { label: "Price or price guide", complete: property.price_cents.present? || property.price_display.present? || property.price_hidden?, step: "pricing" },
+      { label: "Selling entity selected", complete: property.entity_id.present?, step: "entity" },
+      { label: "Listing intent set", complete: property.listing_intent.present?, step: "intent" }
+    ]
+    all_complete = checklist.all? { |item| item[:complete] }
+  %>
+
+  <div class="space-y-3">
+    <% checklist.each do |item| %>
+      <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+        <div class="flex items-center gap-3">
+          <% if item[:complete] %>
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--color-success); display: flex; align-items: center; justify-content: center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <span class="font-medium"><%= item[:label] %></span>
+          <% else %>
+            <div style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--color-gray-300); display: flex; align-items: center; justify-content: center;">
+            </div>
+            <span class="text-muted"><%= item[:label] %></span>
+          <% end %>
+        </div>
+        <% unless item[:complete] %>
+          <%= link_to edit_seller_property_path(property, step: item[:step]), class: "btn btn-sm btn-secondary" do %>
+            Complete
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% unless all_complete %>
+    <div class="alert alert-warning mt-4">
+      <div class="flex items-start gap-3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0" style="margin-top: 2px;">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+          <path d="M12 9v4"/>
+          <path d="M12 17h.01"/>
+        </svg>
+        <div>
+          <div class="font-semibold">Almost there!</div>
+          <p class="text-small mt-1">Complete all items in the checklist before publishing your listing.</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%# Summary Panel %>
+<div class="dashboard-panel">
+  <div class="dashboard-panel-header">
+    <div>
+      <h2 class="dashboard-panel-title">Listing Summary</h2>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <h3 class="font-semibold mb-3">Property Details</h3>
+      <div class="stats-summary">
+        <div class="stats-row">
+          <span class="stats-label">Type</span>
+          <span class="stats-value"><%= property.property_type&.humanize || "-" %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Address</span>
+          <span class="stats-value text-small"><%= property.full_address %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Bedrooms</span>
+          <span class="stats-value"><%= property.bedrooms || "-" %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Bathrooms</span>
+          <span class="stats-value"><%= property.bathrooms || "-" %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Parking</span>
+          <span class="stats-value"><%= property.parking_spaces || "-" %></span>
+        </div>
+        <% if property.land_size_sqm %>
+          <div class="stats-row">
+            <span class="stats-label">Land Size</span>
+            <span class="stats-value"><%= number_with_delimiter(property.land_size_sqm) %> m<sup>2</sup></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-semibold mb-3">Listing Settings</h3>
+      <div class="stats-summary">
+        <div class="stats-row">
+          <span class="stats-label">Price</span>
+          <span class="stats-value"><%= property.price_range_display %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Intent</span>
+          <span class="stats-value"><%= property.listing_intent&.humanize&.titleize || "-" %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Entity</span>
+          <span class="stats-value"><%= property.entity&.display_name || "-" %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Photos</span>
+          <span class="stats-value"><%= property.photos.attached? ? property.photos.count : 0 %></span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">Status</span>
+          <span class="stats-value">
+            <% if property.draft? %>
+              <span class="status-badge status-badge-pending">Draft</span>
+            <% elsif property.active? %>
+              <span class="status-badge status-badge-active">Active</span>
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if property.features.present? && property.features.any? %>
+    <div class="divider my-4"></div>
+    <h3 class="font-semibold mb-3">Features</h3>
+    <div class="flex flex-wrap gap-2">
+      <% property.features.compact.reject(&:blank?).each do |feature| %>
+        <span class="badge badge-gray"><%= feature.humanize %></span>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,136 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Transactions</h1>
+      <p class="admin-page-subtitle">Monitor property transactions</p>
+    </div>
+  </div>
+
+  <%# Stats %>
+  <div class="stat-cards-4 mb-6">
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @total_transactions %></div>
+        <div class="metric-card-label">Total</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @active_count %></div>
+        <div class="metric-card-label">Active</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @completed_count %></div>
+        <div class="metric-card-label">Completed</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @disputed_count %></div>
+        <div class="metric-card-label">Disputed</div>
+      </div>
+    </div>
+  </div>
+
+  <%# Filters %>
+  <div class="admin-filters mb-4">
+    <div class="filter-pills">
+      <%= link_to "All", admin_transactions_path, class: "filter-pill #{'filter-pill-active' if params[:status].blank? && action_name == 'index'}" %>
+      <%= link_to "Active", active_admin_transactions_path, class: "filter-pill #{'filter-pill-active' if action_name == 'active'}" %>
+      <%= link_to "Completed", completed_admin_transactions_path, class: "filter-pill #{'filter-pill-active' if action_name == 'completed'}" %>
+      <%= link_to "Disputes", disputes_admin_transactions_path, class: "filter-pill #{'filter-pill-active' if action_name == 'disputes'}" %>
+    </div>
+  </div>
+
+  <%# Transactions Table %>
+  <div class="admin-panel">
+    <div class="admin-table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Property</th>
+            <th>Buyer</th>
+            <th>Seller</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @transactions.each do |transaction| %>
+            <tr>
+              <td>
+                <span class="text-sm font-medium">#<%= transaction.id %></span>
+              </td>
+              <td>
+                <% if transaction.property %>
+                  <%= link_to truncate(transaction.property.address, length: 30), admin_property_path(transaction.property), class: "user-cell-name" %>
+                <% else %>
+                  <span class="text-muted">N/A</span>
+                <% end %>
+              </td>
+              <td>
+                <% if transaction.buyer %>
+                  <%= link_to transaction.buyer.name, admin_user_path(transaction.buyer), class: "user-cell-name" %>
+                <% else %>
+                  <span class="text-muted">N/A</span>
+                <% end %>
+              </td>
+              <td>
+                <% if transaction.seller %>
+                  <%= link_to transaction.seller.name, admin_user_path(transaction.seller), class: "user-cell-name" %>
+                <% else %>
+                  <span class="text-muted">N/A</span>
+                <% end %>
+              </td>
+              <td>
+                <span class="font-medium">
+                  <%= number_to_currency(transaction.amount_cents.to_i / 100, precision: 0) %>
+                </span>
+              </td>
+              <td>
+                <span class="badge badge-sm <%= transaction.status == 'completed' ? 'badge-green' : (transaction.status == 'cancelled' ? 'badge-red' : 'badge-blue') %>">
+                  <%= transaction.status&.humanize || "Pending" %>
+                </span>
+                <% if transaction.disputed? %>
+                  <span class="badge badge-sm badge-red">Disputed</span>
+                <% end %>
+              </td>
+              <td class="text-muted text-sm">
+                <%= transaction.created_at.strftime("%b %d, %Y") %>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <%= link_to admin_transaction_path(transaction), class: "btn btn-ghost btn-sm" do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @transactions.empty? %>
+      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+        <p class="text-muted">No transactions found.</p>
+      </div>
+    <% end %>
+
+    <%# Pagination %>
+    <% if @pagy.pages > 1 %>
+      <div class="pagination-wrapper">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

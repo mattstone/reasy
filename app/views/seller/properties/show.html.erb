@@ -1,0 +1,429 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <div class="flex items-center gap-2 mb-2">
+            <%= link_to seller_properties_path, class: "text-muted" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            <% end %>
+            <span class="text-small text-muted">Back to My Listings</span>
+          </div>
+          <h1 class="page-title"><%= @property.headline.presence || @property.short_address %></h1>
+          <p class="page-subtitle"><%= @property.full_address %></p>
+        </div>
+        <div class="page-header-actions">
+          <% case @property.status %>
+          <% when "draft" %>
+            <%= link_to edit_seller_property_path(@property, step: "preview"), class: "btn btn-secondary" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+              </svg>
+              Continue Editing
+            <% end %>
+            <%= button_to publish_seller_property_path(@property), method: :post, class: "btn btn-primary" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
+              Publish
+            <% end %>
+          <% when "active" %>
+            <%= link_to edit_seller_property_path(@property), class: "btn btn-secondary" do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+              </svg>
+              Edit
+            <% end %>
+            <%= button_to unpublish_seller_property_path(@property), method: :post, class: "btn btn-ghost", data: { turbo_confirm: "Are you sure you want to take this property offline?" } do %>
+              Unpublish
+            <% end %>
+          <% when "under_offer" %>
+            <%= link_to edit_seller_property_path(@property), class: "btn btn-secondary" do %>
+              Edit
+            <% end %>
+          <% else %>
+            <%= link_to edit_seller_property_path(@property), class: "btn btn-secondary" do %>
+              Edit
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6">
+        <%# Main Content - 2 columns %>
+        <div class="col-span-2">
+          <%# Property Image %>
+          <div class="dashboard-panel mb-6">
+            <div style="height: 320px; background: var(--color-gray-100); border-radius: var(--radius-lg); overflow: hidden; position: relative;">
+              <% if @property.hero_image.attached? %>
+                <%= image_tag @property.hero_image, style: "width: 100%; height: 100%; object-fit: cover;" %>
+              <% elsif @property.photos.attached? %>
+                <%= image_tag @property.photos.first, style: "width: 100%; height: 100%; object-fit: cover;" %>
+              <% else %>
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--color-gray-400);">
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  <p class="mt-2 text-small">No photos uploaded</p>
+                  <%= link_to "Add Photos", edit_seller_property_path(@property, step: "photos"), class: "btn btn-sm btn-primary mt-3" %>
+                </div>
+              <% end %>
+
+              <%# Status Badge %>
+              <div style="position: absolute; top: var(--space-4); left: var(--space-4);">
+                <% case @property.status %>
+                <% when "active" %>
+                  <span class="status-badge status-badge-active" style="font-size: var(--font-size-sm);">Active</span>
+                <% when "draft" %>
+                  <span class="status-badge status-badge-pending" style="font-size: var(--font-size-sm);">Draft</span>
+                <% when "under_offer" %>
+                  <span class="status-badge status-badge-warning" style="font-size: var(--font-size-sm);">Under Offer</span>
+                <% when "sold" %>
+                  <span class="status-badge status-badge-success" style="font-size: var(--font-size-sm);">Sold</span>
+                <% when "withdrawn" %>
+                  <span class="status-badge status-badge-inactive" style="font-size: var(--font-size-sm);">Withdrawn</span>
+                <% when "archived" %>
+                  <span class="status-badge status-badge-inactive" style="font-size: var(--font-size-sm);">Archived</span>
+                <% end %>
+              </div>
+
+              <%# Photo Count %>
+              <% if @property.photos.attached? %>
+                <div style="position: absolute; bottom: var(--space-4); right: var(--space-4);">
+                  <span class="badge" style="background: rgba(0,0,0,0.6); color: white;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                    <%= @property.photos.count %> photos
+                  </span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Property Details %>
+          <div class="dashboard-panel mb-6">
+            <div class="dashboard-panel-header">
+              <div>
+                <h2 class="dashboard-panel-title">Property Details</h2>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-4 mb-6">
+              <div class="text-center p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                <div class="text-small text-muted mb-1">Bedrooms</div>
+                <div class="font-semibold text-lg"><%= @property.bedrooms || "-" %></div>
+              </div>
+              <div class="text-center p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                <div class="text-small text-muted mb-1">Bathrooms</div>
+                <div class="font-semibold text-lg"><%= @property.bathrooms || "-" %></div>
+              </div>
+              <div class="text-center p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                <div class="text-small text-muted mb-1">Parking</div>
+                <div class="font-semibold text-lg"><%= @property.parking_spaces || "-" %></div>
+              </div>
+              <div class="text-center p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                <div class="text-small text-muted mb-1">Type</div>
+                <div class="font-semibold text-lg"><%= @property.property_type&.humanize || "-" %></div>
+              </div>
+            </div>
+
+            <% if @property.land_size_sqm || @property.building_size_sqm %>
+              <div class="grid grid-cols-2 gap-4 mb-6">
+                <% if @property.land_size_sqm %>
+                  <div class="stats-row">
+                    <span class="stats-label">Land Size</span>
+                    <span class="stats-value"><%= number_with_delimiter(@property.land_size_sqm) %> m<sup>2</sup></span>
+                  </div>
+                <% end %>
+                <% if @property.building_size_sqm %>
+                  <div class="stats-row">
+                    <span class="stats-label">Building Size</span>
+                    <span class="stats-value"><%= number_with_delimiter(@property.building_size_sqm) %> m<sup>2</sup></span>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if @property.description.present? %>
+              <div class="divider"></div>
+              <h3 class="font-semibold mb-3">Description</h3>
+              <div class="text-muted" style="white-space: pre-line;"><%= @property.description %></div>
+            <% end %>
+
+            <% if @property.features.present? && @property.features.any? %>
+              <div class="divider"></div>
+              <h3 class="font-semibold mb-3">Features</h3>
+              <div class="flex flex-wrap gap-2">
+                <% @property.features.each do |feature| %>
+                  <span class="badge badge-gray"><%= feature.humanize %></span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Recent Offers %>
+          <div class="dashboard-panel">
+            <div class="dashboard-panel-header">
+              <div>
+                <h2 class="dashboard-panel-title">Recent Offers</h2>
+                <p class="dashboard-panel-subtitle"><%= @property.offers.count %> total offers received</p>
+              </div>
+              <% if @property.offers.any? %>
+                <%= link_to seller_property_offers_path(@property), class: "btn btn-sm btn-secondary" do %>
+                  View All
+                <% end %>
+              <% end %>
+            </div>
+
+            <% if @offers.any? %>
+              <div class="space-y-3">
+                <% @offers.each do |offer| %>
+                  <div class="flex items-center justify-between p-3" style="background: var(--color-gray-50); border-radius: var(--radius-lg);">
+                    <div>
+                      <div class="font-semibold">
+                        $<%= number_with_delimiter(offer.amount_cents.to_i / 100) %>
+                      </div>
+                      <div class="text-small text-muted">
+                        <%= time_ago_in_words(offer.created_at) %> ago
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <% case offer.status %>
+                      <% when "pending" %>
+                        <span class="status-badge status-badge-pending">Pending</span>
+                      <% when "accepted" %>
+                        <span class="status-badge status-badge-success">Accepted</span>
+                      <% when "rejected" %>
+                        <span class="status-badge status-badge-error">Rejected</span>
+                      <% when "countered" %>
+                        <span class="status-badge status-badge-warning">Countered</span>
+                      <% when "withdrawn" %>
+                        <span class="status-badge status-badge-inactive">Withdrawn</span>
+                      <% when "expired" %>
+                        <span class="status-badge status-badge-inactive">Expired</span>
+                      <% end %>
+                      <%= link_to seller_property_offer_path(@property, offer), class: "btn btn-sm btn-ghost" do %>
+                        View
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="empty-state py-8">
+                <div class="empty-state-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <h3 class="empty-state-title">No offers yet</h3>
+                <p class="empty-state-description text-small">
+                  <% if @property.draft? %>
+                    Publish your listing to start receiving offers.
+                  <% else %>
+                    When buyers make offers, they'll appear here.
+                  <% end %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Sidebar - 1 column %>
+        <div>
+          <%# Price Card %>
+          <div class="dashboard-panel mb-6">
+            <div class="text-center py-4">
+              <div class="text-small text-muted mb-1">Price</div>
+              <div class="text-2xl font-bold" style="color: var(--color-primary);">
+                <%= @property.price_range_display %>
+              </div>
+              <% if @property.listing_intent.present? %>
+                <div class="mt-2">
+                  <% case @property.listing_intent %>
+                  <% when "want_to_sell" %>
+                    <span class="badge badge-success">Want to Sell</span>
+                  <% when "open_to_offers" %>
+                    <span class="badge badge-blue">Open to Offers</span>
+                  <% when "just_exploring" %>
+                    <span class="badge badge-gray">Just Exploring</span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Stats Card %>
+          <div class="dashboard-panel mb-6">
+            <div class="dashboard-panel-header">
+              <h2 class="dashboard-panel-title">Performance</h2>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-muted">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  Views
+                </div>
+                <div class="font-semibold"><%= number_with_delimiter(@stats[:views]) %></div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-muted">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  Loves
+                </div>
+                <div class="font-semibold"><%= number_with_delimiter(@stats[:loves]) %></div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-muted">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+                  </svg>
+                  Enquiries
+                </div>
+                <div class="font-semibold"><%= number_with_delimiter(@stats[:enquiries]) %></div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-muted">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                  Offers
+                </div>
+                <div class="font-semibold"><%= number_with_delimiter(@stats[:offers]) %></div>
+              </div>
+            </div>
+          </div>
+
+          <%# Timeline Card %>
+          <div class="dashboard-panel mb-6">
+            <div class="dashboard-panel-header">
+              <h2 class="dashboard-panel-title">Timeline</h2>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0 w-2 h-2 rounded-full" style="background: var(--color-success);"></div>
+                <div>
+                  <div class="text-small font-medium">Created</div>
+                  <div class="text-small text-muted"><%= @property.created_at.strftime("%d %b %Y, %I:%M %p") %></div>
+                </div>
+              </div>
+
+              <% if @property.published_at.present? %>
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-2 h-2 rounded-full" style="background: var(--color-primary);"></div>
+                  <div>
+                    <div class="text-small font-medium">Published</div>
+                    <div class="text-small text-muted"><%= @property.published_at.strftime("%d %b %Y, %I:%M %p") %></div>
+                  </div>
+                </div>
+              <% end %>
+
+              <% if @property.under_offer_at.present? %>
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-2 h-2 rounded-full" style="background: var(--color-warning);"></div>
+                  <div>
+                    <div class="text-small font-medium">Under Offer</div>
+                    <div class="text-small text-muted"><%= @property.under_offer_at.strftime("%d %b %Y, %I:%M %p") %></div>
+                  </div>
+                </div>
+              <% end %>
+
+              <% if @property.sold_at.present? %>
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-2 h-2 rounded-full" style="background: var(--color-success);"></div>
+                  <div>
+                    <div class="text-small font-medium">Sold</div>
+                    <div class="text-small text-muted"><%= @property.sold_at.strftime("%d %b %Y, %I:%M %p") %></div>
+                  </div>
+                </div>
+              <% end %>
+
+              <% if @property.withdrawn_at.present? %>
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-2 h-2 rounded-full" style="background: var(--color-gray-400);"></div>
+                  <div>
+                    <div class="text-small font-medium">Withdrawn</div>
+                    <div class="text-small text-muted"><%= @property.withdrawn_at.strftime("%d %b %Y, %I:%M %p") %></div>
+                  </div>
+                </div>
+              <% end %>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0 w-2 h-2 rounded-full" style="background: var(--color-gray-300);"></div>
+                <div>
+                  <div class="text-small font-medium">Last Updated</div>
+                  <div class="text-small text-muted"><%= @property.updated_at.strftime("%d %b %Y, %I:%M %p") %></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <%# Quick Actions Card %>
+          <div class="dashboard-panel">
+            <div class="dashboard-panel-header">
+              <h2 class="dashboard-panel-title">Quick Actions</h2>
+            </div>
+
+            <div class="space-y-2">
+              <%= link_to edit_seller_property_path(@property, step: "photos"), class: "btn btn-sm btn-ghost w-full justify-start" do %>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                  <circle cx="9" cy="9" r="2"/>
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                </svg>
+                Manage Photos
+              <% end %>
+
+              <%= link_to edit_seller_property_path(@property, step: "pricing"), class: "btn btn-sm btn-ghost w-full justify-start" do %>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                Update Pricing
+              <% end %>
+
+              <%= link_to edit_seller_property_path(@property, step: "description"), class: "btn btn-sm btn-ghost w-full justify-start" do %>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                </svg>
+                Edit Description
+              <% end %>
+
+              <div class="divider my-3"></div>
+
+              <% unless @property.archived? %>
+                <%= button_to archive_seller_property_path(@property), method: :post, class: "btn btn-sm btn-ghost w-full justify-start", style: "color: var(--color-error);", data: { turbo_confirm: "Are you sure you want to archive this property? You can restore it later." } do %>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="20" height="5" x="2" y="3" rx="1"/>
+                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/>
+                    <path d="M10 12h4"/>
+                  </svg>
+                  Archive Property
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

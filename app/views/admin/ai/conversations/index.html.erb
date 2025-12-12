@@ -1,0 +1,167 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">AI Conversations</h1>
+      <p class="admin-page-subtitle">Monitor AI assistant interactions</p>
+    </div>
+    <div>
+      <%= link_to export_all_admin_ai_conversations_path(format: :json), class: "btn btn-secondary" do %>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export All
+      <% end %>
+    </div>
+  </div>
+
+  <%# Stats %>
+  <div class="stat-cards-4 mb-6">
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @total_conversations %></div>
+        <div class="metric-card-label">Total Conversations</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @conversations_today %></div>
+        <div class="metric-card-label">Today</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @conversations_this_week %></div>
+        <div class="metric-card-label">This Week</div>
+      </div>
+    </div>
+    <div class="metric-card metric-card-sm">
+      <div class="metric-card-content">
+        <div class="metric-card-value"><%= @assistant_breakdown.keys.count %></div>
+        <div class="metric-card-label">Assistants Used</div>
+      </div>
+    </div>
+  </div>
+
+  <%# Assistant Breakdown %>
+  <% if @assistant_breakdown.any? %>
+    <div class="admin-panel mb-6">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Conversations by Assistant</h2>
+      </div>
+      <div class="admin-panel-content">
+        <div style="display: flex; gap: var(--reasy-space-4); flex-wrap: wrap;">
+          <% @assistant_breakdown.each do |assistant, count| %>
+            <%= link_to admin_ai_conversations_path(assistant: assistant), style: "text-decoration: none;" do %>
+              <div style="background: var(--reasy-gray-50); padding: var(--reasy-space-3) var(--reasy-space-4); border-radius: var(--reasy-radius-md); display: flex; align-items: center; gap: var(--reasy-space-3);">
+                <div style="width: 40px; height: 40px; background: var(--reasy-blue-100); border-radius: var(--reasy-radius-md); display: flex; align-items: center; justify-content: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-blue-600)" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style="font-size: var(--reasy-text-sm); font-weight: 500; color: var(--reasy-gray-900);"><%= assistant&.humanize || "General" %></div>
+                  <div style="font-size: var(--reasy-text-xs); color: var(--reasy-gray-500);"><%= count %> conversations</div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Filters %>
+  <div class="admin-filters mb-4">
+    <div class="filter-pills">
+      <%= link_to "All", admin_ai_conversations_path, class: "filter-pill #{'filter-pill-active' if params[:assistant].blank?}" %>
+      <% @assistant_breakdown.keys.each do |assistant| %>
+        <%= link_to assistant&.humanize || "General", admin_ai_conversations_path(assistant: assistant), class: "filter-pill #{'filter-pill-active' if params[:assistant] == assistant}" %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Conversations Table %>
+  <div class="admin-panel">
+    <div class="admin-table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Assistant</th>
+            <th>Messages</th>
+            <th>Started</th>
+            <th>Last Activity</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @conversations.each do |conversation| %>
+            <tr>
+              <td>
+                <span class="text-sm font-medium">#<%= conversation.id %></span>
+              </td>
+              <td>
+                <% if conversation.user %>
+                  <%= link_to conversation.user.name, admin_user_path(conversation.user), class: "user-cell-name" %>
+                  <span class="user-cell-email"><%= conversation.user.email %></span>
+                <% else %>
+                  <span class="text-muted">Anonymous</span>
+                <% end %>
+              </td>
+              <td>
+                <span class="badge badge-sm badge-blue">
+                  <%= conversation.assistant_type&.humanize || "General" %>
+                </span>
+              </td>
+              <td>
+                <span class="text-sm"><%= conversation.messages.count %></span>
+              </td>
+              <td class="text-muted text-sm">
+                <%= conversation.created_at.strftime("%b %d, %Y") %>
+              </td>
+              <td class="text-muted text-sm">
+                <%= time_ago_in_words(conversation.updated_at) %> ago
+              </td>
+              <td>
+                <div class="table-actions">
+                  <%= link_to admin_ai_conversation_path(conversation), class: "btn btn-ghost btn-sm" do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  <% end %>
+                  <%= link_to export_admin_ai_conversation_path(conversation, format: :json), class: "btn btn-ghost btn-sm" do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @conversations.empty? %>
+      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+        <p class="text-muted">No AI conversations found.</p>
+      </div>
+    <% end %>
+
+    <%# Pagination %>
+    <% if @pagy.pages > 1 %>
+      <div class="pagination-wrapper">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

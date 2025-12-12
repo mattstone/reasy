@@ -1,0 +1,29 @@
+<nav class="nav" data-controller="navbar">
+  <div class="nav-inner">
+    <%= link_to root_path do %>
+      <%= image_tag "Reasy Logo Blue.png", alt: "Reasy", class: "nav-logo" %>
+    <% end %>
+
+    <div class="nav-links">
+      <%= link_to "How it works", how_it_works_path, class: current_page?(how_it_works_path) ? "active" : "" %>
+      <%= link_to "Pricing", pricing_path, class: current_page?(pricing_path) ? "active" : "" %>
+      <%= link_to "About us", about_path, class: current_page?(about_path) ? "active" : "" %>
+      <%= link_to "Contact", contact_path, class: current_page?(contact_path) ? "active" : "" %>
+    </div>
+
+    <div class="nav-actions">
+      <% if user_signed_in? %>
+        <%= link_to "Dashboard", dashboard_path, class: "btn btn-primary" %>
+      <% else %>
+        <%= link_to "Log in", new_user_session_path, class: "nav-link" %>
+        <%= link_to "Get started", new_user_registration_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+
+    <button class="nav-toggle" data-action="click->navbar#toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>

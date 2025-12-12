@@ -1,0 +1,19 @@
+<%= turbo_stream.append "messages-container" do %>
+  <%= render "messages/message", message: @conversation.messages.last %>
+<% end %>
+
+<%= turbo_stream.replace "message-form" do %>
+  <%= form_with model: [@conversation, Message.new],
+                id: "message-form",
+                class: "message-form",
+                data: { messages_target: "form", action: "turbo:submit-end->messages#clearForm" } do |f| %>
+    <div class="message-input-wrapper">
+      <%= f.text_area :content,
+                      class: "message-input",
+                      placeholder: "Type your message...",
+                      rows: 1,
+                      data: { messages_target: "input", action: "input->messages#autoResize keydown->messages#handleKeydown" } %>
+      <%= f.submit "Send", class: "btn btn-primary btn-send" %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,121 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Back Link %>
+      <div class="mb-4">
+        <%= link_to review_path(@review), class: "btn btn-ghost btn-sm" do %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Back to Review
+        <% end %>
+      </div>
+
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Dispute Review</h1>
+          <p class="page-subtitle">Report an issue with this review</p>
+        </div>
+      </div>
+
+      <%# Review Summary %>
+      <div class="dashboard-panel mb-6">
+        <div class="dispute-review-summary">
+          <div class="dispute-review-rating">
+            <% 5.times do |i| %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="<%= i < @review.overall_rating ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" class="<%= i < @review.overall_rating ? 'star-filled' : 'star-empty' %>">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            <% end %>
+          </div>
+          <p class="dispute-review-excerpt"><%= truncate(@review.body, length: 200) %></p>
+          <p class="text-muted text-sm">by <%= @review.reviewer.name %> - <%= time_ago_in_words(@review.created_at) %> ago</p>
+        </div>
+      </div>
+
+      <%# Dispute Form %>
+      <div class="dashboard-panel">
+        <%= form_with model: [@review, @dispute], class: "dispute-form" do |f| %>
+          <% if @dispute.errors.any? %>
+            <div class="alert alert-error mb-6">
+              <ul>
+                <% @dispute.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%# Reason %>
+          <div class="form-section">
+            <h3 class="form-section-title">Reason for Dispute</h3>
+            <p class="form-section-description">Select the reason that best describes your concern</p>
+
+            <div class="radio-card-group">
+              <% ReviewDispute::REASONS.each do |reason| %>
+                <label class="radio-card">
+                  <%= f.radio_button :reason, reason, required: true %>
+                  <div class="radio-card-content">
+                    <span class="radio-card-indicator"></span>
+                    <div class="radio-card-text">
+                      <span class="radio-card-title"><%= reason.humanize.titleize %></span>
+                      <span class="radio-card-description">
+                        <% case reason %>
+                        <% when "false_information" %>
+                          The review contains statements that are factually incorrect
+                        <% when "inappropriate_content" %>
+                          The review contains offensive, discriminatory, or inappropriate content
+                        <% when "wrong_person" %>
+                          This review was meant for someone else or involves a transaction I wasn't part of
+                        <% when "harassment" %>
+                          The review is harassing, threatening, or constitutes bullying
+                        <% when "other" %>
+                          The review violates our guidelines in another way
+                        <% end %>
+                      </span>
+                    </div>
+                  </div>
+                </label>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Explanation %>
+          <div class="form-section">
+            <div class="form-group">
+              <%= f.label :explanation, "Detailed Explanation", class: "form-label" %>
+              <%= f.text_area :explanation,
+                              class: "form-control",
+                              rows: 6,
+                              placeholder: "Please provide a detailed explanation of why you're disputing this review. Include specific examples if possible.",
+                              minlength: 20,
+                              maxlength: 2000,
+                              required: true %>
+              <p class="form-hint">Minimum 20 characters. Be specific and provide evidence if available.</p>
+            </div>
+          </div>
+
+          <%# Guidelines %>
+          <div class="dispute-guidelines">
+            <h4>What happens next?</h4>
+            <ul>
+              <li>Our moderation team will review your dispute within 48 hours</li>
+              <li>The review will remain visible but marked as "Under Dispute"</li>
+              <li>You'll be notified of the outcome via email</li>
+              <li>If upheld, the review will be removed. If rejected, the review will remain published</li>
+            </ul>
+          </div>
+
+          <%# Submit %>
+          <div class="form-actions">
+            <%= link_to "Cancel", review_path(@review), class: "btn btn-secondary" %>
+            <%= f.submit "Submit Dispute", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>

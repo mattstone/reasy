@@ -1,0 +1,254 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Subscription</h1>
+          <p class="page-subtitle">Manage your Reasy subscription and billing</p>
+        </div>
+      </div>
+
+      <%# Current Plan %>
+      <div class="dashboard-panel mb-6">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 class="dashboard-panel-title">Current Plan</h2>
+            <p class="dashboard-panel-subtitle">Your subscription status and details</p>
+          </div>
+        </div>
+
+        <div class="subscription-status">
+          <div class="subscription-plan">
+            <div class="subscription-plan-badge">
+              <% case current_user.subscription_status %>
+              <% when "trial" %>
+                <span class="badge badge-orange badge-lg">Free Trial</span>
+              <% when "active" %>
+                <span class="badge badge-green badge-lg">Active</span>
+              <% when "past_due" %>
+                <span class="badge badge-red badge-lg">Past Due</span>
+              <% when "cancelled" %>
+                <span class="badge badge-gray badge-lg">Cancelled</span>
+              <% else %>
+                <span class="badge badge-gray badge-lg">No Subscription</span>
+              <% end %>
+            </div>
+
+            <% if current_user.trial? %>
+              <div class="subscription-trial-info">
+                <% if current_user.trial_ends_at.present? %>
+                  <% if current_user.trial_ends_at > Time.current %>
+                    <p class="text-lg">Your free trial ends in <strong><%= distance_of_time_in_words(Time.current, current_user.trial_ends_at) %></strong></p>
+                    <p class="text-muted"><%= current_user.trial_ends_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+                  <% else %>
+                    <p class="text-lg text-danger">Your free trial has expired</p>
+                    <p class="text-muted">Subscribe now to continue using Reasy</p>
+                  <% end %>
+                <% end %>
+              </div>
+            <% elsif current_user.active_subscription? && @current_subscription.present? %>
+              <div class="subscription-details">
+                <div class="subscription-detail">
+                  <span class="subscription-detail-label">Plan</span>
+                  <span class="subscription-detail-value">
+                    <%= @current_subscription.items.data.first&.price&.nickname || "Standard" %>
+                  </span>
+                </div>
+                <div class="subscription-detail">
+                  <span class="subscription-detail-label">Billing Period</span>
+                  <span class="subscription-detail-value">
+                    <%= @current_subscription.items.data.first&.price&.recurring&.interval&.humanize || "Monthly" %>
+                  </span>
+                </div>
+                <div class="subscription-detail">
+                  <span class="subscription-detail-label">Next Billing Date</span>
+                  <span class="subscription-detail-value">
+                    <%= Time.at(@current_subscription.current_period_end).strftime("%B %d, %Y") %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Actions %>
+          <div class="subscription-actions mt-6">
+            <% if current_user.trial? || !current_user.active_subscription? %>
+              <%= link_to checkout_subscription_path(plan_type: "buyer"), method: :post, class: "btn btn-primary" do %>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M2 12h20"/>
+                </svg>
+                Subscribe Now
+              <% end %>
+            <% elsif current_user.stripe_customer_id.present? %>
+              <%= link_to portal_subscription_path, method: :post, class: "btn btn-secondary" do %>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="20" height="14" x="2" y="5" rx="2"/>
+                  <line x1="2" x2="22" y1="10" y2="10"/>
+                </svg>
+                Manage Billing
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <%# Pricing Plans %>
+      <div class="dashboard-panel">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 class="dashboard-panel-title">Available Plans</h2>
+            <p class="dashboard-panel-subtitle">Choose the plan that fits your needs</p>
+          </div>
+        </div>
+
+        <div class="pricing-grid">
+          <%# Buyer Plan %>
+          <div class="pricing-card <%= 'pricing-card-current' if current_user.buyer? && current_user.active_subscription? %>">
+            <div class="pricing-card-header">
+              <h3 class="pricing-card-title">Buyer</h3>
+              <p class="pricing-card-subtitle">For property buyers</p>
+            </div>
+            <div class="pricing-card-price">
+              <span class="pricing-amount">$9.99</span>
+              <span class="pricing-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Save unlimited properties
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Property alerts
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                AI Assistant access
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Make offers directly
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                24-hour free trial
+              </li>
+            </ul>
+            <% unless current_user.active_subscription? %>
+              <%= link_to checkout_subscription_path(plan_type: "buyer"),
+                    method: :post,
+                    class: "btn btn-primary btn-block" do %>
+                Start Free Trial
+              <% end %>
+            <% end %>
+          </div>
+
+          <%# Seller Plan %>
+          <div class="pricing-card <%= 'pricing-card-current' if current_user.seller? && current_user.active_subscription? %>">
+            <div class="pricing-card-header">
+              <h3 class="pricing-card-title">Seller</h3>
+              <p class="pricing-card-subtitle">For property sellers</p>
+            </div>
+            <div class="pricing-card-price">
+              <span class="pricing-amount">$29.99</span>
+              <span class="pricing-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                List unlimited properties
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Receive and manage offers
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                AI Assistant access
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Enquiry management
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Transaction tracking
+              </li>
+            </ul>
+            <% unless current_user.active_subscription? %>
+              <%= link_to checkout_subscription_path(plan_type: "seller"),
+                    method: :post,
+                    class: "btn btn-primary btn-block" do %>
+                Subscribe
+              <% end %>
+            <% end %>
+          </div>
+
+          <%# Co-User Plan %>
+          <div class="pricing-card">
+            <div class="pricing-card-header">
+              <h3 class="pricing-card-title">Co-User</h3>
+              <p class="pricing-card-subtitle">For partners & family</p>
+            </div>
+            <div class="pricing-card-price">
+              <span class="pricing-amount">80%</span>
+              <span class="pricing-period">discount</span>
+            </div>
+            <ul class="pricing-features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                All features of main plan
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Shared saved properties
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Collaborative offers
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Only $1.99/month for buyers
+              </li>
+            </ul>
+            <%= link_to new_co_user_invitation_path, class: "btn btn-secondary btn-block" do %>
+              Invite Co-User
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

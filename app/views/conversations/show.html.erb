@@ -1,0 +1,90 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Conversation Header %>
+      <div class="conversation-header">
+        <div class="conversation-header-left">
+          <%= link_to conversations_path, class: "btn btn-ghost btn-sm" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Back
+          <% end %>
+        </div>
+
+        <div class="conversation-header-info">
+          <div class="conversation-header-avatars">
+            <% @other_participants.each do |participant| %>
+              <% if participant.avatar&.attached? %>
+                <%= image_tag participant.avatar, class: "avatar avatar-sm" %>
+              <% else %>
+                <div class="avatar avatar-sm avatar-placeholder">
+                  <%= participant.name.first.upcase %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+          <div class="conversation-header-details">
+            <h1 class="conversation-header-name">
+              <%= @other_participants.map(&:name).join(", ") %>
+            </h1>
+            <% if @conversation.property.present? %>
+              <p class="conversation-header-context">
+                Re: <%= link_to @conversation.property.short_address, @conversation.property %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="conversation-header-right">
+          <button type="button" class="btn btn-ghost btn-icon" data-action="click->conversation#toggleOptions">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="1"/>
+              <circle cx="19" cy="12" r="1"/>
+              <circle cx="5" cy="12" r="1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <%# Messages Container %>
+      <div class="conversation-messages" data-controller="messages" data-messages-conversation-id-value="<%= @conversation.id %>">
+        <div class="messages-container" id="messages-container" data-messages-target="container">
+          <% if @messages.empty? %>
+            <div class="messages-empty">
+              <p class="text-muted">Start the conversation by sending a message below.</p>
+            </div>
+          <% else %>
+            <% @messages.group_by { |m| m.created_at.to_date }.each do |date, messages| %>
+              <div class="messages-date-separator">
+                <span><%= date == Date.today ? "Today" : date == Date.yesterday ? "Yesterday" : date.strftime("%B %d, %Y") %></span>
+              </div>
+
+              <% messages.each do |message| %>
+                <%= render "messages/message", message: message %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%# Message Input %>
+        <div class="message-input-container">
+          <%= form_with model: [@conversation, Message.new],
+                        class: "message-form",
+                        data: { messages_target: "form", action: "turbo:submit-end->messages#clearForm" } do |f| %>
+            <div class="message-input-wrapper">
+              <%= f.text_area :content,
+                              class: "message-input",
+                              placeholder: "Type your message...",
+                              rows: 1,
+                              data: { messages_target: "input", action: "input->messages#autoResize keydown->messages#handleKeydown" } %>
+              <%= f.submit "Send", class: "btn btn-primary btn-send" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

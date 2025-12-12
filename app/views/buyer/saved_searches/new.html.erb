@@ -1,0 +1,23 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <%= link_to buyer_saved_searches_path, class: "back-link" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+            Back to Saved Searches
+          <% end %>
+          <h1 class="page-title">Create Saved Search</h1>
+          <p class="page-subtitle">Set up alerts for properties matching your criteria</p>
+        </div>
+      </div>
+
+      <%= render "form", saved_search: @saved_search %>
+    </div>
+  </main>
+</div>

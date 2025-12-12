@@ -1,0 +1,46 @@
+<div class="map-property-item"
+     data-property-id="<%= property.id %>"
+     data-lat="<%= property.latitude %>"
+     data-lng="<%= property.longitude %>"
+     data-action="click->property-map#highlightProperty mouseenter->property-map#showPropertyOnMap mouseleave->property-map#resetMarker">
+  <% if property.hero_image.attached? %>
+    <%= image_tag property.hero_image.variant(resize_to_fill: [200, 160]),
+          class: "map-property-image",
+          alt: property.headline || property.street_address %>
+  <% else %>
+    <div class="map-property-image" style="background: linear-gradient(135deg, var(--color-primary-pale), var(--color-beige));"></div>
+  <% end %>
+
+  <div class="map-property-content">
+    <div class="map-property-price"><%= property.price_range_display %></div>
+    <div class="map-property-address"><%= property.short_address %></div>
+    <div class="map-property-features">
+      <% if property.bedrooms.present? %>
+        <span class="map-property-feature">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>
+          </svg>
+          <%= property.bedrooms %>
+        </span>
+      <% end %>
+      <% if property.bathrooms.present? %>
+        <span class="map-property-feature">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>
+            <line x1="2" x2="22" y1="12" y2="12"/>
+          </svg>
+          <%= property.bathrooms %>
+        </span>
+      <% end %>
+      <% if property.parking_spaces.present? && property.parking_spaces > 0 %>
+        <span class="map-property-feature">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8c-.1.2-.1.4-.1.6v4.7c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+          </svg>
+          <%= property.parking_spaces %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<%# Turbo Stream response for new messages %>
+<%# This template handles real-time message updates %>
+
+<%# Append the user's message to the messages container %>
+<% if @user_message.present? %>
+  <%= turbo_stream.append "messages-container" do %>
+    <%= render "ai/conversations/message", message: @user_message, conversation: @conversation %>
+  <% end %>
+<% end %>
+
+<%# Append the assistant's response to the messages container %>
+<% if @assistant_message.present? %>
+  <%= turbo_stream.append "messages-container" do %>
+    <%= render "ai/conversations/message", message: @assistant_message, conversation: @conversation %>
+  <% end %>
+<% end %>
+
+<%# Show the messages container if it was hidden (empty state) %>
+<%= turbo_stream.replace "messages-container" do %>
+  <div class="ai-messages" id="messages-container">
+    <% @conversation.ai_messages.where(role: %w[user assistant]).chronological.each do |message| %>
+      <%= render "ai/conversations/message", message: message, conversation: @conversation %>
+    <% end %>
+  </div>
+<% end %>
+
+<%# Scroll to bottom via stimulus or inline script %>
+<%= turbo_stream.append "messages-container" do %>
+  <script>
+    (function() {
+      const container = document.getElementById('messages-container');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+      // Hide empty state if present
+      const emptyState = document.querySelector('.ai-empty-state');
+      if (emptyState) {
+        emptyState.style.display = 'none';
+      }
+    })();
+  </script>
+<% end %>

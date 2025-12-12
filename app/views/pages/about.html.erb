@@ -1,0 +1,60 @@
+<%= render "shared/nav" %>
+
+<div class="page-hero">
+  <h1>About Reasy</h1>
+  <p>We're transforming how Australians buy and sell property</p>
+</div>
+
+<section class="content">
+  <div class="content-narrow prose">
+    <p class="text-lg">
+      Reasy was born from a simple observation: buying and selling property in Australia is unnecessarily expensive, stressful, and opaque. We believe there's a better way.
+    </p>
+
+    <h2>Our Mission</h2>
+    <p>
+      To democratise property transactions by providing the tools, guidance, and platform that enable buyers and sellers to connect directly. We help you save thousands in agent commissions while maintaining full control over your property journey.
+    </p>
+
+    <h2>What Makes Us Different</h2>
+
+    <div class="grid grid-2 mb-12" style="gap: var(--reasy-space-6);">
+      <div class="card">
+        <h4 class="text-blue mb-4">Expert guidance, not sales pressure</h4>
+        <p class="mb-0">Our platform guides you step-by-step through every decision. You're in control, with expert support when you need it.</p>
+      </div>
+      <div class="card">
+        <h4 class="text-blue mb-4">Transparent pricing</h4>
+        <p class="mb-0">Know exactly what you'll pay before you start. No hidden fees, no surprise costs. Buyers browse free, sellers pay a flat fee only on success.</p>
+      </div>
+      <div class="card">
+        <h4 class="text-orange mb-4">Direct communication</h4>
+        <p class="mb-0">Connect directly with buyers or sellers. No middleman filtering your questions or negotiating against your interests.</p>
+      </div>
+      <div class="card">
+        <h4 class="text-orange mb-4">Built for Australia</h4>
+        <p class="mb-0">We understand Australian property law, state-specific requirements, and the nuances of our market. Every feature is designed for how we do things here.</p>
+      </div>
+    </div>
+
+    <h2>Our Values</h2>
+
+    <ul>
+      <li><strong>Transparency first</strong> — No hidden agendas. We succeed when you succeed.</li>
+      <li><strong>Empowerment over dependence</strong> — We give you the tools to make informed decisions, not decisions made for you.</li>
+      <li><strong>Trust is earned</strong> — Every user is verified. Every review is real. Every dollar is accounted for.</li>
+      <li><strong>Simple beats complex</strong> — Property transactions are already complicated enough. We make the process as simple as possible.</li>
+    </ul>
+
+    <h2>Our Team</h2>
+    <p>
+      We're a team of property enthusiasts, technologists, and legal experts. We've bought and sold property ourselves, and we've experienced the frustration of the traditional process. That's why we're building something better.
+    </p>
+
+    <div class="text-center mt-12">
+      <%= link_to "Join us — Get started free", new_user_registration_path, class: "btn btn-primary btn-lg" %>
+    </div>
+  </div>
+</section>
+
+<%= render "shared/footer" %>

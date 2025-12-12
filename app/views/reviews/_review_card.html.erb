@@ -1,0 +1,125 @@
+<%
+  is_mine = review.reviewer_id == current_user.id
+  is_about_me = review.reviewee_id == current_user.id
+  other_user = is_mine ? review.reviewee : review.reviewer
+%>
+
+<div class="review-card" id="review-<%= review.id %>">
+  <div class="review-card-header">
+    <div class="review-card-user">
+      <% if other_user.avatar&.attached? %>
+        <%= image_tag other_user.avatar, class: "avatar avatar-md" %>
+      <% else %>
+        <div class="avatar avatar-md avatar-placeholder">
+          <%= other_user.name.first.upcase %>
+        </div>
+      <% end %>
+
+      <div class="review-card-user-info">
+        <span class="review-card-user-name"><%= other_user.name %></span>
+        <span class="review-card-user-role">
+          <% if is_mine %>
+            Review you wrote
+          <% else %>
+            Reviewed you as <%= review.reviewee_role.humanize %>
+          <% end %>
+        </span>
+      </div>
+    </div>
+
+    <div class="review-card-meta">
+      <div class="review-stars">
+        <% 5.times do |i| %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="<%= i < review.overall_rating ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" class="<%= i < review.overall_rating ? 'star-filled' : 'star-empty' %>">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        <% end %>
+      </div>
+      <span class="review-card-date"><%= time_ago_in_words(review.created_at) %> ago</span>
+    </div>
+  </div>
+
+  <%# Status Badge %>
+  <% unless review.published? %>
+    <div class="review-card-status">
+      <% if review.held? %>
+        <span class="badge badge-orange">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <% if review.on_hold? %>
+            On hold - <%= review.hours_until_release %> hours remaining
+          <% else %>
+            Hold expired - Awaiting publish
+          <% end %>
+        </span>
+      <% elsif review.disputed? %>
+        <span class="badge badge-red">Under Dispute</span>
+      <% elsif review.removed? %>
+        <span class="badge badge-gray">Removed</span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Title %>
+  <% if review.title.present? %>
+    <h3 class="review-card-title"><%= review.title %></h3>
+  <% end %>
+
+  <%# Body %>
+  <div class="review-card-body">
+    <%= simple_format(truncate(review.body, length: 300), {}, sanitize: true) %>
+  </div>
+
+  <%# Category Ratings %>
+  <% if review.category_ratings.present? %>
+    <div class="review-card-categories">
+      <% review.category_ratings.each do |category, rating| %>
+        <div class="review-category">
+          <span class="review-category-label"><%= category.humanize %></span>
+          <div class="review-category-stars">
+            <% 5.times do |i| %>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="<%= i < rating ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" class="<%= i < rating ? 'star-filled' : 'star-empty' %>">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Public Response %>
+  <% if review.has_response? %>
+    <div class="review-card-response">
+      <div class="review-response-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 14 4 9 9 4"/>
+          <path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+        </svg>
+        Response from <%= review.reviewee.name %>
+      </div>
+      <p class="review-response-body"><%= review.public_response %></p>
+    </div>
+  <% end %>
+
+  <%# Actions %>
+  <div class="review-card-actions">
+    <%= link_to review_path(review), class: "btn btn-sm btn-secondary" do %>
+      View Details
+    <% end %>
+
+    <% if is_about_me && review.published? && !review.has_response? %>
+      <%= link_to review_path(review, anchor: "respond"), class: "btn btn-sm btn-ghost" do %>
+        Respond
+      <% end %>
+    <% end %>
+
+    <% if is_about_me && review.published? && !review.has_active_dispute? %>
+      <%= link_to new_review_review_dispute_path(review), class: "btn btn-sm btn-ghost" do %>
+        Dispute
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <%= link_to root_path do %>
+      <%= image_tag "Reasy Logo Blue.png", alt: "Reasy", class: "auth-logo" %>
+    <% end %>
+
+    <h2 class="auth-title">Welcome back</h2>
+    <p class="auth-subtitle">Log in to your Reasy account</p>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <% if flash[:alert] %>
+        <div class="alert alert-error">
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+
+      <% if flash[:notice] %>
+        <div class="alert alert-success">
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :email, class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input", placeholder: "you@example.com" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password, class: "form-label" %>
+        <%= f.password_field :password, autocomplete: "current-password", class: "form-input", placeholder: "Your password" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="form-group form-checkbox">
+          <%= f.check_box :remember_me %>
+          <%= f.label :remember_me, "Remember me" %>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.submit "Log in", class: "btn btn-primary btn-lg btn-block" %>
+      </div>
+    <% end %>
+
+    <p class="text-center text-sm">
+      <%= link_to "Forgot your password?", new_user_password_path %>
+    </p>
+
+    <p class="auth-footer">
+      Don't have an account? <%= link_to "Sign up", new_user_registration_path %>
+    </p>
+  </div>
+</div>

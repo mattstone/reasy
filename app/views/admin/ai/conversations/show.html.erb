@@ -1,0 +1,158 @@
+<div class="admin-content">
+  <%# Back Link %>
+  <div class="mb-4">
+    <%= link_to admin_ai_conversations_path, class: "btn btn-ghost btn-sm" do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to AI Conversations
+    <% end %>
+  </div>
+
+  <%# Conversation Header %>
+  <div class="admin-user-header mb-6">
+    <div class="admin-user-header-main">
+      <div style="width: 64px; height: 64px; background: var(--reasy-blue-100); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-blue-600)" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4"/>
+          <path d="M12 8h.01"/>
+        </svg>
+      </div>
+      <div class="admin-user-header-info">
+        <h1 class="admin-user-name">Conversation #<%= @conversation.id %></h1>
+        <p class="admin-user-email">
+          <% if @conversation.user %>
+            <%= @conversation.user.name %> (<%= @conversation.user.email %>)
+          <% else %>
+            Anonymous User
+          <% end %>
+        </p>
+        <div class="admin-user-badges">
+          <span class="badge badge-blue">
+            <%= @conversation.assistant_type&.humanize || "General" %> Assistant
+          </span>
+          <span class="badge badge-gray">
+            <%= @messages.count %> messages
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="admin-user-header-actions">
+      <%= link_to export_admin_ai_conversation_path(@conversation, format: :json), class: "btn btn-secondary" do %>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export JSON
+      <% end %>
+      <% if @conversation.user %>
+        <%= link_to admin_user_path(@conversation.user), class: "btn btn-secondary" do %>
+          View User
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="admin-grid-2">
+    <%# Conversation Details %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Details</h2>
+      </div>
+      <div class="admin-detail-list">
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Started</span>
+          <span class="admin-detail-value"><%= @conversation.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Last Activity</span>
+          <span class="admin-detail-value"><%= @conversation.updated_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Duration</span>
+          <span class="admin-detail-value"><%= distance_of_time_in_words(@conversation.created_at, @conversation.updated_at) %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Message Count</span>
+          <span class="admin-detail-value"><%= @messages.count %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">User Messages</span>
+          <span class="admin-detail-value"><%= @messages.select { |m| m.role == 'user' }.count %></span>
+        </div>
+        <div class="admin-detail-row">
+          <span class="admin-detail-label">Assistant Responses</span>
+          <span class="admin-detail-value"><%= @messages.select { |m| m.role == 'assistant' }.count %></span>
+        </div>
+      </div>
+    </div>
+
+    <%# User Info %>
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">User Information</h2>
+      </div>
+      <% if @conversation.user %>
+        <div class="admin-detail-list">
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Name</span>
+            <span class="admin-detail-value"><%= @conversation.user.name %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Email</span>
+            <span class="admin-detail-value"><%= @conversation.user.email %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Roles</span>
+            <span class="admin-detail-value">
+              <% @conversation.user.roles.each do |role| %>
+                <span class="badge badge-sm badge-gray"><%= role.humanize %></span>
+              <% end %>
+            </span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Total Conversations</span>
+            <span class="admin-detail-value"><%= AiConversation.where(user: @conversation.user).count %></span>
+          </div>
+        </div>
+      <% else %>
+        <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-4);">
+          <p class="text-muted">No user information available</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Messages %>
+  <div class="admin-panel mt-6">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Conversation Messages</h2>
+    </div>
+    <div class="admin-conversation-messages">
+      <% @messages.each do |message| %>
+        <div class="admin-message admin-message--<%= message.role %>">
+          <div class="admin-message-bubble">
+            <%= simple_format(message.content) %>
+          </div>
+          <div class="admin-message-meta" style="<%= message.role == 'user' ? 'text-align: right;' : '' %>">
+            <%= message.role&.humanize || "User" %> · <%= message.created_at.strftime("%I:%M %p") %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Metadata %>
+  <% if @conversation.respond_to?(:metadata) && @conversation.metadata.present? %>
+    <div class="admin-panel mt-6">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Metadata</h2>
+      </div>
+      <div class="admin-panel-content">
+        <pre style="font-size: var(--reasy-text-xs); background: var(--reasy-gray-100); padding: var(--reasy-space-3); border-radius: var(--reasy-radius-md); overflow-x: auto;"><%= JSON.pretty_generate(@conversation.metadata) %></pre>
+      </div>
+    </div>
+  <% end %>
+</div>

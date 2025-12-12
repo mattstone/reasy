@@ -1,0 +1,341 @@
+<%# Official Reasy Brand Design - Based on Style Guide %>
+<%= stylesheet_link_tag "pages/index4", media: "all" %>
+
+<div class="reasy-page">
+  <!-- Navigation -->
+  <nav class="reasy-nav">
+    <div class="reasy-nav-inner">
+      <%= image_tag "Reasy Logo Blue.png", alt: "reasy.", class: "reasy-logo", height: 32 %>
+      <div class="reasy-nav-links">
+        <a href="/how-it-works">How it works</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About</a>
+      </div>
+      <div class="reasy-nav-actions">
+        <a href="#" class="reasy-btn-ghost">Log in</a>
+        <a href="#" class="reasy-btn-primary">Get started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="reasy-hero">
+    <div class="reasy-hero-content">
+      <h1>Real estate<br>made <span class="reasy-text-orange">easy</span></h1>
+      <p class="reasy-hero-subtitle">The best real estate agent you'll never meet. Buy and sell property the intelligent way with AI.</p>
+      <div class="reasy-hero-actions">
+        <a href="#" class="reasy-btn-primary reasy-btn-lg">
+          I want to sell
+        </a>
+        <a href="#" class="reasy-btn-secondary reasy-btn-lg">
+          I want to buy
+        </a>
+      </div>
+      <div class="reasy-hero-trust">
+        <div class="reasy-trust-avatars">
+          <div class="reasy-avatar">JM</div>
+          <div class="reasy-avatar">SK</div>
+          <div class="reasy-avatar">AT</div>
+          <div class="reasy-avatar">+</div>
+        </div>
+        <span>Join 2,800+ Australians already using Reasy</span>
+      </div>
+    </div>
+    <div class="reasy-hero-visual">
+      <div class="reasy-hero-card">
+        <div class="reasy-a-graphic"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Props Pills -->
+  <section class="reasy-pills">
+    <div class="reasy-pills-inner">
+      <div class="reasy-pill reasy-pill-blue">Buy</div>
+      <div class="reasy-pill reasy-pill-icon">%</div>
+      <div class="reasy-pill reasy-pill-orange">Sell</div>
+      <div class="reasy-pill reasy-pill-icon-heart"></div>
+      <div class="reasy-pill reasy-pill-icon-chart"></div>
+      <div class="reasy-pill reasy-pill-peach">Finance</div>
+      <div class="reasy-pill reasy-pill-beige">Manage</div>
+      <div class="reasy-pill reasy-pill-outline">Easy</div>
+      <div class="reasy-pill reasy-pill-gradient">AI Assistant</div>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="reasy-section reasy-section-dark">
+    <div class="reasy-section-inner">
+      <div class="reasy-two-col">
+        <div class="reasy-col">
+          <span class="reasy-label">The problem</span>
+          <h2>Real estate today is built around agents, not consumers</h2>
+          <p>Buyers struggle to access off-market homes without paying huge fees. Sellers can't test demand privately without committing to expensive campaigns. Everyone feels uncertain, exposed and forced to rely on middlemen.</p>
+        </div>
+        <div class="reasy-col">
+          <div class="reasy-problem-stats">
+            <div class="reasy-stat-card">
+              <span class="reasy-stat-number">$25,000</span>
+              <span class="reasy-stat-label">Average commission on a $1M home</span>
+            </div>
+            <div class="reasy-stat-card">
+              <span class="reasy-stat-number">67%</span>
+              <span class="reasy-stat-label">of sellers feel uninformed during the process</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="reasy-section reasy-section-beige">
+    <div class="reasy-section-inner">
+      <span class="reasy-label reasy-label-blue">Reasy changes that</span>
+      <h2 class="reasy-section-title">A fully capable real estate agent in your pocket</h2>
+
+      <div class="reasy-features-grid">
+        <div class="reasy-feature-card">
+          <div class="reasy-feature-icon reasy-feature-icon-blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
+          </div>
+          <h3>Connect directly with buyers</h3>
+          <p>No gatekeeping. Talk to interested buyers yourself and negotiate on your terms.</p>
+        </div>
+
+        <div class="reasy-feature-card">
+          <div class="reasy-feature-icon reasy-feature-icon-orange">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3>Open to offers</h3>
+          <p>Quietly list your property, compare interest and move at your own pace.</p>
+        </div>
+
+        <div class="reasy-feature-card">
+          <div class="reasy-feature-icon reasy-feature-icon-green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3>AI-powered guidance</h3>
+          <p>Messaging, valuation, negotiation support and workflow all the way to contract.</p>
+        </div>
+
+        <div class="reasy-feature-card">
+          <div class="reasy-feature-icon reasy-feature-icon-blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path d="M14 2v6h6"/>
+              <path d="M16 13H8"/>
+              <path d="M16 17H8"/>
+              <path d="M10 9H8"/>
+            </svg>
+          </div>
+          <h3>Zero paperwork headaches</h3>
+          <p>Digital contracts, e-signatures, and plain-English explanations of every clause.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="reasy-section">
+    <div class="reasy-section-inner">
+      <span class="reasy-label">How it works</span>
+      <h2 class="reasy-section-title">Simple way to sell or buy property</h2>
+
+      <div class="reasy-steps">
+        <div class="reasy-step">
+          <div class="reasy-step-number">1</div>
+          <h3>Create your profile</h3>
+          <p>Tell us what you're looking for or list your property in minutes.</p>
+        </div>
+        <div class="reasy-step-connector"></div>
+        <div class="reasy-step">
+          <div class="reasy-step-number">2</div>
+          <h3>Get matched</h3>
+          <p>Our AI connects buyers and sellers based on preferences and requirements.</p>
+        </div>
+        <div class="reasy-step-connector"></div>
+        <div class="reasy-step">
+          <div class="reasy-step-number">3</div>
+          <h3>Negotiate & close</h3>
+          <p>Guided support from offer to settlement. No agents required.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Savings Section -->
+  <section class="reasy-section reasy-section-blue">
+    <div class="reasy-section-inner">
+      <div class="reasy-savings-content">
+        <span class="reasy-label reasy-label-light">Seller stories</span>
+        <p class="reasy-savings-intro">Here's how much you would save</p>
+        <h2 class="reasy-savings-headline">We kept <span class="reasy-text-beige">$27,400</span> using reasy</h2>
+
+        <div class="reasy-savings-pills">
+          <span class="reasy-savings-pill reasy-savings-pill-green">Zero paperwork headaches</span>
+          <span class="reasy-savings-pill reasy-savings-pill-blue">Connect with buyers</span>
+          <span class="reasy-savings-pill reasy-savings-pill-yellow">Open to offers</span>
+        </div>
+      </div>
+
+      <div class="reasy-savings-calculator">
+        <h4>Calculate your savings</h4>
+        <div class="reasy-calc-row">
+          <span>Property value</span>
+          <strong>$1,000,000</strong>
+        </div>
+        <div class="reasy-calc-row reasy-calc-old">
+          <span>Traditional agent (2.5%)</span>
+          <strong>$25,000</strong>
+        </div>
+        <div class="reasy-calc-row reasy-calc-new">
+          <span>With Reasy</span>
+          <strong>$4,990</strong>
+        </div>
+        <div class="reasy-calc-total">
+          <span>You save</span>
+          <strong>$20,010</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="reasy-section reasy-section-beige">
+    <div class="reasy-section-inner">
+      <span class="reasy-label">What our users say</span>
+      <h2 class="reasy-section-title">Real stories from real people</h2>
+
+      <div class="reasy-testimonials">
+        <div class="reasy-testimonial">
+          <div class="reasy-testimonial-content">
+            <p>"Reasy's in your pocket, not theirs. We saved over $20,000 and had complete control over our sale. The AI assistant was incredibly helpful."</p>
+          </div>
+          <div class="reasy-testimonial-author">
+            <div class="reasy-author-avatar">JM</div>
+            <div>
+              <strong>James & Michelle</strong>
+              <span>Sold in Paddington, NSW</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reasy-testimonial">
+          <div class="reasy-testimonial-content">
+            <p>"As a first-home buyer, I was nervous about the process. Reasy guided me every step of the way. Real estate made easy indeed!"</p>
+          </div>
+          <div class="reasy-testimonial-author">
+            <div class="reasy-author-avatar">SK</div>
+            <div>
+              <strong>Sarah K.</strong>
+              <span>Bought in Richmond, VIC</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reasy-testimonial">
+          <div class="reasy-testimonial-content">
+            <p>"The 'Open to Offers' feature let us test the market without committing. We found our buyer in 3 weeks. Unbelievable."</p>
+          </div>
+          <div class="reasy-testimonial-author">
+            <div class="reasy-author-avatar">AT</div>
+            <div>
+              <strong>Andrew T.</strong>
+              <span>Sold in Bulimba, QLD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Preview -->
+  <section class="reasy-section">
+    <div class="reasy-section-inner">
+      <span class="reasy-label">Pricing</span>
+      <h2 class="reasy-section-title">Transparent, simple pricing</h2>
+
+      <div class="reasy-pricing-cards">
+        <div class="reasy-price-card">
+          <h3>Buyers</h3>
+          <div class="reasy-price">
+            <span class="reasy-price-amount">Free</span>
+          </div>
+          <p>Access off-market properties, AI guidance, and direct seller connections at no cost.</p>
+          <a href="#" class="reasy-btn-secondary reasy-btn-block">Start browsing</a>
+        </div>
+
+        <div class="reasy-price-card reasy-price-card-featured">
+          <div class="reasy-price-badge">Most popular</div>
+          <h3>Sellers</h3>
+          <div class="reasy-price">
+            <span class="reasy-price-amount">$4,990</span>
+            <span class="reasy-price-note">Only when you sell</span>
+          </div>
+          <p>Full-service selling with AI support, buyer matching, and guided settlement.</p>
+          <a href="#" class="reasy-btn-primary reasy-btn-block">List your property</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="reasy-cta">
+    <div class="reasy-cta-inner">
+      <div class="reasy-cta-graphic">
+        <div class="reasy-a-graphic reasy-a-graphic-large"></div>
+      </div>
+      <div class="reasy-cta-content">
+        <h2>Open to possibility.</h2>
+        <p>Buy and sell property the intelligent way with AI. Join thousands of Australians who've already made the switch.</p>
+        <div class="reasy-cta-actions">
+          <a href="#" class="reasy-btn-primary reasy-btn-xl">Get started free</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="reasy-footer">
+    <div class="reasy-footer-inner">
+      <div class="reasy-footer-grid">
+        <div class="reasy-footer-brand">
+          <%= image_tag "Reasy Logo Beige.png", alt: "reasy.", class: "reasy-footer-logo", height: 28 %>
+          <p>The smarter way to buy and sell property in Australia.</p>
+        </div>
+        <div class="reasy-footer-col">
+          <h4>Product</h4>
+          <a href="#">For buyers</a>
+          <a href="#">For sellers</a>
+          <a href="/how-it-works">How it works</a>
+          <a href="/pricing">Pricing</a>
+        </div>
+        <div class="reasy-footer-col">
+          <h4>Company</h4>
+          <a href="/about">About</a>
+          <a href="#">Careers</a>
+          <a href="#">Blog</a>
+          <a href="/contact">Contact</a>
+        </div>
+        <div class="reasy-footer-col">
+          <h4>Legal</h4>
+          <a href="/terms">Terms of Service</a>
+          <a href="/privacy">Privacy Policy</a>
+        </div>
+      </div>
+      <div class="reasy-footer-bottom">
+        <p>&copy; 2025 Reasy. All rights reserved. Real estate made easy.</p>
+      </div>
+    </div>
+  </footer>
+</div>

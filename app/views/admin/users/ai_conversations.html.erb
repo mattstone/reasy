@@ -1,0 +1,76 @@
+<div class="admin-content">
+  <%# Back Link %>
+  <div class="mb-4">
+    <%= link_to admin_user_path(@user), class: "btn btn-ghost btn-sm" do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to User
+    <% end %>
+  </div>
+
+  <%# Page Header %>
+  <div class="admin-page-header mb-6">
+    <div>
+      <h1 class="admin-page-title">AI Conversations</h1>
+      <p class="admin-page-subtitle"><%= @user.name %> (<%= @user.email %>)</p>
+    </div>
+  </div>
+
+  <%# Conversations List %>
+  <div class="admin-panel">
+    <% if @conversations.any? %>
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Assistant</th>
+              <th>Messages</th>
+              <th>Started</th>
+              <th>Last Activity</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @conversations.each do |conversation| %>
+              <tr>
+                <td>
+                  <span class="text-sm font-medium">#<%= conversation.id %></span>
+                </td>
+                <td>
+                  <span class="badge badge-sm badge-blue">
+                    <%= conversation.assistant_type&.humanize || "General" %>
+                  </span>
+                </td>
+                <td>
+                  <span class="text-sm"><%= conversation.messages.count %></span>
+                </td>
+                <td class="text-muted text-sm">
+                  <%= conversation.created_at.strftime("%b %d, %Y") %>
+                </td>
+                <td class="text-muted text-sm">
+                  <%= time_ago_in_words(conversation.updated_at) %> ago
+                </td>
+                <td>
+                  <div class="table-actions">
+                    <%= link_to admin_ai_conversation_path(conversation), class: "btn btn-ghost btn-sm" do %>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+        <p class="text-muted">No AI conversations for this user.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

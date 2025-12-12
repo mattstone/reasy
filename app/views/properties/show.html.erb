@@ -1,0 +1,989 @@
+<%= render "shared/nav" %>
+
+<main class="property-detail">
+  <%# Back navigation %>
+  <div class="property-back-nav">
+    <div class="container">
+      <%= link_to properties_path, class: "back-link" do %>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back to listings
+      <% end %>
+    </div>
+  </div>
+
+  <%# Image Gallery Section %>
+  <section class="property-gallery">
+    <div class="container">
+      <div class="gallery-grid">
+        <%# Hero image %>
+        <div class="gallery-hero">
+          <% if @property.hero_image.attached? %>
+            <%= image_tag @property.hero_image.variant(resize_to_fill: [800, 500]), alt: @property.short_address, class: "gallery-hero-img" %>
+          <% elsif @property.photos.attached? && @property.photos.first.present? %>
+            <%= image_tag @property.photos.first.variant(resize_to_fill: [800, 500]), alt: @property.short_address, class: "gallery-hero-img" %>
+          <% else %>
+            <div class="gallery-placeholder">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              <p>No photos available</p>
+            </div>
+          <% end %>
+
+          <%# Photo count badge %>
+          <% photo_count = @property.photos.attached? ? @property.photos.count : 0 %>
+          <% photo_count += 1 if @property.hero_image.attached? %>
+          <% if photo_count > 0 %>
+            <button type="button" class="gallery-count-badge" data-action="open-gallery">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="9" cy="9" r="2"/>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+              </svg>
+              View all <%= photo_count %> photos
+            </button>
+          <% end %>
+        </div>
+
+        <%# Thumbnail grid (show up to 4) %>
+        <% if @property.photos.attached? && @property.photos.count > 0 %>
+          <div class="gallery-thumbnails">
+            <% @property.photos.limit(4).each_with_index do |photo, index| %>
+              <div class="gallery-thumbnail <%= 'gallery-thumbnail-more' if index == 3 && @property.photos.count > 4 %>">
+                <%= image_tag photo.variant(resize_to_fill: [200, 150]), alt: "Photo #{index + 1}" %>
+                <% if index == 3 && @property.photos.count > 4 %>
+                  <div class="thumbnail-overlay">
+                    +<%= @property.photos.count - 4 %> more
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <%# Property Header %>
+  <section class="property-header-section">
+    <div class="container">
+      <div class="property-header-content">
+        <div class="property-header-info">
+          <%# Status badge %>
+          <div class="property-status-badges">
+            <% case @property.status %>
+            <% when "under_offer" %>
+              <span class="badge badge-orange badge-lg">Under Offer</span>
+            <% when "sold" %>
+              <span class="badge badge-gray badge-lg">Sold</span>
+            <% else %>
+              <% case @property.listing_intent %>
+              <% when "open_to_offers" %>
+                <span class="intent-badge intent-badge-offers badge-lg">Open to Offers</span>
+              <% when "want_to_sell" %>
+                <span class="intent-badge intent-badge-sell badge-lg">For Sale</span>
+              <% when "just_exploring" %>
+                <span class="intent-badge intent-badge-exploring badge-lg">Exploring</span>
+              <% end %>
+            <% end %>
+
+            <span class="badge badge-gray"><%= @property.property_type.humanize %></span>
+          </div>
+
+          <h1 class="property-title"><%= @property.headline.presence || @property.street_address %></h1>
+          <p class="property-location">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <%= @property.location %>
+          </p>
+        </div>
+
+        <%# Price display (mobile) %>
+        <div class="property-header-price hide-desktop">
+          <p class="property-price"><%= @property.price_range_display %></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Key Stats Row %>
+  <section class="property-stats-section">
+    <div class="container">
+      <div class="stat-cards stat-cards-4">
+        <% if @property.bedrooms.present? %>
+          <div class="stat-card">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 7v11m0-4h18m0 4V7"/>
+                <path d="M7 11V7h10v4"/>
+              </svg>
+            </div>
+            <div class="stat-card-content">
+              <p class="stat-card-value"><%= @property.bedrooms %></p>
+              <p class="stat-card-label">Bedrooms</p>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @property.bathrooms.present? %>
+          <div class="stat-card">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12h16"/>
+                <path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/>
+                <path d="M6 12V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>
+              </svg>
+            </div>
+            <div class="stat-card-content">
+              <p class="stat-card-value"><%= @property.bathrooms %></p>
+              <p class="stat-card-label">Bathrooms</p>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @property.parking_spaces.present? %>
+          <div class="stat-card">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/>
+                <path d="M13 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/>
+                <path d="M5 9v5h14V9l-3-4H8z"/>
+                <path d="M5 14v3"/>
+                <path d="M19 14v3"/>
+              </svg>
+            </div>
+            <div class="stat-card-content">
+              <p class="stat-card-value"><%= @property.parking_spaces %></p>
+              <p class="stat-card-label">Parking</p>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @property.land_size_sqm.present? %>
+          <div class="stat-card">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18"/>
+                <path d="M9 21V9"/>
+              </svg>
+            </div>
+            <div class="stat-card-content">
+              <p class="stat-card-value"><%= number_with_delimiter(@property.land_size_sqm) %></p>
+              <p class="stat-card-label">Land (m&sup2;)</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <%# Main Content - Two Column Layout %>
+  <section class="property-content-section">
+    <div class="container">
+      <div class="property-content-grid">
+        <%# Left Column - Details %>
+        <div class="property-details">
+          <%# Price section (desktop only, also shown in sidebar) %>
+          <div class="property-price-section hide-mobile">
+            <p class="property-price-label">Price</p>
+            <p class="property-price"><%= @property.price_range_display %></p>
+          </div>
+
+          <%# Description %>
+          <div class="property-section">
+            <h2 class="property-section-title">About this property</h2>
+            <div class="property-description">
+              <% if @property.description.present? %>
+                <%= simple_format(@property.description) %>
+              <% else %>
+                <p class="text-muted">No description available for this property.</p>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Features %>
+          <% if @property.features.present? && @property.features.any? %>
+            <div class="property-section">
+              <h2 class="property-section-title">Features</h2>
+              <div class="features-grid">
+                <% @property.features.each do |feature| %>
+                  <div class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span><%= feature %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <%# Property Details Table %>
+          <div class="property-section">
+            <h2 class="property-section-title">Property Details</h2>
+            <table class="property-details-table">
+              <tbody>
+                <tr>
+                  <th>Property Type</th>
+                  <td><%= @property.property_type.humanize %></td>
+                </tr>
+                <% if @property.bedrooms.present? %>
+                  <tr>
+                    <th>Bedrooms</th>
+                    <td><%= @property.bedrooms %></td>
+                  </tr>
+                <% end %>
+                <% if @property.bathrooms.present? %>
+                  <tr>
+                    <th>Bathrooms</th>
+                    <td><%= @property.bathrooms %></td>
+                  </tr>
+                <% end %>
+                <% if @property.parking_spaces.present? %>
+                  <tr>
+                    <th>Parking Spaces</th>
+                    <td><%= @property.parking_spaces %></td>
+                  </tr>
+                <% end %>
+                <% if @property.land_size_sqm.present? %>
+                  <tr>
+                    <th>Land Size</th>
+                    <td><%= number_with_delimiter(@property.land_size_sqm) %> m&sup2;</td>
+                  </tr>
+                <% end %>
+                <tr>
+                  <th>Address</th>
+                  <td><%= @property.full_address %></td>
+                </tr>
+                <% if @property.published_at.present? %>
+                  <tr>
+                    <th>Listed</th>
+                    <td><%= time_ago_in_words(@property.published_at) %> ago</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+          <%# Map Section (Placeholder) %>
+          <div class="property-section">
+            <h2 class="property-section-title">Location</h2>
+            <div class="property-map-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <p><%= @property.suburb %>, <%= @property.state %> <%= @property.postcode %></p>
+              <p class="text-sm text-muted">Interactive map coming soon</p>
+            </div>
+          </div>
+        </div>
+
+        <%# Right Column - Enquiry Card %>
+        <div class="property-sidebar">
+          <div class="enquiry-card">
+            <%# Status badge %>
+            <% if @property.listing_intent == "open_to_offers" %>
+              <span class="intent-badge intent-badge-offers mb-4">Open to Offers</span>
+            <% elsif @property.listing_intent == "want_to_sell" %>
+              <span class="intent-badge intent-badge-sell mb-4">For Sale</span>
+            <% end %>
+
+            <%# Price %>
+            <p class="enquiry-card-price"><%= @property.price_range_display %></p>
+            <p class="enquiry-card-type"><%= @property.property_type.humanize %></p>
+
+            <%# Love button %>
+            <div class="enquiry-card-love">
+              <% if user_signed_in? %>
+                <%= button_to toggle_love_property_path(@property),
+                    method: :post,
+                    class: "love-button #{'loved' if @property.loved_by?(current_user)}",
+                    data: { turbo_frame: "_top" } do %>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="<%= @property.loved_by?(current_user) ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  <%= @property.loved_by?(current_user) ? "Saved" : "Save property" %>
+                <% end %>
+              <% else %>
+                <%= link_to new_user_session_path, class: "love-button" do %>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  Save property
+                <% end %>
+              <% end %>
+
+              <% if @property.love_count.to_i > 0 %>
+                <span class="love-count">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  <%= @property.love_count %> <%= "person".pluralize(@property.love_count) %> saved this
+                </span>
+              <% end %>
+            </div>
+
+            <div class="divider"></div>
+
+            <%# Action buttons %>
+            <div class="enquiry-card-actions">
+              <% if user_signed_in? %>
+                <% if current_user.buyer_profile %>
+                  <%= link_to new_property_property_enquiry_path(@property), class: "btn btn-primary btn-block" do %>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    Make an Enquiry
+                  <% end %>
+
+                  <% if @property.listing_intent == "open_to_offers" && @property.can_receive_offers? %>
+                    <%= link_to new_property_offer_path(@property), class: "btn btn-accent btn-block" do %>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                      </svg>
+                      Make an Offer
+                    <% end %>
+                  <% end %>
+                <% else %>
+                  <p class="text-muted text-center mb-4">Create a buyer profile to enquire about this property</p>
+                  <%= link_to onboarding_path, class: "btn btn-primary btn-block" do %>
+                    Set up buyer profile
+                  <% end %>
+                <% end %>
+              <% else %>
+                <%= link_to new_user_session_path, class: "btn btn-primary btn-block" do %>
+                  Log in to enquire
+                <% end %>
+                <p class="enquiry-card-signup">
+                  New to Reasy? <%= link_to "Create a free account", new_user_registration_path %>
+                </p>
+              <% end %>
+            </div>
+
+            <div class="divider"></div>
+
+            <%# Owner/Agent info placeholder %>
+            <div class="enquiry-card-owner">
+              <h4 class="enquiry-card-owner-title">Property Contact</h4>
+              <div class="owner-info">
+                <div class="owner-avatar">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div class="owner-details">
+                  <p class="owner-name">Property Owner</p>
+                  <p class="owner-role">Private Seller</p>
+                </div>
+              </div>
+              <p class="text-sm text-muted mt-3">Contact details will be shared when you make an enquiry.</p>
+            </div>
+          </div>
+
+          <%# View stats %>
+          <div class="property-stats-card">
+            <div class="stats-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span><%= @property.view_count || 0 %> views</span>
+            </div>
+            <div class="stats-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+              <span><%= @property.love_count || 0 %> saves</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%= render "shared/footer" %>
+
+<style>
+  /* Property Detail Page */
+  .property-detail {
+    background: var(--color-gray-50);
+    min-height: 100vh;
+  }
+
+  /* Back Navigation */
+  .property-back-nav {
+    background: var(--color-white);
+    padding: calc(var(--space-20) + 80px) 0 var(--space-4);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .back-link:hover {
+    color: var(--color-primary);
+  }
+
+  /* Gallery Section */
+  .property-gallery {
+    background: var(--color-white);
+    padding: var(--space-6) 0;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .gallery-hero {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, var(--color-primary-pale) 0%, var(--color-beige) 100%);
+  }
+
+  .gallery-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gallery-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    color: var(--color-text-muted);
+  }
+
+  .gallery-count-badge {
+    position: absolute;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--color-white);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+
+  .gallery-count-badge:hover {
+    background: rgba(0, 0, 0, 0.85);
+  }
+
+  .gallery-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .gallery-thumbnail {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .gallery-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+  }
+
+  .gallery-thumbnail:hover img {
+    transform: scale(1.05);
+  }
+
+  .thumbnail-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--color-white);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /* Header Section */
+  .property-header-section {
+    background: var(--color-white);
+    padding: var(--space-6) 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .property-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+
+  .property-status-badges {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .badge-lg {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+
+  .property-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2);
+  }
+
+  .property-location {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .property-header-price {
+    text-align: right;
+  }
+
+  /* Stats Section */
+  .property-stats-section {
+    background: var(--color-white);
+    padding: 0 0 var(--space-6);
+  }
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-xl);
+  }
+
+  .stat-card-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary-pale);
+    color: var(--color-primary);
+    border-radius: var(--radius-lg);
+  }
+
+  .stat-card-value {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+    line-height: 1;
+  }
+
+  .stat-card-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 0;
+  }
+
+  /* Content Section */
+  .property-content-section {
+    padding: var(--space-8) 0 var(--space-12);
+  }
+
+  .property-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  /* Property Details (Left Column) */
+  .property-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .property-price-section {
+    background: var(--color-white);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+  }
+
+  .property-price-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-1);
+  }
+
+  .property-price {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .property-section {
+    background: var(--color-white);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+  }
+
+  .property-section-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-4);
+  }
+
+  .property-description {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+  }
+
+  .property-description p {
+    margin: 0 0 var(--space-4);
+  }
+
+  .property-description p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Features Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+  }
+
+  /* Property Details Table */
+  .property-details-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .property-details-table tr {
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .property-details-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .property-details-table th,
+  .property-details-table td {
+    padding: var(--space-3) 0;
+    font-size: var(--font-size-base);
+    text-align: left;
+  }
+
+  .property-details-table th {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    width: 40%;
+  }
+
+  .property-details-table td {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  /* Map Placeholder */
+  .property-map-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  .property-map-placeholder svg {
+    margin-bottom: var(--space-3);
+    opacity: 0.5;
+  }
+
+  .property-map-placeholder p {
+    margin: 0;
+    font-size: var(--font-size-base);
+  }
+
+  /* Sidebar (Right Column) */
+  .property-sidebar {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .enquiry-card {
+    background: var(--color-white);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+  }
+
+  .enquiry-card-price {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .enquiry-card-type {
+    font-size: var(--font-size-base);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 var(--space-4);
+  }
+
+  .enquiry-card-love {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .love-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .love-button:hover {
+    background: var(--color-gray-100);
+    border-color: var(--color-border-hover);
+  }
+
+  .love-button.loved {
+    color: var(--color-error);
+    background: var(--color-error-pale);
+    border-color: var(--color-error);
+  }
+
+  .love-count {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-sm);
+    color: var(--color-error);
+  }
+
+  .enquiry-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .enquiry-card-signup {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+    margin: var(--space-2) 0 0;
+  }
+
+  .enquiry-card-signup a {
+    color: var(--color-primary);
+  }
+
+  .enquiry-card-owner {
+    margin-top: var(--space-2);
+  }
+
+  .enquiry-card-owner-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-3);
+  }
+
+  .owner-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .owner-avatar {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-gray-100);
+    border-radius: 50%;
+    color: var(--color-text-muted);
+  }
+
+  .owner-name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .owner-role {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 0;
+  }
+
+  /* Property Stats Card */
+  .property-stats-card {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-6);
+    padding: var(--space-4);
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+  }
+
+  .stats-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  /* Utility classes */
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  .text-sm {
+    font-size: var(--font-size-sm);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .mb-4 {
+    margin-bottom: var(--space-4);
+  }
+
+  .mt-3 {
+    margin-top: var(--space-3);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--color-border-light);
+    margin: var(--space-4) 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .property-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .property-sidebar {
+      position: static;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .property-back-nav {
+      padding-top: calc(var(--space-16) + 60px);
+    }
+
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gallery-thumbnails {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-2);
+    }
+
+    .property-title {
+      font-size: var(--font-size-2xl);
+    }
+
+    .stat-cards-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hide-mobile {
+      display: none !important;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .hide-desktop {
+      display: none !important;
+    }
+  }
+</style>

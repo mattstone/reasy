@@ -1,0 +1,78 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <%= link_to seller_property_path(@property), class: "back-link" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+            Back to Property
+          <% end %>
+          <h1 class="page-title">Offers for <%= @property.short_address %></h1>
+          <p class="page-subtitle">
+            <%= pluralize(@offers.count, "offer") %> received
+            <% if @active_offers.any? %>
+              · <%= pluralize(@active_offers.count, "active offer") %>
+            <% end %>
+          </p>
+        </div>
+      </div>
+
+      <% if @active_offers.any? %>
+        <%# Active Offers %>
+        <div class="dashboard-panel mb-6">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Active Offers</h2>
+              <p class="dashboard-panel-subtitle">Offers awaiting your response</p>
+            </div>
+          </div>
+
+          <div class="offers-list">
+            <% @active_offers.each do |offer| %>
+              <%= render "seller/offers/offer_card", offer: offer, property: @property %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @responded_offers.any? %>
+        <%# Responded Offers %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Responded Offers</h2>
+              <p class="dashboard-panel-subtitle">Offers you've accepted, rejected, or countered</p>
+            </div>
+          </div>
+
+          <div class="offers-list">
+            <% @responded_offers.each do |offer| %>
+              <%= render "seller/offers/offer_card", offer: offer, property: @property %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @offers.empty? %>
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" x2="8" y1="13" y2="13"/>
+              <line x1="16" x2="8" y1="17" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h3 class="empty-state-title">No offers yet</h3>
+          <p class="empty-state-description">Offers on this property will appear here. Make sure your property is active and priced attractively.</p>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

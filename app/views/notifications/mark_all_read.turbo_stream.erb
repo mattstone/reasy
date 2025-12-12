@@ -1,0 +1,17 @@
+<%= turbo_stream.replace "notifications-list" do %>
+  <div class="dashboard-panel" id="notifications-list">
+    <% if @notifications.any? %>
+      <% @grouped_notifications.each do |group_name, notifications| %>
+        <div class="notification-group">
+          <h3 class="notification-group-title"><%= group_name %></h3>
+
+          <div class="notification-list">
+            <% notifications.each do |notification| %>
+              <%= render "notification_item", notification: notification.tap { |n| n.read_at = Time.current } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

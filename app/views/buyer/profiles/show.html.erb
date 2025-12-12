@@ -1,0 +1,307 @@
+<div class="layout">
+  <%= render "shared/dashboard_sidebar" %>
+
+  <main class="layout-main">
+    <div class="content">
+      <%# Page Header %>
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Buyer Profile</h1>
+          <p class="page-subtitle">Your property search preferences and financial details</p>
+        </div>
+        <div class="page-header-actions">
+          <%= link_to edit_buyer_profile_path, class: "btn btn-primary" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+            Edit Profile
+          <% end %>
+        </div>
+      </div>
+
+      <%# Budget & Finance Panel %>
+      <div class="dashboard-panel mb-6">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 class="dashboard-panel-title">Budget & Finance</h2>
+            <p class="dashboard-panel-subtitle">Your financial position and buying power</p>
+          </div>
+        </div>
+
+        <div class="stat-cards-3 mb-6">
+          <%# Budget Range Card %>
+          <div class="metric-card">
+            <div class="metric-card-icon metric-card-icon-green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div class="metric-card-content">
+              <% if @buyer_profile.budget_min && @buyer_profile.budget_max %>
+                <div class="metric-card-value-sm"><%= number_to_currency(@buyer_profile.budget_min, precision: 0) %></div>
+                <div class="metric-card-label">to <%= number_to_currency(@buyer_profile.budget_max, precision: 0) %></div>
+              <% else %>
+                <div class="metric-card-value-sm">Not set</div>
+                <div class="metric-card-label">Budget Range</div>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Finance Status Card %>
+          <div class="metric-card">
+            <div class="metric-card-icon metric-card-icon-blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <path d="M2 10h20"/>
+              </svg>
+            </div>
+            <div class="metric-card-content">
+              <div class="metric-card-value-sm">
+                <% if @buyer_profile.finance_status.present? %>
+                  <% case @buyer_profile.finance_status %>
+                  <% when "cash" %>
+                    <span class="status-badge status-badge-active">Cash Buyer</span>
+                  <% when "pre_approved" %>
+                    <span class="status-badge status-badge-active">Pre-approved</span>
+                  <% when "needs_finance" %>
+                    <span class="status-badge status-badge-pending">Needs Finance</span>
+                  <% when "exploring" %>
+                    <span class="status-badge status-badge-inactive">Exploring</span>
+                  <% end %>
+                <% else %>
+                  <span class="status-badge status-badge-inactive">Not set</span>
+                <% end %>
+              </div>
+              <div class="metric-card-label">Finance Status</div>
+            </div>
+          </div>
+
+          <%# Buying Timeline Card %>
+          <div class="metric-card">
+            <div class="metric-card-icon metric-card-icon-orange">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="metric-card-content">
+              <div class="metric-card-value-sm">
+                <% if @buyer_profile.buying_timeline.present? %>
+                  <%= @buyer_profile.buying_timeline.humanize.titleize %>
+                <% else %>
+                  Not set
+                <% end %>
+              </div>
+              <div class="metric-card-label">Buying Timeline</div>
+            </div>
+          </div>
+        </div>
+
+        <% if @buyer_profile.pre_approved? %>
+          <div class="divider"></div>
+          <h3 class="dashboard-panel-title mb-4">Pre-approval Details</h3>
+          <div class="stats-summary">
+            <div class="stats-row">
+              <span class="stats-label">Pre-approval Amount</span>
+              <span class="stats-value">
+                <% if @buyer_profile.pre_approval_amount %>
+                  <%= number_to_currency(@buyer_profile.pre_approval_amount, precision: 0) %>
+                <% else %>
+                  Not specified
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Lender</span>
+              <span class="stats-value"><%= @buyer_profile.pre_approval_lender.presence || "Not specified" %></span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Expiry Date</span>
+              <span class="stats-value">
+                <% if @buyer_profile.pre_approval_expires_at %>
+                  <%= @buyer_profile.pre_approval_expires_at.strftime("%d %B %Y") %>
+                  <% if @buyer_profile.pre_approval_expiring_soon? %>
+                    <span class="badge badge-warning ml-2">Expiring soon</span>
+                  <% elsif !@buyer_profile.pre_approval_valid? %>
+                    <span class="badge badge-error ml-2">Expired</span>
+                  <% end %>
+                <% else %>
+                  Not specified
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Status</span>
+              <span class="stats-value">
+                <% if @buyer_profile.pre_approval_valid? %>
+                  <span class="status-badge status-badge-active">Valid</span>
+                <% else %>
+                  <span class="status-badge status-badge-error">Invalid/Expired</span>
+                <% end %>
+              </span>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @buyer_profile.first_home_buyer? %>
+          <div class="mt-4">
+            <span class="badge badge-blue">First Home Buyer</span>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <%# Property Preferences Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Property Preferences</h2>
+              <p class="dashboard-panel-subtitle">What you're looking for</p>
+            </div>
+          </div>
+
+          <div class="stats-summary">
+            <div class="stats-row">
+              <span class="stats-label">Property Types</span>
+              <span class="stats-value">
+                <% if @buyer_profile.property_types.present? && @buyer_profile.property_types.any? %>
+                  <div class="tag-group">
+                    <% @buyer_profile.property_types.each do |type| %>
+                      <span class="badge badge-gray"><%= type.humanize.titleize %></span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  Any
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Bedrooms</span>
+              <span class="stats-value">
+                <% if @buyer_profile.bedrooms_min || @buyer_profile.bedrooms_max %>
+                  <%= @buyer_profile.bedrooms_min || "Any" %> - <%= @buyer_profile.bedrooms_max || "Any" %>
+                <% else %>
+                  Any
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Bathrooms</span>
+              <span class="stats-value">
+                <% if @buyer_profile.bathrooms_min || @buyer_profile.bathrooms_max %>
+                  <%= @buyer_profile.bathrooms_min || "Any" %> - <%= @buyer_profile.bathrooms_max || "Any" %>
+                <% else %>
+                  Any
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Parking</span>
+              <span class="stats-value">
+                <% if @buyer_profile.parking_min || @buyer_profile.parking_max %>
+                  <%= @buyer_profile.parking_min || "Any" %> - <%= @buyer_profile.parking_max || "Any" %>
+                <% else %>
+                  Any
+                <% end %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <%# Location Panel %>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">Location Preferences</h2>
+              <p class="dashboard-panel-subtitle">Where you want to live</p>
+            </div>
+          </div>
+
+          <div class="stats-summary">
+            <div class="stats-row">
+              <span class="stats-label">Preferred Suburbs</span>
+              <span class="stats-value">
+                <% if @buyer_profile.preferred_suburbs.present? && @buyer_profile.preferred_suburbs.any? %>
+                  <div class="tag-group">
+                    <% @buyer_profile.preferred_suburbs.each do |suburb| %>
+                      <span class="tag"><%= suburb %></span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  Any
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Max Commute Time</span>
+              <span class="stats-value">
+                <% if @buyer_profile.max_commute_minutes %>
+                  <%= @buyer_profile.max_commute_minutes %> minutes
+                <% else %>
+                  Not specified
+                <% end %>
+              </span>
+            </div>
+            <div class="stats-row">
+              <span class="stats-label">Proximity Preferences</span>
+              <span class="stats-value">
+                <% proximity_prefs = [] %>
+                <% proximity_prefs << "Primary School" if @buyer_profile.near_primary_school? %>
+                <% proximity_prefs << "Secondary School" if @buyer_profile.near_secondary_school? %>
+                <% proximity_prefs << "Train Station" if @buyer_profile.near_train_station? %>
+                <% proximity_prefs << "Bus Stop" if @buyer_profile.near_bus_stop? %>
+                <% if proximity_prefs.any? %>
+                  <div class="tag-group">
+                    <% proximity_prefs.each do |pref| %>
+                      <span class="badge badge-gray"><%= pref %></span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  None specified
+                <% end %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# Features Panel %>
+      <div class="dashboard-panel mt-6">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 class="dashboard-panel-title">Features</h2>
+            <p class="dashboard-panel-subtitle">Property features that matter to you</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <h4 class="text-secondary mb-3">Must-have Features</h4>
+            <% if @buyer_profile.must_have_features.present? && @buyer_profile.must_have_features.any? %>
+              <div class="tag-group">
+                <% @buyer_profile.must_have_features.each do |feature| %>
+                  <span class="badge badge-success"><%= feature.humanize.titleize %></span>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-muted">No must-have features specified</p>
+            <% end %>
+          </div>
+
+          <div>
+            <h4 class="text-secondary mb-3">Nice-to-have Features</h4>
+            <% if @buyer_profile.nice_to_have_features.present? && @buyer_profile.nice_to_have_features.any? %>
+              <div class="tag-group">
+                <% @buyer_profile.nice_to_have_features.each do |feature| %>
+                  <span class="badge badge-gray"><%= feature.humanize.titleize %></span>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-muted">No nice-to-have features specified</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

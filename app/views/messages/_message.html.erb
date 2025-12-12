@@ -1,0 +1,47 @@
+<%
+  is_mine = message.sender == current_user
+  is_system = message.system?
+%>
+
+<div class="message <%= 'message-mine' if is_mine %> <%= 'message-system' if is_system %>" id="message-<%= message.id %>">
+  <% unless is_mine || is_system %>
+    <div class="message-avatar">
+      <% if message.sender.avatar&.attached? %>
+        <%= image_tag message.sender.avatar, class: "avatar avatar-sm" %>
+      <% else %>
+        <div class="avatar avatar-sm avatar-placeholder">
+          <%= message.sender.name.first.upcase %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="message-content">
+    <% unless is_mine || is_system %>
+      <span class="message-sender"><%= message.sender.name %></span>
+    <% end %>
+
+    <div class="message-bubble">
+      <% if is_system %>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" x2="12" y1="16" y2="12"/>
+          <line x1="12" x2="12.01" y1="8" y2="8"/>
+        </svg>
+      <% end %>
+      <span class="message-text"><%= simple_format(message.content, {}, sanitize: true) %></span>
+    </div>
+
+    <div class="message-meta">
+      <span class="message-time">
+        <%= message.created_at.strftime("%l:%M %p").strip %>
+      </span>
+      <% if message.edited? %>
+        <span class="message-edited">(edited)</span>
+      <% end %>
+      <% if message.ai_generated? %>
+        <span class="message-ai-badge">AI</span>
+      <% end %>
+    </div>
+  </div>
+</div>
