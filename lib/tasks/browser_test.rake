@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
-# Only load in development/test environments
-return unless Rails.env.local?
+# Only load in development/test environments - exit early in production
+# This prevents the file from requiring development gems like capybara/selenium
+if defined?(Rails) && !Rails.env.local?
+  # Define empty namespace to prevent rake errors if task is referenced
+  namespace(:browser_test) { }
+  return
+end
 
 namespace :browser_test do
   desc "Run comprehensive browser tests for all authenticated user flows"
