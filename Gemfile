@@ -87,7 +87,7 @@ gem "blind_index", "~> 2.5"
 gem "sidekiq", "~> 7.3"
 
 # Payment processing
-gem "stripe", "~> 13.2"
+gem "stripe", "~> 18.0"
 
 # Phone number validation
 gem "phonelib", "~> 0.9"
