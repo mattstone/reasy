@@ -20,18 +20,18 @@ test:
   database: reasy_test
 
 production:
-  primary: &production_default
+  primary:
     <<: *default
-    url: <%= ENV.fetch("DATABASE_URL", "postgresql://neondb_owner:npg_uKDiHxLq0Ne3@ep-wandering-salad-a7rmrq74-pooler.ap-southeast-2.aws.neon.tech/neondb?sslmode=require") %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
-    <<: *production_default
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cache_migrate
-    url: <%= URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_cache" } if ENV["DATABASE_URL"] %>
   queue:
-    <<: *production_default
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/queue_migrate
-    url: <%= URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_queue" } if ENV["DATABASE_URL"] %>
   cable:
-    <<: *production_default
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cable_migrate
-    url: <%= URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_cable" } if ENV["DATABASE_URL"] %>
