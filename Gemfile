@@ -84,7 +84,7 @@ gem "lockbox", "~> 1.4"
 gem "blind_index", "~> 2.5"
 
 # Background jobs
-gem "sidekiq", "~> 7.3"
+gem "sidekiq", "~> 8.1"
 
 # Payment processing
 gem "stripe", "~> 13.2"
