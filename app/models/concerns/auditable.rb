@@ -36,7 +36,7 @@ module Auditable
       action_type: "#{self.class.name.underscore}.#{action}",
       resource_type: self.class.name,
       resource_id: id,
-      changes: changes_to_log,
+      recorded_changes: changes_to_log,
       metadata: audit_metadata,
       ip_address: Current.ip_address,
       user_agent: Current.user_agent,

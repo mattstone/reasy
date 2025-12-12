@@ -8,6 +8,9 @@ class AuditLog < ApplicationRecord
   validates :resource_type, presence: true
   validates :resource_id, presence: true
 
+  # Alias for the recorded_changes column (renamed from 'changes' to avoid AR conflict)
+  alias_attribute :changes_made, :recorded_changes
+
   scope :for_user, ->(user) { where(user: user) }
   scope :for_resource, ->(type, id) { where(resource_type: type, resource_id: id) }
   scope :by_action, ->(action) { where(action_type: action) }
