@@ -333,7 +333,7 @@ GEM
       activesupport (>= 7.0)
       railties (>= 7.0)
       sqlite3
-    lockbox (1.4.1)
+    lockbox (2.1.0)
     logger (1.7.0)
     loofah (2.24.1)
       crass (~> 1.0.2)
@@ -642,7 +642,7 @@ DEPENDENCIES
   kamal
   letter_opener_web
   litestream (~> 0.14.0)
-  lockbox (~> 1.4)
+  lockbox (~> 2.1)
   mocha
   pagy (~> 9.3)
   pg (~> 1.5)
