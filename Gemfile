@@ -93,7 +93,7 @@ gem "stripe", "~> 13.2"
 gem "phonelib", "~> 0.9"
 
 # Country/State data
-gem "countries", "~> 7.1"
+gem "countries", "~> 8.0"
 
 # Pagination
 gem "pagy", "~> 9.3"
