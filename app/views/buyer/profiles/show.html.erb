@@ -1,8 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
@@ -178,8 +174,8 @@
             <div class="stats-row">
               <span class="stats-label">Bedrooms</span>
               <span class="stats-value">
-                <% if @buyer_profile.bedrooms_min || @buyer_profile.bedrooms_max %>
-                  <%= @buyer_profile.bedrooms_min || "Any" %> - <%= @buyer_profile.bedrooms_max || "Any" %>
+                <% if @buyer_profile.bedrooms_min %>
+                  <%= @buyer_profile.bedrooms_min %>+
                 <% else %>
                   Any
                 <% end %>
@@ -188,8 +184,8 @@
             <div class="stats-row">
               <span class="stats-label">Bathrooms</span>
               <span class="stats-value">
-                <% if @buyer_profile.bathrooms_min || @buyer_profile.bathrooms_max %>
-                  <%= @buyer_profile.bathrooms_min || "Any" %> - <%= @buyer_profile.bathrooms_max || "Any" %>
+                <% if @buyer_profile.bathrooms_min %>
+                  <%= @buyer_profile.bathrooms_min %>+
                 <% else %>
                   Any
                 <% end %>
@@ -198,8 +194,8 @@
             <div class="stats-row">
               <span class="stats-label">Parking</span>
               <span class="stats-value">
-                <% if @buyer_profile.parking_min || @buyer_profile.parking_max %>
-                  <%= @buyer_profile.parking_min || "Any" %> - <%= @buyer_profile.parking_max || "Any" %>
+                <% if @buyer_profile.parking_min %>
+                  <%= @buyer_profile.parking_min %>+
                 <% else %>
                   Any
                 <% end %>
@@ -219,26 +215,16 @@
 
           <div class="stats-summary">
             <div class="stats-row">
-              <span class="stats-label">Preferred Suburbs</span>
+              <span class="stats-label">Search Areas</span>
               <span class="stats-value">
-                <% if @buyer_profile.preferred_suburbs.present? && @buyer_profile.preferred_suburbs.any? %>
+                <% if @buyer_profile.search_areas.present? && @buyer_profile.search_areas.any? %>
                   <div class="tag-group">
-                    <% @buyer_profile.preferred_suburbs.each do |suburb| %>
-                      <span class="tag"><%= suburb %></span>
+                    <% @buyer_profile.search_areas.each do |area| %>
+                      <span class="tag"><%= area %></span>
                     <% end %>
                   </div>
                 <% else %>
                   Any
-                <% end %>
-              </span>
-            </div>
-            <div class="stats-row">
-              <span class="stats-label">Max Commute Time</span>
-              <span class="stats-value">
-                <% if @buyer_profile.max_commute_minutes %>
-                  <%= @buyer_profile.max_commute_minutes %> minutes
-                <% else %>
-                  Not specified
                 <% end %>
               </span>
             </div>
@@ -302,6 +288,3 @@
           </div>
         </div>
       </div>
-    </div>
-  </main>
-</div>

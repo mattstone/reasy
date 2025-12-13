@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class OffersController < ApplicationController
+  layout "dashboard"
   before_action :authenticate_user!
   before_action :set_property, only: %i[new create]
   before_action :set_offer, only: %i[show withdraw]

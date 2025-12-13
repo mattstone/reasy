@@ -28,7 +28,7 @@
       <div class="metric-card-content">
         <div class="metric-card-value"><%= @pending_reviews %></div>
         <div class="metric-card-label">Pending Reviews</div>
-        <div class="metric-card-change" style="color: var(--reasy-orange);"><%= @disputed_reviews %> disputed</div>
+        <div class="metric-card-change" style="color: var(--color-accent);"><%= @disputed_reviews %> disputed</div>
       </div>
     </div>
     <div class="metric-card metric-card-sm">
@@ -72,8 +72,8 @@
           <% end %>
         <% end %>
       <% else %>
-        <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-6);">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green-500)" stroke-width="2" style="margin: 0 auto var(--reasy-space-3);">
+        <div class="admin-panel-content" style="text-align: center; padding: var(--space-6);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-success-pale0)" stroke-width="2" style="margin: 0 auto var(--space-3);">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
             <polyline points="22 4 12 14.01 9 11.01"/>
           </svg>
@@ -162,7 +162,7 @@
           <% end %>
         </ul>
       <% else %>
-        <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-6);">
+        <div class="admin-panel-content" style="text-align: center; padding: var(--space-6);">
           <p class="text-muted">No users yet.</p>
         </div>
       <% end %>
@@ -179,10 +179,10 @@
           <% @recent_properties.each do |property| %>
             <li class="recent-activity-item">
               <% if property.hero_image.attached? %>
-                <%= image_tag property.hero_image, style: "width: 40px; height: 40px; object-fit: cover; border-radius: var(--reasy-radius-md);" %>
+                <%= image_tag property.hero_image, style: "width: 40px; height: 40px; object-fit: cover; border-radius: var(--radius-md);" %>
               <% else %>
-                <div style="width: 40px; height: 40px; background: var(--reasy-gray-100); border-radius: var(--reasy-radius-md); display: flex; align-items: center; justify-content: center;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-gray-400)" stroke-width="2">
+                <div style="width: 40px; height: 40px; background: var(--color-gray-100); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-gray-400)" stroke-width="2">
                     <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                     <polyline points="9 22 9 12 15 12 15 22"/>
                   </svg>
@@ -192,7 +192,7 @@
                 <%= link_to truncate(property.address, length: 35), admin_property_path(property), class: "recent-activity-name" %>
                 <span class="recent-activity-meta">
                   <%= number_to_currency(property.price_cents / 100, precision: 0) %>
-                  <span class="badge badge-sm <%= property_status_badge_class(property.status) %>" style="margin-left: var(--reasy-space-2);">
+                  <span class="badge badge-sm <%= property_status_badge_class(property.status) %>" style="margin-left: var(--space-2);">
                     <%= property.status&.humanize || "Draft" %>
                   </span>
                 </span>
@@ -202,7 +202,7 @@
           <% end %>
         </ul>
       <% else %>
-        <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-6);">
+        <div class="admin-panel-content" style="text-align: center; padding: var(--space-6);">
           <p class="text-muted">No properties yet.</p>
         </div>
       <% end %>

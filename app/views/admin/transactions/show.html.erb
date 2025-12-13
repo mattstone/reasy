@@ -12,14 +12,14 @@
   <%# Transaction Header %>
   <div class="admin-user-header mb-6">
     <div class="admin-user-header-main">
-      <div style="width: 64px; height: 64px; background: var(--reasy-green-100); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center;">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green-600)" stroke-width="2">
+      <div style="width: 64px; height: 64px; background: var(--color-success-pale); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>
       </div>
       <div class="admin-user-header-info">
         <h1 class="admin-user-name">Transaction #<%= @transaction.id %></h1>
-        <p class="admin-user-email"><%= number_to_currency(@transaction.amount_cents.to_i / 100, precision: 0) %></p>
+        <p class="admin-user-email"><%= number_to_currency(@transaction.sale_price_cents.to_i / 100, precision: 0) %></p>
         <div class="admin-user-badges">
           <span class="badge <%= @transaction.status == 'completed' ? 'badge-green' : (@transaction.status == 'cancelled' ? 'badge-red' : 'badge-blue') %>">
             <%= @transaction.status&.humanize || "Pending" %>
@@ -55,7 +55,7 @@
         </div>
         <div class="admin-detail-row">
           <span class="admin-detail-label">Sale Price</span>
-          <span class="admin-detail-value"><%= number_to_currency(@transaction.amount_cents.to_i / 100, precision: 0) %></span>
+          <span class="admin-detail-value"><%= number_to_currency(@transaction.sale_price_cents.to_i / 100, precision: 0) %></span>
         </div>
         <div class="admin-detail-row">
           <span class="admin-detail-label">Created</span>
@@ -175,19 +175,19 @@
       <div class="admin-panel-header">
         <h2 class="admin-panel-title">Timeline</h2>
       </div>
-      <div style="padding: var(--reasy-space-4);">
+      <div style="padding: var(--space-4);">
         <% @timeline.each do |event| %>
-          <div style="display: flex; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <div style="width: 8px; height: 8px; background: var(--reasy-blue-500); border-radius: 50%; margin-top: 6px;"></div>
+          <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4);">
+            <div style="width: 8px; height: 8px; background: var(--color-primary-pale0); border-radius: 50%; margin-top: 6px;"></div>
             <div>
-              <div style="font-size: var(--reasy-text-sm); font-weight: 500; color: var(--reasy-gray-900);">
+              <div style="font-size: var(--font-size-sm); font-weight: 500; color: var(--color-gray-900);">
                 <%= event.event_type&.humanize || "Event" %>
               </div>
-              <div style="font-size: var(--reasy-text-xs); color: var(--reasy-gray-500);">
+              <div style="font-size: var(--font-size-xs); color: var(--color-gray-500);">
                 <%= event.created_at.strftime("%B %d, %Y at %I:%M %p") %>
               </div>
               <% if event.description.present? %>
-                <div style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin-top: var(--reasy-space-1);">
+                <div style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-top: var(--space-1);">
                   <%= event.description %>
                 </div>
               <% end %>

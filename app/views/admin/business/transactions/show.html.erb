@@ -1,0 +1,152 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Transaction Analytics</h1>
+      <p class="admin-page-subtitle">Sales volume, values, and settlement metrics</p>
+    </div>
+    <div class="admin-section-nav">
+      <%= link_to "Overview", admin_business_root_path, class: "admin-section-nav-item" %>
+      <%= link_to "Revenue", admin_business_revenue_path, class: "admin-section-nav-item" %>
+      <%= link_to "User Growth", admin_business_users_path, class: "admin-section-nav-item" %>
+      <%= link_to "Transactions", admin_business_transactions_path, class: "admin-section-nav-item active" %>
+    </div>
+  </div>
+
+  <%# Hero Metrics %>
+  <div class="admin-metric-hero">
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@total_value, precision: 0) %></div>
+      <div class="admin-metric-hero-label">Total Transaction Value</div>
+      <div class="admin-metric-hero-change neutral">All time</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="9" y1="21" x2="9" y2="9"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_with_delimiter(@total_count) %></div>
+      <div class="admin-metric-hero-label">Total Transactions</div>
+      <div class="admin-metric-hero-change neutral"><%= @active_count %> currently active</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon orange">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@avg_value, precision: 0) %></div>
+      <div class="admin-metric-hero-label">Avg Transaction Value</div>
+      <div class="admin-metric-hero-change neutral">Per transaction</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon purple">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= @settlement_success_rate %>%</div>
+      <div class="admin-metric-hero-label">Settlement Success</div>
+      <div class="admin-metric-hero-change neutral">Avg <%= @avg_settlement_days %> days to settle</div>
+    </div>
+  </div>
+
+  <%# Charts %>
+  <div class="admin-grid-2 mb-6">
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">Transaction Value Trend</h3>
+          <p class="admin-chart-card-subtitle">Last 30 days</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="area"
+           data-d3-chart-data-value="<%= @transaction_value_trend.to_json %>"
+           data-d3-chart-height-value="280"
+           data-d3-chart-colors-value='["#22c55e"]'>
+      </div>
+    </div>
+
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">Transactions by Status</h3>
+          <p class="admin-chart-card-subtitle">Current distribution</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="donut"
+           data-d3-chart-data-value="<%= @transactions_by_status.map { |status, count| { label: status&.humanize || 'Unknown', value: count } }.to_json %>"
+           data-d3-chart-height-value="280">
+      </div>
+    </div>
+  </div>
+
+  <%# Recent Transactions Table %>
+  <div class="admin-panel">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Recent Transactions</h2>
+      <%= link_to "View All", admin_transactions_path, class: "btn btn-ghost btn-sm" %>
+    </div>
+    <div class="admin-table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Buyer</th>
+            <th>Seller</th>
+            <th>Value</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @recent_transactions.each do |transaction| %>
+            <tr>
+              <td>
+                <%= link_to transaction.property&.address&.truncate(30) || "Unknown", admin_transaction_path(transaction), class: "text-link" %>
+              </td>
+              <td><%= transaction.buyer&.name || "N/A" %></td>
+              <td><%= transaction.seller&.name || "N/A" %></td>
+              <td><%= number_to_currency((transaction.sale_price_cents || 0) / 100.0, precision: 0) %></td>
+              <td>
+                <span class="badge badge-sm <%=
+                  case transaction.status
+                  when 'completed' then 'badge-green'
+                  when 'active', 'pending' then 'badge-yellow'
+                  when 'canceled' then 'badge-red'
+                  else 'badge-gray'
+                  end
+                %>">
+                  <%= transaction.status&.humanize || "Unknown" %>
+                </span>
+              </td>
+              <td class="text-muted text-sm"><%= transaction.created_at.strftime("%b %d, %Y") %></td>
+            </tr>
+          <% end %>
+          <% if @recent_transactions.empty? %>
+            <tr>
+              <td colspan="6" class="text-center py-6 text-muted">No transactions found</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class NotificationsController < ApplicationController
+  layout "dashboard"
   before_action :authenticate_user!
   before_action :set_notification, only: [:show, :mark_read]
 

@@ -54,7 +54,7 @@
             <div class="admin-review-meta">
               <div class="admin-review-participants">
                 <strong><%= review.reviewer&.name || "Anonymous" %></strong>
-                <span style="color: var(--reasy-gray-400);"> reviewed </span>
+                <span style="color: var(--color-gray-400);"> reviewed </span>
                 <strong><%= review.reviewee&.name || "Unknown" %></strong>
               </div>
               <div class="admin-review-date">
@@ -68,7 +68,7 @@
             </div>
             <div class="admin-review-rating">
               <% 5.times do |i| %>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="<%= i < review.rating ? 'var(--reasy-orange)' : 'none' %>" stroke="var(--reasy-orange)" stroke-width="2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="<%= i < review.rating ? 'var(--color-accent)' : 'none' %>" stroke="var(--color-accent)" stroke-width="2">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
               <% end %>
@@ -108,7 +108,7 @@
         </div>
       <% end %>
     <% else %>
-      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+      <div class="admin-panel-content" style="text-align: center; padding: var(--space-8);">
         <p class="text-muted">No reviews found.</p>
       </div>
     <% end %>

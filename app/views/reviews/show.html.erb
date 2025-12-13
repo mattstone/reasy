@@ -3,11 +3,7 @@
   is_about_me = @review.reviewee_id == current_user.id
 %>
 
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Back Link %>
       <div class="mb-4">
         <%= link_to reviews_path, class: "btn btn-ghost btn-sm" do %>
@@ -227,6 +223,3 @@
           </div>
         </div>
       <% end %>
-    </div>
-  </main>
-</div>

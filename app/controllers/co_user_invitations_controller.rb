@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CoUserInvitationsController < ApplicationController
+  layout "dashboard"
   before_action :authenticate_user!
   before_action :set_invitation, only: [:destroy, :resend, :revoke, :accept, :confirm]
 

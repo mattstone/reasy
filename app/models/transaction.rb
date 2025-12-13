@@ -96,6 +96,11 @@ class Transaction < ApplicationRecord
     !settled? && !fallen_through?
   end
 
+  def disputed?
+    # Placeholder - disputes feature not yet implemented
+    false
+  end
+
   def can_rescind?
     in_cooling_off? && cooling_off_ends_at.present? && cooling_off_ends_at > Time.current
   end

@@ -26,46 +26,54 @@
   </nav>
 
   <!-- Hero Section -->
-  <section class="r5-hero">
+  <section class="r5-hero r5-hero-compact">
     <div class="r5-hero-bg">
       <div class="r5-hero-gradient"></div>
       <div class="r5-hero-pattern"></div>
     </div>
 
     <div class="r5-hero-content" data-aos="fade-up" data-aos-duration="800">
-      <div class="r5-hero-badge">
-        <span class="r5-badge-dot"></span>
-        Trusted by 2,800+ Australian families
-      </div>
+      <h1>Find your perfect home</h1>
+      <p class="r5-hero-subtitle">Search thousands of properties across Australia</p>
 
-      <h1>Finally, someone<br>in <em>your</em> corner</h1>
-
-      <p class="r5-hero-lead">
-        Buying or selling your home is one of life's biggest decisions.
-        You deserve expert guidance that puts your interests first — not an agent's commission.
-      </p>
-
-      <div class="r5-hero-cta">
-        <%= link_to new_user_registration_path(role: "buyer"), class: "r5-btn r5-btn-primary r5-btn-xl" do %>
-          I'm looking to buy
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-4-4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <%# Property Search Widget - THE HERO %>
+      <div class="r5-hero-search-wide">
+        <%= form_with url: properties_path, method: :get, local: true, class: "r5-search-form-wide" do %>
+          <div class="r5-search-field">
+            <label class="r5-search-label">Location</label>
+            <div class="r5-search-input-group">
+              <svg class="r5-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <%= text_field_tag :location, nil,
+                  placeholder: "Enter suburb, postcode or region",
+                  class: "r5-search-input-wide",
+                  autocomplete: "off" %>
+            </div>
+          </div>
+          <%= submit_tag "Search", class: "r5-search-btn-wide" %>
         <% end %>
-        <%= link_to "I'm ready to sell", new_user_registration_path(role: "seller"), class: "r5-btn r5-btn-secondary r5-btn-xl" %>
       </div>
 
-      <div class="r5-hero-trust">
-        <div class="r5-trust-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Bank-level security</span>
+      <div class="r5-hero-actions">
+        <span class="r5-hero-or">or</span>
+        <div class="r5-hero-cta-inline">
+          <%= link_to new_user_registration_path(role: "buyer"), class: "r5-btn r5-btn-secondary" do %>
+            I'm looking to buy
+          <% end %>
+          <%= link_to new_user_registration_path(role: "seller"), class: "r5-btn r5-btn-orange" do %>
+            I'm ready to sell
+          <% end %>
         </div>
-        <div class="r5-trust-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Support 7 days a week</span>
-        </div>
-        <div class="r5-trust-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>No lock-in contracts</span>
-        </div>
+      </div>
+
+      <div class="r5-hero-trust-inline">
+        <span>Trusted by 2,800+ families</span>
+        <span class="r5-trust-dot"></span>
+        <span>$42M+ saved</span>
+        <span class="r5-trust-dot"></span>
+        <span>4.9/5 rating</span>
       </div>
     </div>
   </section>
@@ -465,12 +473,28 @@
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    AOS.init({
-      duration: 600,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 50
-    });
+  // Initialize AOS - works with both regular page loads and Turbo navigation
+  function initAOS() {
+    if (typeof AOS !== 'undefined') {
+      AOS.init({
+        duration: 600,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 50
+      });
+    }
+  }
+
+  // Run on initial page load
+  document.addEventListener('DOMContentLoaded', initAOS);
+
+  // Run on Turbo navigation (when navigating within the app)
+  document.addEventListener('turbo:load', initAOS);
+
+  // Also refresh AOS when Turbo renders new content
+  document.addEventListener('turbo:render', function() {
+    if (typeof AOS !== 'undefined') {
+      AOS.refresh();
+    }
   });
 </script>

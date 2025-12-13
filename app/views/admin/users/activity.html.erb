@@ -37,12 +37,12 @@
           <div class="audit-log-details">
             <% if log.changes_made.present? %>
               <% log.changes_made.each do |field, values| %>
-                <span style="display: inline-block; margin-right: var(--reasy-space-3);">
+                <span style="display: inline-block; margin-right: var(--space-3);">
                   <strong><%= field.humanize %>:</strong>
                   <% if values.is_a?(Array) && values.length == 2 %>
-                    <span style="text-decoration: line-through; color: var(--reasy-red-500);"><%= values[0] %></span>
+                    <span style="text-decoration: line-through; color: var(--color-error-pale0);"><%= values[0] %></span>
                     →
-                    <span style="color: var(--reasy-green-600);"><%= values[1] %></span>
+                    <span style="color: var(--color-success);"><%= values[1] %></span>
                   <% else %>
                     <%= values %>
                   <% end %>
@@ -60,7 +60,7 @@
         </div>
       <% end %>
     <% else %>
-      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+      <div class="admin-panel-content" style="text-align: center; padding: var(--space-8);">
         <p class="text-muted">No activity recorded for this user.</p>
       </div>
     <% end %>

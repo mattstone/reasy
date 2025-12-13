@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CoUsersController < ApplicationController
+  layout "dashboard"
   before_action :authenticate_user!
   before_action :set_relationship, only: [:show, :destroy]
 

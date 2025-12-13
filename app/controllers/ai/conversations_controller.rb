@@ -2,6 +2,7 @@
 
 module AI
   class ConversationsController < ApplicationController
+    layout "dashboard"
     before_action :authenticate_user!
     before_action :set_conversation, only: %i[show message]
 

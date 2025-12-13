@@ -455,6 +455,142 @@ h4 { font-size: var(--r5-text-xl); }
   margin-bottom: var(--r5-space-12);
 }
 
+/* Compact Hero - Search Focused */
+.r5-hero-compact {
+  min-height: auto;
+  padding: var(--r5-space-16) var(--r5-space-6);
+  padding-top: calc(var(--r5-space-16) + 80px);
+  padding-bottom: var(--r5-space-12);
+}
+
+.r5-hero-compact .r5-hero-content {
+  max-width: 900px;
+}
+
+.r5-hero-compact h1 {
+  font-size: var(--r5-text-5xl);
+  margin: 0 0 var(--r5-space-3);
+}
+
+.r5-hero-subtitle {
+  font-size: var(--r5-text-xl);
+  color: var(--r5-gray-600);
+  margin: 0 0 var(--r5-space-8);
+}
+
+/* Wide Search Widget - THE HERO */
+.r5-hero-search-wide {
+  margin: 0 auto var(--r5-space-6);
+  max-width: 800px;
+  width: 100%;
+}
+
+.r5-search-form-wide {
+  display: flex;
+  align-items: stretch;
+  background: var(--r5-white);
+  border-radius: var(--r5-radius-xl);
+  box-shadow: 0 12px 48px rgba(33, 38, 80, 0.15), 0 4px 16px rgba(33, 38, 80, 0.1);
+  overflow: hidden;
+}
+
+.r5-search-field {
+  flex: 1;
+  padding: var(--r5-space-4) var(--r5-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--r5-space-1);
+}
+
+.r5-search-label {
+  font-size: var(--r5-text-sm);
+  font-weight: 600;
+  color: var(--r5-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.r5-search-input-group {
+  display: flex;
+  align-items: center;
+  gap: var(--r5-space-3);
+}
+
+.r5-search-icon {
+  flex-shrink: 0;
+  color: var(--r5-gray-400);
+}
+
+.r5-search-input-wide {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: var(--r5-text-xl);
+  font-family: var(--r5-font);
+  color: var(--r5-dark);
+  background: transparent;
+  padding: var(--r5-space-2) 0;
+}
+
+.r5-search-input-wide::placeholder {
+  color: var(--r5-gray-400);
+}
+
+.r5-search-btn-wide {
+  flex-shrink: 0;
+  padding: var(--r5-space-6) var(--r5-space-10);
+  background: var(--r5-blue);
+  color: var(--r5-white);
+  border: none;
+  font-size: var(--r5-text-lg);
+  font-weight: 600;
+  font-family: var(--r5-font);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.r5-search-btn-wide:hover {
+  background: var(--r5-blue-dark);
+}
+
+/* Hero Actions */
+.r5-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--r5-space-4);
+  margin-bottom: var(--r5-space-8);
+}
+
+.r5-hero-or {
+  font-size: var(--r5-text-sm);
+  color: var(--r5-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.r5-hero-cta-inline {
+  display: flex;
+  gap: var(--r5-space-3);
+}
+
+/* Inline Trust Indicators */
+.r5-hero-trust-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--r5-space-4);
+  font-size: var(--r5-text-sm);
+  color: var(--r5-gray-500);
+}
+
+.r5-trust-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--r5-gray-300);
+  border-radius: 50%;
+}
+
 .r5-hero-trust {
   display: flex;
   justify-content: center;
@@ -1234,6 +1370,60 @@ h4 { font-size: var(--r5-text-xl); }
   .r5-hero-cta {
     flex-direction: column;
     align-items: center;
+  }
+
+  /* Mobile compact hero */
+  .r5-hero-compact {
+    padding-top: calc(var(--r5-space-12) + 70px);
+    padding-bottom: var(--r5-space-8);
+  }
+
+  .r5-hero-compact h1 {
+    font-size: var(--r5-text-3xl);
+  }
+
+  .r5-hero-subtitle {
+    font-size: var(--r5-text-lg);
+    margin-bottom: var(--r5-space-6);
+  }
+
+  /* Mobile wide search widget */
+  .r5-search-form-wide {
+    flex-direction: column;
+    border-radius: var(--r5-radius-xl);
+  }
+
+  .r5-search-field {
+    padding: var(--r5-space-4);
+  }
+
+  .r5-search-input-wide {
+    font-size: var(--r5-text-lg);
+  }
+
+  .r5-search-btn-wide {
+    padding: var(--r5-space-4) var(--r5-space-6);
+    font-size: var(--r5-text-base);
+  }
+
+  .r5-hero-actions {
+    flex-direction: column;
+    gap: var(--r5-space-3);
+  }
+
+  .r5-hero-cta-inline {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .r5-hero-cta-inline .r5-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .r5-hero-trust-inline {
+    flex-wrap: wrap;
+    gap: var(--r5-space-2);
   }
 
   .r5-hero-trust {

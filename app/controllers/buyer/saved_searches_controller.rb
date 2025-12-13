@@ -2,6 +2,7 @@
 
 module Buyer
   class SavedSearchesController < ApplicationController
+    layout "dashboard"
     before_action :authenticate_user!
     before_action :set_saved_search, only: %i[show edit update destroy]
 

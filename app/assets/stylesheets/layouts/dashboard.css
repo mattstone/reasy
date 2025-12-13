@@ -23,10 +23,10 @@
 }
 
 /* ============================================
-   Content Area
+   Content Area - Generous whitespace
    ============================================ */
 .content {
-  padding: var(--space-8);
+  padding: var(--space-10);
   max-width: var(--content-max-width);
 }
 
@@ -35,7 +35,11 @@
 }
 
 .content-padded {
-  padding: var(--space-10);
+  padding: var(--space-12);
+}
+
+.content-narrow {
+  max-width: var(--content-narrow-width);
 }
 
 /* ============================================
@@ -44,8 +48,8 @@
 .dashboard-hero {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
+  gap: var(--space-6);
+  margin-bottom: var(--space-10);
 }
 
 @media (max-width: 1200px) {
@@ -61,12 +65,12 @@
 }
 
 /* ============================================
-   Dashboard Main Grid
+   Dashboard Main Grid - More breathing room
    ============================================ */
 .dashboard-main {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 @media (max-width: 1200px) {
@@ -76,12 +80,12 @@
 }
 
 /* ============================================
-   Dashboard Panels
+   Dashboard Panels - Larger radius, more padding
    ============================================ */
 .dashboard-panel {
   background: var(--color-surface);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
   box-shadow: var(--shadow-card);
 }
 
@@ -89,7 +93,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .dashboard-panel-title {
@@ -197,27 +201,28 @@
 .quick-action {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
+  gap: var(--space-4);
+  padding: var(--space-5);
   background: var(--color-gray-50);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   text-decoration: none;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-base);
 }
 
 .quick-action:hover {
   background: var(--color-gray-100);
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .quick-action-icon {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-white);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
 
@@ -269,17 +274,18 @@
 }
 
 /* ============================================
-   Welcome Banner
+   Welcome Banner - More prominent
    ============================================ */
 .welcome-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-6);
+  padding: var(--space-8);
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   color: var(--color-white);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-10);
+  box-shadow: 0 8px 30px rgba(79, 125, 221, 0.25);
 }
 
 .welcome-banner-content h1 {
@@ -338,6 +344,47 @@
 }
 
 /* ============================================
+   Section Backgrounds (Rentberry-inspired)
+   ============================================ */
+.section-beige {
+  background: var(--section-bg-beige);
+  padding: var(--space-12) var(--space-8);
+  margin: 0 calc(var(--space-10) * -1);
+  margin-bottom: var(--space-10);
+}
+
+.section-beige-light {
+  background: var(--section-bg-beige-light);
+  padding: var(--space-10) var(--space-8);
+  margin: 0 calc(var(--space-10) * -1);
+  margin-bottom: var(--space-10);
+}
+
+.section-blue-light {
+  background: var(--section-bg-blue-light);
+  padding: var(--space-10) var(--space-8);
+  border-radius: var(--radius-2xl);
+  margin-bottom: var(--space-8);
+}
+
+/* ============================================
+   Dashboard Section Titles
+   ============================================ */
+.section-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+}
+
+.section-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-top: calc(var(--space-2) * -1);
+  margin-bottom: var(--space-8);
+}
+
+/* ============================================
    Responsive Layout
    ============================================ */
 @media (max-width: 1024px) {
@@ -348,6 +395,13 @@
   .content {
     padding: var(--space-6);
   }
+
+  .section-beige,
+  .section-beige-light {
+    margin: 0 calc(var(--space-6) * -1);
+    margin-bottom: var(--space-8);
+    padding: var(--space-8) var(--space-6);
+  }
 }
 
 @media (max-width: 768px) {
@@ -356,10 +410,17 @@
   }
 
   .dashboard-panel {
-    padding: var(--space-4);
+    padding: var(--space-5);
   }
 
   .quick-actions {
     grid-template-columns: 1fr;
+  }
+
+  .section-beige,
+  .section-beige-light {
+    margin: 0 calc(var(--space-4) * -1);
+    margin-bottom: var(--space-6);
+    padding: var(--space-6) var(--space-4);
   }
 }

@@ -104,6 +104,9 @@ gem "alba", "~> 3.3"
 # HTTP client for external APIs
 gem "faraday", "~> 2.12"
 
+# Geocoding
+gem "geocoder", "~> 1.8"
+
 # State machine
 gem "aasm", "~> 5.5"
 

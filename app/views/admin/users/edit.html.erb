@@ -27,7 +27,7 @@
         <%= form_with model: [:admin, @user], local: true do |f| %>
           <% if @user.errors.any? %>
             <div class="alert alert-error mb-4">
-              <ul style="margin: 0; padding-left: var(--reasy-space-4);">
+              <ul style="margin: 0; padding-left: var(--space-4);">
                 <% @user.errors.full_messages.each do |message| %>
                   <li><%= message %></li>
                 <% end %>
@@ -75,9 +75,9 @@
 
           <div class="form-group">
             <label class="form-label">Roles</label>
-            <div style="display: flex; flex-direction: column; gap: var(--reasy-space-2);">
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
               <% %w[buyer seller service_provider admin].each do |role| %>
-                <label style="display: flex; align-items: center; gap: var(--reasy-space-2); font-weight: normal;">
+                <label style="display: flex; align-items: center; gap: var(--space-2); font-weight: normal;">
                   <input type="checkbox" name="user[roles][]" value="<%= role %>" <%= 'checked' if @user.roles.include?(role) %>>
                   <%= role.humanize %>
                 </label>
@@ -86,7 +86,7 @@
             </div>
           </div>
 
-          <div style="display: flex; gap: var(--reasy-space-3); margin-top: var(--reasy-space-6);">
+          <div style="display: flex; gap: var(--space-3); margin-top: var(--space-6);">
             <%= f.submit "Save Changes", class: "btn btn-primary" %>
             <%= link_to "Cancel", admin_user_path(@user), class: "btn btn-secondary" %>
           </div>

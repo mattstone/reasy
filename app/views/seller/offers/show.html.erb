@@ -1,8 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
@@ -12,7 +8,7 @@
             </svg>
             Back to Offers
           <% end %>
-          <h1 class="page-title">Offer from <%= @offer.buyer.full_name || @offer.buyer.email %></h1>
+          <h1 class="page-title">Offer from <%= @offer.buyer.name || @offer.buyer.email %></h1>
           <p class="page-subtitle">Received <%= @offer.submitted_at&.strftime("%d %B %Y at %I:%M %p") || "Not yet submitted" %></p>
         </div>
       </div>
@@ -45,16 +41,16 @@
         </div>
         <div class="offer-status-content">
           <div class="offer-status-title">
-            <% case @offer.status %>
-            <% when "submitted" %>Offer Pending Response
-            <% when "viewed" %>Offer Viewed
-            <% when "accepted" %>Offer Accepted
-            <% when "rejected" %>Offer Rejected
-            <% when "countered" %>Counter-Offer Sent
-            <% when "withdrawn" %>Offer Withdrawn
-            <% when "expired" %>Offer Expired
-            <% else %><%= @offer.status.humanize %>
-            <% end %>
+            <% case @offer.status
+               when "submitted" %>Offer Pending Response<%
+               when "viewed" %>Offer Viewed<%
+               when "accepted" %>Offer Accepted<%
+               when "rejected" %>Offer Rejected<%
+               when "countered" %>Counter-Offer Sent<%
+               when "withdrawn" %>Offer Withdrawn<%
+               when "expired" %>Offer Expired<%
+               else %><%= @offer.status.humanize %><%
+               end %>
           </div>
           <div class="offer-status-description">
             <% case @offer.status %>
@@ -146,12 +142,12 @@
             </div>
           <% end %>
 
-          <% if @offer.message.present? %>
-            <%# Buyer Message %>
+          <% if @offer.other_conditions.present? %>
+            <%# Buyer Notes %>
             <div class="dashboard-panel">
-              <h2 class="dashboard-panel-title mb-4">Message from Buyer</h2>
+              <h2 class="dashboard-panel-title mb-4">Additional Notes from Buyer</h2>
               <div class="message-box">
-                <p><%= simple_format(@offer.message) %></p>
+                <p><%= simple_format(@offer.other_conditions) %></p>
               </div>
             </div>
           <% end %>
@@ -232,10 +228,10 @@
 
             <div class="buyer-info">
               <div class="buyer-avatar">
-                <%= @offer.buyer.full_name&.first || @offer.buyer.email.first.upcase %>
+                <%= @offer.buyer.name&.first || @offer.buyer.email.first.upcase %>
               </div>
               <div class="buyer-details">
-                <div class="buyer-name"><%= @offer.buyer.full_name || "Buyer" %></div>
+                <div class="buyer-name"><%= @offer.buyer.name || "Buyer" %></div>
                 <div class="buyer-email"><%= @offer.buyer.email %></div>
               </div>
             </div>
@@ -290,6 +286,3 @@
           <% end %>
         </div>
       </div>
-    </div>
-  </main>
-</div>

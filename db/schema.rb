@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_12_093413) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -373,6 +373,39 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_093413) do
     t.index ["submitted_at"], name: "index_offers_on_submitted_at"
   end
 
+  create_table "postcode_profiles", force: :cascade do |t|
+    t.decimal "avg_household_size"
+    t.datetime "created_at", null: false
+    t.string "data_source"
+    t.integer "data_year"
+    t.decimal "families_with_children_pct"
+    t.datetime "last_updated_at"
+    t.decimal "latitude"
+    t.string "locality"
+    t.decimal "longitude"
+    t.integer "median_age"
+    t.bigint "median_house_price_cents"
+    t.bigint "median_household_income_cents"
+    t.bigint "median_land_value_cents"
+    t.bigint "median_unit_price_cents"
+    t.decimal "mortgage_pct"
+    t.decimal "owner_occupied_pct"
+    t.integer "population"
+    t.string "postcode"
+    t.decimal "professional_occupation_pct"
+    t.decimal "rented_pct"
+    t.integer "seifa_advantage_disadvantage"
+    t.integer "seifa_economic_resources"
+    t.integer "seifa_education_occupation"
+    t.string "state"
+    t.decimal "unemployment_rate"
+    t.decimal "university_educated_pct"
+    t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_postcode_profiles_on_latitude_and_longitude"
+    t.index ["postcode"], name: "index_postcode_profiles_on_postcode", unique: true
+    t.index ["state"], name: "index_postcode_profiles_on_state"
+  end
+
   create_table "properties", force: :cascade do |t|
     t.text "ai_generated_description"
     t.integer "bathrooms"
@@ -477,6 +510,45 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_093413) do
     t.index ["property_id"], name: "index_property_loves_on_property_id"
     t.index ["user_id", "property_id"], name: "index_property_loves_on_user_id_and_property_id", unique: true
     t.index ["user_id"], name: "index_property_loves_on_user_id"
+  end
+
+  create_table "property_sales", force: :cascade do |t|
+    t.string "address"
+    t.integer "bathrooms"
+    t.integer "bedrooms"
+    t.decimal "building_area_sqm"
+    t.date "contract_date"
+    t.datetime "created_at", null: false
+    t.string "data_source"
+    t.decimal "land_area_sqm"
+    t.bigint "land_value_cents"
+    t.date "land_value_date"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.integer "parking"
+    t.string "postcode"
+    t.string "property_id"
+    t.string "property_type"
+    t.bigint "sale_price_cents"
+    t.date "settlement_date"
+    t.string "source_id"
+    t.string "state"
+    t.boolean "strata_lot"
+    t.string "street_name"
+    t.string "street_number"
+    t.string "suburb"
+    t.string "unit_number"
+    t.datetime "updated_at", null: false
+    t.integer "year_built"
+    t.string "zoning"
+    t.index ["contract_date"], name: "index_property_sales_on_contract_date"
+    t.index ["latitude", "longitude"], name: "index_property_sales_on_latitude_and_longitude"
+    t.index ["postcode"], name: "index_property_sales_on_postcode"
+    t.index ["property_id"], name: "index_property_sales_on_property_id"
+    t.index ["property_type"], name: "index_property_sales_on_property_type"
+    t.index ["source_id"], name: "index_property_sales_on_source_id", unique: true
+    t.index ["state"], name: "index_property_sales_on_state"
+    t.index ["suburb"], name: "index_property_sales_on_suburb"
   end
 
   create_table "property_views", force: :cascade do |t|
@@ -669,6 +741,43 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_093413) do
     t.index ["service_type"], name: "index_service_provider_profiles_on_service_type"
     t.index ["user_id"], name: "index_service_provider_profiles_on_user_id", unique: true
     t.index ["verification_status"], name: "index_service_provider_profiles_on_verification_status"
+  end
+
+  create_table "suburb_profiles", force: :cascade do |t|
+    t.decimal "avg_household_size"
+    t.datetime "created_at", null: false
+    t.integer "data_year"
+    t.integer "days_on_market_house"
+    t.integer "days_on_market_unit"
+    t.decimal "house_price_growth_1yr"
+    t.decimal "house_price_growth_5yr"
+    t.datetime "last_updated_at"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.integer "median_age"
+    t.bigint "median_house_price_cents"
+    t.bigint "median_household_income_cents"
+    t.bigint "median_land_value_cents"
+    t.bigint "median_unit_price_cents"
+    t.decimal "owner_occupied_pct"
+    t.integer "population"
+    t.string "postcode"
+    t.decimal "rental_yield_house"
+    t.decimal "rental_yield_unit"
+    t.decimal "rented_pct"
+    t.integer "sales_volume_12m"
+    t.string "school_catchment_primary"
+    t.string "school_catchment_secondary"
+    t.integer "seifa_score"
+    t.string "state"
+    t.string "suburb"
+    t.decimal "unit_price_growth_1yr"
+    t.decimal "unit_price_growth_5yr"
+    t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_suburb_profiles_on_latitude_and_longitude"
+    t.index ["postcode"], name: "index_suburb_profiles_on_postcode"
+    t.index ["state"], name: "index_suburb_profiles_on_state"
+    t.index ["suburb", "state"], name: "index_suburb_profiles_on_suburb_and_state", unique: true
   end
 
   create_table "transaction_events", force: :cascade do |t|

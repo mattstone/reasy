@@ -1,0 +1,26 @@
+<%
+  # Shared Property Image Partial - falls back to static map if no image
+  # Usage: render 'shared/property_image', property: @property, size: :medium
+  size ||= :medium
+  show_placeholder = local_assigns.fetch(:show_placeholder, true)
+
+  map_dimensions = case size
+                   when :small then { width: 160, height: 120 }
+                   when :large then { width: 400, height: 300 }
+                   else { width: 240, height: 160 }
+                   end
+%>
+<% if property.hero_image.attached? %>
+  <%= image_tag property.hero_image, alt: property.street_address, style: "width: 100%; height: 100%; object-fit: cover;" %>
+<% elsif property.photos.attached? && property.photos.any? %>
+  <%= image_tag property.photos.first, alt: property.street_address, style: "width: 100%; height: 100%; object-fit: cover;" %>
+<% elsif (map_url = property_static_map_url(property, width: map_dimensions[:width], height: map_dimensions[:height])) %>
+  <%= image_tag map_url, alt: "Map of #{property.street_address}", style: "width: 100%; height: 100%; object-fit: cover;" %>
+<% elsif show_placeholder %>
+  <div class="property-card-placeholder">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  </div>
+<% end %>

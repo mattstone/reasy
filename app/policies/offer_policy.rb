@@ -33,6 +33,29 @@ class OfferPolicy < ApplicationPolicy
     true
   end
 
+  # Seller actions
+  def accept?
+    seller_can_respond?
+  end
+
+  def reject?
+    seller_can_respond?
+  end
+
+  def counter?
+    seller_can_respond?
+  end
+
+  private
+
+  def seller_can_respond?
+    return false unless user.present?
+    return false unless record.property&.user_id == user.id # Must be property owner
+    return false unless record.active? # Offer must be active
+
+    true
+  end
+
   class Scope < ApplicationPolicy::Scope
     def resolve
       # User can see offers they made or offers on properties they own

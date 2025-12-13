@@ -1,8 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
@@ -35,11 +31,7 @@
               <div class="property-card">
                 <%# Property Image %>
                 <div class="property-card-image">
-                  <% if property.hero_image.attached? %>
-                    <%= image_tag property.hero_image.variant(resize_to_fill: [400, 300]), alt: property.headline || property.street_address %>
-                  <% else %>
-                    <div class="property-card-placeholder"></div>
-                  <% end %>
+                  <%= render 'shared/property_image', property: property, size: :large %>
 
                   <%# Status Badge %>
                   <% if property.under_offer? %>
@@ -136,6 +128,3 @@
           <% end %>
         </div>
       <% end %>
-    </div>
-  </main>
-</div>

@@ -12,8 +12,8 @@
   <%# Review Header %>
   <div class="admin-user-header mb-6">
     <div class="admin-user-header-main">
-      <div style="width: 64px; height: 64px; background: var(--reasy-orange-100); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center;">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--reasy-orange)" stroke="var(--reasy-orange)" stroke-width="2">
+      <div style="width: 64px; height: 64px; background: var(--color-accent-100); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="var(--color-accent)" stroke-width="2">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
         </svg>
       </div>
@@ -62,44 +62,44 @@
       </div>
       <div class="admin-panel-content">
         <%# Rating %>
-        <div style="display: flex; gap: var(--reasy-space-1); margin-bottom: var(--reasy-space-4);">
+        <div style="display: flex; gap: var(--space-1); margin-bottom: var(--space-4);">
           <% 5.times do |i| %>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="<%= i < @review.rating ? 'var(--reasy-orange)' : 'none' %>" stroke="var(--reasy-orange)" stroke-width="2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="<%= i < @review.rating ? 'var(--color-accent)' : 'none' %>" stroke="var(--color-accent)" stroke-width="2">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
             </svg>
           <% end %>
-          <span style="margin-left: var(--reasy-space-2); color: var(--reasy-gray-600);">
+          <span style="margin-left: var(--space-2); color: var(--color-gray-600);">
             <%= @review.rating %> out of 5
           </span>
         </div>
 
         <%# Category Ratings %>
         <% if @review.respond_to?(:category_ratings) && @review.category_ratings.present? %>
-          <div style="margin-bottom: var(--reasy-space-4);">
-            <h4 style="font-size: var(--reasy-text-sm); font-weight: 600; color: var(--reasy-gray-700); margin-bottom: var(--reasy-space-2);">Category Ratings</h4>
+          <div style="margin-bottom: var(--space-4);">
+            <h4 style="font-size: var(--font-size-sm); font-weight: 600; color: var(--color-gray-700); margin-bottom: var(--space-2);">Category Ratings</h4>
             <% @review.category_ratings.each do |category, rating| %>
-              <div style="display: flex; justify-content: space-between; margin-bottom: var(--reasy-space-1);">
-                <span style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600);"><%= category.humanize %></span>
-                <span style="font-size: var(--reasy-text-sm); font-weight: 500;"><%= rating %>/5</span>
+              <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);">
+                <span style="font-size: var(--font-size-sm); color: var(--color-gray-600);"><%= category.humanize %></span>
+                <span style="font-size: var(--font-size-sm); font-weight: 500;"><%= rating %>/5</span>
               </div>
             <% end %>
           </div>
         <% end %>
 
         <%# Review Text %>
-        <div style="border-top: 1px solid var(--reasy-gray-100); padding-top: var(--reasy-space-4);">
-          <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-700); line-height: 1.6;">
+        <div style="border-top: 1px solid var(--color-gray-100); padding-top: var(--space-4);">
+          <p style="font-size: var(--font-size-sm); color: var(--color-gray-700); line-height: 1.6;">
             <%= @review.content %>
           </p>
         </div>
 
         <%# Response %>
         <% if @review.response.present? %>
-          <div style="margin-top: var(--reasy-space-4); padding: var(--reasy-space-4); background: var(--reasy-gray-50); border-radius: var(--reasy-radius-md);">
-            <h4 style="font-size: var(--reasy-text-sm); font-weight: 600; color: var(--reasy-gray-700); margin-bottom: var(--reasy-space-2);">
+          <div style="margin-top: var(--space-4); padding: var(--space-4); background: var(--color-gray-50); border-radius: var(--radius-md);">
+            <h4 style="font-size: var(--font-size-sm); font-weight: 600; color: var(--color-gray-700); margin-bottom: var(--space-2);">
               Response from <%= @review.reviewee&.name || "Reviewee" %>
             </h4>
-            <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); line-height: 1.6;">
+            <p style="font-size: var(--font-size-sm); color: var(--color-gray-600); line-height: 1.6;">
               <%= @review.response %>
             </p>
           </div>
@@ -172,22 +172,22 @@
         <h2 class="admin-panel-title">Disputes (<%= @review.disputes.count %>)</h2>
       </div>
       <% @review.disputes.each do |dispute| %>
-        <div style="padding: var(--reasy-space-4) var(--reasy-space-5); border-bottom: 1px solid var(--reasy-gray-100);">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--reasy-space-2);">
+        <div style="padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--color-gray-100);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-2);">
             <div>
               <span class="badge badge-sm <%= dispute.status == 'resolved' ? 'badge-green' : 'badge-orange' %>">
                 <%= dispute.status&.humanize || "Pending" %>
               </span>
-              <span style="font-size: var(--reasy-text-xs); color: var(--reasy-gray-500); margin-left: var(--reasy-space-2);">
+              <span style="font-size: var(--font-size-xs); color: var(--color-gray-500); margin-left: var(--space-2);">
                 Filed <%= time_ago_in_words(dispute.created_at) %> ago
               </span>
             </div>
             <%= link_to "View Dispute", admin_review_dispute_path(dispute), class: "btn btn-ghost btn-sm" %>
           </div>
-          <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600);">
+          <p style="font-size: var(--font-size-sm); color: var(--color-gray-600);">
             <strong>Reason:</strong> <%= dispute.reason&.humanize || "Other" %>
           </p>
-          <p style="font-size: var(--reasy-text-sm); color: var(--reasy-gray-600); margin-top: var(--reasy-space-1);">
+          <p style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-top: var(--space-1);">
             <%= truncate(dispute.explanation, length: 200) %>
           </p>
         </div>

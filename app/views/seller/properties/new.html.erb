@@ -1,8 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
@@ -26,6 +22,3 @@
       <%= form_with model: @property, url: seller_properties_path, method: :post, id: "property_form", data: { turbo: false } do |f| %>
         <%= render "form", f: f, property: @property, step: @step, entities: @entities %>
       <% end %>
-    </div>
-  </main>
-</div>

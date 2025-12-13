@@ -117,7 +117,7 @@
     <% end %>
 
     <% if is_about_me && review.published? && !review.has_active_dispute? %>
-      <%= link_to new_review_review_dispute_path(review), class: "btn btn-sm btn-ghost" do %>
+      <%= link_to new_review_dispute_path(review), class: "btn btn-sm btn-ghost" do %>
         Dispute
       <% end %>
     <% end %>

@@ -182,6 +182,24 @@ Rails.application.routes.draw do
     # Dashboard
     get "dashboard", to: "dashboard#show"
 
+    # Business Intelligence Section
+    namespace :business do
+      root to: "dashboard#show"
+      get "dashboard", to: "dashboard#show", as: :dashboard
+      get "revenue", to: "revenue#show", as: :revenue
+      get "users", to: "users#show", as: :users
+      get "transactions", to: "transactions#show", as: :transactions
+    end
+
+    # System Health Section
+    namespace :system do
+      root to: "dashboard#show"
+      get "dashboard", to: "dashboard#show", as: :dashboard
+      get "usage", to: "usage#show", as: :usage
+      get "ai", to: "ai#show", as: :ai
+      get "audit", to: "audit#show", as: :audit
+    end
+
     # Users management
     resources :users do
       member do

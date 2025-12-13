@@ -8,7 +8,18 @@ class PropertiesController < ApplicationController
   before_action :set_property, only: [:show, :enquire, :love, :unlove]
 
   def index
-    @pagy, @properties = pagy(Property.active.includes(:user), limit: 12)
+    properties = Property.active.includes(:user)
+
+    # Apply location filter (suburb, postcode, or state)
+    if params[:location].present?
+      location = params[:location].strip
+      properties = properties.where(
+        "suburb ILIKE :q OR postcode = :exact OR state ILIKE :q",
+        q: "%#{location}%", exact: location
+      )
+    end
+
+    @pagy, @properties = pagy(properties, limit: 12)
   end
 
   def show

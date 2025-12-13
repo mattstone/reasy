@@ -21,7 +21,7 @@
   <div class="admin-panel mb-4">
     <div class="admin-panel-content">
       <%= form_with url: admin_audit_logs_path, method: :get, local: true do |f| %>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--reasy-space-4);">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4);">
           <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label">Action Type</label>
             <select name="action_type" class="form-control form-control-sm">
@@ -59,8 +59,8 @@
         <div class="audit-log-entry">
           <div class="audit-log-header">
             <span class="audit-log-action">
-              <span class="badge badge-sm <%= log.action == 'create' ? 'badge-green' : (log.action == 'delete' ? 'badge-red' : 'badge-blue') %>">
-                <%= log.action&.upcase || "ACTION" %>
+              <span class="badge badge-sm <%= log.action_type&.include?('create') ? 'badge-green' : (log.action_type&.include?('delete') ? 'badge-red' : 'badge-blue') %>">
+                <%= log.action_type&.split('.')&.last&.upcase || "ACTION" %>
               </span>
               <%= log.resource_type&.humanize || "Resource" %>
               <% if log.resource_id %>
@@ -70,21 +70,21 @@
             <span class="audit-log-time"><%= log.created_at.strftime("%B %d, %Y at %I:%M:%S %p") %></span>
           </div>
           <div class="audit-log-details">
-            <% if log.changes_made.present? %>
-              <% log.changes_made.each do |field, values| %>
-                <span style="display: inline-block; margin-right: var(--reasy-space-3);">
+            <% if log.recorded_changes.present? %>
+              <% log.recorded_changes.each do |field, values| %>
+                <span style="display: inline-block; margin-right: var(--space-3);">
                   <strong><%= field.humanize %>:</strong>
                   <% if values.is_a?(Array) && values.length == 2 %>
-                    <span style="text-decoration: line-through; color: var(--reasy-red-500);"><%= values[0] %></span>
+                    <span style="text-decoration: line-through; color: var(--color-error);"><%= values[0] %></span>
                     →
-                    <span style="color: var(--reasy-green-600);"><%= values[1] %></span>
+                    <span style="color: var(--color-success);"><%= values[1] %></span>
                   <% else %>
                     <%= values %>
                   <% end %>
                 </span>
               <% end %>
             <% else %>
-              <%= log.description || "No details available" %>
+              No details available
             <% end %>
           </div>
           <div class="audit-log-user">
@@ -100,7 +100,7 @@
         </div>
       <% end %>
     <% else %>
-      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+      <div class="admin-panel-content" style="text-align: center; padding: var(--space-8);">
         <p class="text-muted">No audit logs found.</p>
       </div>
     <% end %>

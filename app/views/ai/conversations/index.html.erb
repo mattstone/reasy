@@ -1,8 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
@@ -151,14 +147,14 @@
               <% assistant_info = AI::AssistantService::ASSISTANTS[assistant_key] %>
               <%= link_to ai_conversation_path(conversation), class: "ai-conversation-item" do %>
                 <div class="ai-conversation-avatar ai-avatar-<%= conversation.assistant %>">
-                  <% case conversation.assistant %>
-                  <% when "max" %>🏠
-                  <% when "sage" %>🧭
-                  <% when "nina" %>🤝
-                  <% when "doc" %>📄
-                  <% when "scout" %>📊
-                  <% when "ally" %>👥
-                  <% end %>
+                  <% case conversation.assistant
+                     when "max" %>🏠<%
+                     when "sage" %>🧭<%
+                     when "nina" %>🤝<%
+                     when "doc" %>📄<%
+                     when "scout" %>📊<%
+                     when "ally" %>👥<%
+                     end %>
                 </div>
                 <div class="ai-conversation-content">
                   <div class="ai-conversation-name"><%= assistant_info&.dig(:name) || conversation.assistant.titleize %></div>
@@ -180,6 +176,3 @@
           </div>
         <% end %>
       </div>
-    </div>
-  </main>
-</div>

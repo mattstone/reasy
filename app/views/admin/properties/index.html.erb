@@ -69,16 +69,9 @@
             <tr>
               <td>
                 <div class="admin-property-card" style="padding: 0; border: none;">
-                  <% if property.hero_image.attached? %>
-                    <%= image_tag property.hero_image, class: "admin-property-image" %>
-                  <% else %>
-                    <div class="admin-property-image" style="display: flex; align-items: center; justify-content: center;">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--reasy-gray-300);">
-                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
-                      </svg>
-                    </div>
-                  <% end %>
+                  <div class="admin-property-image">
+                    <%= render 'shared/property_image', property: property, size: :small %>
+                  </div>
                   <div class="admin-property-info">
                     <%= link_to property.address, admin_property_path(property), class: "admin-property-address" %>
                     <span class="admin-property-details">

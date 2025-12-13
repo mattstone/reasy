@@ -160,18 +160,7 @@
             <article class="property-card">
               <%# Image container %>
               <div class="property-card-image">
-                <% if property.hero_image.attached? %>
-                  <%= image_tag property.hero_image.variant(resize_to_fill: [400, 250]), alt: property.short_address %>
-                <% elsif property.photos.attached? && property.photos.first.present? %>
-                  <%= image_tag property.photos.first.variant(resize_to_fill: [400, 250]), alt: property.short_address %>
-                <% else %>
-                  <div class="property-card-placeholder">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                      <polyline points="9 22 9 12 15 12 15 22"/>
-                    </svg>
-                  </div>
-                <% end %>
+                <%= render 'shared/property_image', property: property, size: :large %>
 
                 <%# Status badge %>
                 <div class="property-card-badge">

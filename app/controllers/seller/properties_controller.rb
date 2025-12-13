@@ -2,6 +2,7 @@
 
 module Seller
   class PropertiesController < ApplicationController
+    layout "dashboard"
     before_action :authenticate_user!
     before_action :set_property, only: %i[show edit update publish unpublish archive]
 

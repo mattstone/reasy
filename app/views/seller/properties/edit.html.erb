@@ -1,8 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
@@ -34,6 +30,3 @@
         <%= hidden_field_tag :step, @step %>
         <%= render "form", f: f, property: @property, step: @step, entities: @entities %>
       <% end %>
-    </div>
-  </main>
-</div>

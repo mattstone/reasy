@@ -120,6 +120,19 @@ class BuyerProfile < ApplicationRecord
     location_preferences.dig("near_bus_stop", "enabled")
   end
 
+  # Property love/unlove helpers
+  def love_property(property)
+    PropertyLove.find_or_create_by(user: user, property: property)
+  end
+
+  def unlove_property(property)
+    PropertyLove.find_by(user: user, property: property)&.destroy
+  end
+
+  def loves_property?(property)
+    PropertyLove.exists?(user: user, property: property)
+  end
+
   private
 
   def budget_max_greater_than_min

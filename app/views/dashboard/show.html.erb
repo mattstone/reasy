@@ -1,9 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
-
-  <main class="layout-main">
-    <div class="content">
-      <%# Page Header %>
+<%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
           <h1 class="page-title">Welcome back, <%= current_user.name&.split&.first || "there" %></h1>
@@ -19,7 +14,7 @@
             <% end %>
           <% end %>
           <% if current_user.buyer? %>
-            <%= link_to properties_path, class: "btn btn-secondary" do %>
+            <%= link_to properties_path, class: "btn btn-secondary", data: { turbo_frame: "_top" } do %>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
@@ -260,7 +255,7 @@
                   <p class="dashboard-panel-subtitle">Properties that match your search criteria</p>
                 </div>
                 <div class="dashboard-panel-actions">
-                  <%= link_to properties_path, class: "btn btn-sm btn-ghost" do %>
+                  <%= link_to properties_path, class: "btn btn-sm btn-ghost", data: { turbo_frame: "_top" } do %>
                     View all
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -273,17 +268,9 @@
               <% if matches.any? %>
                 <div class="property-card-list">
                   <% matches.each do |property| %>
-                    <%= link_to property_path(property), class: "property-card property-card-horizontal" do %>
+                    <%= link_to property_path(property), class: "property-card property-card-horizontal", data: { turbo_frame: "_top" } do %>
                       <div class="property-card-image">
-                        <% if property.hero_image.attached? %>
-                          <%= image_tag property.hero_image, alt: property.street_address %>
-                        <% else %>
-                          <div class="property-card-placeholder">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                          </div>
-                        <% end %>
+                        <%= render 'shared/property_image', property: property, size: :medium %>
                       </div>
                       <div class="property-card-content">
                         <div class="property-card-price"><%= number_to_currency(property.price, precision: 0) rescue 'Price on request' %></div>
@@ -321,7 +308,7 @@
                   <p class="dashboard-panel-subtitle">Your properties for sale</p>
                 </div>
                 <div class="dashboard-panel-actions">
-                  <%= link_to seller_properties_path, class: "btn btn-sm btn-ghost" do %>
+                  <%= link_to seller_properties_path, class: "btn btn-sm btn-ghost", data: { turbo_frame: "main_content" } do %>
                     View all
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -334,17 +321,9 @@
               <% if listings.any? %>
                 <div class="property-card-list">
                   <% listings.each do |property| %>
-                    <%= link_to seller_property_path(property), class: "property-card property-card-horizontal" do %>
+                    <%= link_to seller_property_path(property), class: "property-card property-card-horizontal", data: { turbo_frame: "main_content" } do %>
                       <div class="property-card-image">
-                        <% if property.hero_image.attached? %>
-                          <%= image_tag property.hero_image, alt: property.street_address %>
-                        <% else %>
-                          <div class="property-card-placeholder">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                          </div>
-                        <% end %>
+                        <%= render 'shared/property_image', property: property, size: :medium %>
                         <% if property.status.present? %>
                           <span class="status-badge status-badge-<%= property.status %>"><%= property.status.titleize %></span>
                         <% end %>
@@ -441,7 +420,7 @@
               <% end %>
 
               <% if current_user.buyer? %>
-                <%= link_to properties_path, class: "quick-action" do %>
+                <%= link_to properties_path, class: "quick-action", data: { turbo_frame: "_top" } do %>
                   <div class="quick-action-icon" style="background: var(--color-success-pale); color: var(--color-success);">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -541,5 +520,3 @@
         </div>
       </div>
     </div>
-  </main>
-</div>

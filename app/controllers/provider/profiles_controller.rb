@@ -2,6 +2,7 @@
 
 module Provider
   class ProfilesController < ApplicationController
+    layout "dashboard"
     before_action :authenticate_user!
     before_action :set_service_provider_profile
 

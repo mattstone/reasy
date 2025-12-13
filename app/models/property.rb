@@ -10,6 +10,10 @@ class Property < ApplicationRecord
 
   AUSTRALIAN_STATES = %w[NSW VIC QLD WA SA TAS ACT NT].freeze
 
+  # Geocoding
+  geocoded_by :full_address
+  after_validation :geocode, if: :should_geocode?
+
   # Associations
   belongs_to :user
   belongs_to :entity, optional: true
@@ -214,6 +218,14 @@ class Property < ApplicationRecord
   end
 
   private
+
+  def should_geocode?
+    return false unless street_address.present? && suburb.present? && state.present?
+    return true if latitude.blank? || longitude.blank?
+
+    # Re-geocode if address changed
+    street_address_changed? || suburb_changed? || state_changed? || postcode_changed?
+  end
 
   def format_price(cents)
     return nil unless cents

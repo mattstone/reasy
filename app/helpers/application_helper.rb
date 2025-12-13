@@ -158,6 +158,22 @@ module ApplicationHelper
   end
 
   # Property helpers
+  def property_static_map_url(property, width: 300, height: 200, zoom: 15)
+    return nil unless property.latitude.present? && property.longitude.present?
+
+    lat = property.latitude
+    lng = property.longitude
+
+    # Use OpenStreetMap tile directly as a simple map thumbnail
+    # This creates a single tile centered roughly on the location
+    # Tile calculation for zoom level 15
+    n = 2 ** zoom
+    x = ((lng + 180.0) / 360.0 * n).to_i
+    y = ((1.0 - Math.log(Math.tan(lat * Math::PI / 180.0) + 1.0 / Math.cos(lat * Math::PI / 180.0)) / Math::PI) / 2.0 * n).to_i
+
+    "https://tile.openstreetmap.org/#{zoom}/#{x}/#{y}.png"
+  end
+
   def property_status_badge_class(status)
     case status
     when "active"

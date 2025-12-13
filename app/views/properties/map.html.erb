@@ -1,3 +1,8 @@
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<% end %>
+
 <%= render "shared/nav" %>
 
 <div class="map-layout" data-controller="property-map" data-property-map-properties-url-value="<%= property_search_path(format: :json) %>">
@@ -132,6 +137,3 @@
   </div>
 </div>
 
-<%# Leaflet CSS & JS %>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

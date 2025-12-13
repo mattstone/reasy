@@ -1,0 +1,158 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Revenue Analytics</h1>
+      <p class="admin-page-subtitle">MRR, ARR, churn, and lifetime value metrics</p>
+    </div>
+    <div class="admin-section-nav">
+      <%= link_to "Overview", admin_business_root_path, class: "admin-section-nav-item" %>
+      <%= link_to "Revenue", admin_business_revenue_path, class: "admin-section-nav-item active" %>
+      <%= link_to "User Growth", admin_business_users_path, class: "admin-section-nav-item" %>
+      <%= link_to "Transactions", admin_business_transactions_path, class: "admin-section-nav-item" %>
+    </div>
+  </div>
+
+  <%# Hero Metrics %>
+  <div class="admin-metric-hero">
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@mrr, precision: 0) %></div>
+      <div class="admin-metric-hero-label">MRR</div>
+      <div class="admin-metric-hero-change neutral">Monthly Recurring Revenue</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@arr, precision: 0) %></div>
+      <div class="admin-metric-hero-label">ARR</div>
+      <div class="admin-metric-hero-change neutral">Annual Recurring Revenue</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon orange">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@arpu, precision: 2) %></div>
+      <div class="admin-metric-hero-label">ARPU</div>
+      <div class="admin-metric-hero-change neutral">Avg Revenue Per User</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon purple">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@ltv, precision: 0) %></div>
+      <div class="admin-metric-hero-label">LTV</div>
+      <div class="admin-metric-hero-change neutral">Customer Lifetime Value</div>
+    </div>
+  </div>
+
+  <%# Secondary Stats %>
+  <div class="admin-grid-3 mb-6">
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Churn Rate</h2>
+      </div>
+      <div class="admin-panel-content text-center">
+        <div style="font-size: var(--font-size-3xl); font-weight: 700; color: <%= @churn_rate > 5 ? 'var(--color-error)' : 'var(--color-success)' %>;">
+          <%= @churn_rate %>%
+        </div>
+        <p class="text-sm text-muted mt-2">Monthly churn rate</p>
+        <p class="text-xs text-muted"><%= @churned_users %> users churned in last 30 days</p>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Revenue by Plan</h2>
+      </div>
+      <div class="admin-panel-content">
+        <ul class="admin-data-list">
+          <% @revenue_by_plan.each do |plan| %>
+            <li class="admin-data-list-item">
+              <span class="admin-data-list-label"><%= plan[:label] %></span>
+              <span class="admin-data-list-value"><%= number_to_currency(plan[:value], precision: 0) %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Quick Stats</h2>
+      </div>
+      <div class="admin-panel-content">
+        <ul class="admin-data-list">
+          <li class="admin-data-list-item">
+            <span class="admin-data-list-label">Active Subscribers</span>
+            <span class="admin-data-list-value"><%= User.where(subscription_status: "active").count %></span>
+          </li>
+          <li class="admin-data-list-item">
+            <span class="admin-data-list-label">Trialing</span>
+            <span class="admin-data-list-value"><%= User.where(subscription_status: "trialing").count %></span>
+          </li>
+          <li class="admin-data-list-item">
+            <span class="admin-data-list-label">Canceled (30d)</span>
+            <span class="admin-data-list-value"><%= @churned_users %></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <%# Charts %>
+  <div class="admin-grid-2">
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">MRR Growth</h3>
+          <p class="admin-chart-card-subtitle">Last 90 days</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="area"
+           data-d3-chart-data-value="<%= @mrr_growth.to_json %>"
+           data-d3-chart-height-value="300"
+           data-d3-chart-colors-value='["#22c55e"]'>
+      </div>
+    </div>
+
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">Churn Trend</h3>
+          <p class="admin-chart-card-subtitle">Cancellations per day</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="bar"
+           data-d3-chart-data-value="<%= @churn_trend.map { |d| { label: d[:date], value: d[:value] } }.to_json %>"
+           data-d3-chart-height-value="300"
+           data-d3-chart-colors-value='["#ef4444"]'>
+      </div>
+    </div>
+  </div>
+</div>

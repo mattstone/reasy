@@ -134,6 +134,7 @@
   --radius-lg: 0.75rem;   /* 12px */
   --radius-xl: 1rem;      /* 16px */
   --radius-2xl: 1.5rem;   /* 24px */
+  --radius-3xl: 2rem;     /* 32px - for large cards/images */
   --radius-full: 9999px;
 
   /* ============================================
@@ -147,7 +148,8 @@
 
   /* Card-specific shadows */
   --shadow-card: 0 2px 8px rgba(33, 38, 80, 0.06);
-  --shadow-card-hover: 0 8px 24px rgba(33, 38, 80, 0.1);
+  --shadow-card-hover: 0 12px 32px rgba(33, 38, 80, 0.12);
+  --shadow-card-lift: 0 20px 40px rgba(33, 38, 80, 0.15);
 
   /* Focus ring */
   --shadow-focus: 0 0 0 3px var(--color-primary-pale);
@@ -160,11 +162,32 @@
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
 
   --transition-fast: 150ms var(--ease-default);
   --transition-base: 200ms var(--ease-default);
   --transition-slow: 300ms var(--ease-default);
   --transition-slower: 400ms var(--ease-default);
+
+  /* Hover lift transitions (Rentberry-inspired) */
+  --transition-lift: transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
+  --transition-image-zoom: transform 0.5s var(--ease-smooth);
+
+  /* ============================================
+     Hover Effects (Rentberry-inspired)
+     ============================================ */
+  --hover-lift: translateY(-8px);
+  --hover-lift-sm: translateY(-4px);
+  --hover-scale: scale(1.02);
+  --image-zoom-scale: 1.08;
+
+  /* ============================================
+     Section Backgrounds
+     ============================================ */
+  --section-bg-beige: #F0E9DF;
+  --section-bg-beige-light: #F7F3ED;
+  --section-bg-blue-light: #EEF3FC;
+  --section-bg-accent-light: #FFF0ED;
 
   /* ============================================
      Layout

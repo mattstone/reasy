@@ -9,7 +9,9 @@
 .map-layout {
   display: grid;
   grid-template-columns: 400px 1fr;
-  height: calc(100vh - 64px);
+  height: 100vh;
+  padding-top: 80px; /* Account for fixed navbar */
+  box-sizing: border-box;
   overflow: hidden;
 }
 

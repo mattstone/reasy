@@ -17,16 +17,76 @@ export default class extends Controller {
   }
 
   connect() {
-    // Wait for Leaflet to load
-    if (typeof L !== "undefined") {
-      this.initializeMap()
-    } else {
-      // If Leaflet isn't loaded yet, wait for it
-      window.addEventListener("load", () => this.initializeMap())
-    }
-
     this.markers = {}
     this.activePropertyId = null
+
+    // Load Leaflet and initialize map
+    this.loadLeaflet()
+      .then(() => {
+        this.initializeMap()
+      })
+      .catch((error) => {
+        console.error("Failed to load Leaflet:", error)
+      })
+  }
+
+  loadLeaflet() {
+    return new Promise((resolve, reject) => {
+      // Check if already loaded
+      if (typeof L !== "undefined") {
+        resolve()
+        return
+      }
+
+      // Load CSS first
+      if (!document.querySelector('link[href*="leaflet"]')) {
+        const css = document.createElement("link")
+        css.rel = "stylesheet"
+        css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        css.crossOrigin = "anonymous"
+        document.head.appendChild(css)
+      }
+
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src*="leaflet"]')
+
+      if (existingScript) {
+        // Script tag exists, wait for it to load
+        if (typeof L !== "undefined") {
+          resolve()
+        } else {
+          existingScript.addEventListener("load", () => resolve())
+          existingScript.addEventListener("error", reject)
+
+          // Also poll in case events don't fire
+          const checkL = setInterval(() => {
+            if (typeof L !== "undefined") {
+              clearInterval(checkL)
+              resolve()
+            }
+          }, 100)
+
+          // Timeout after 10 seconds
+          setTimeout(() => {
+            clearInterval(checkL)
+            if (typeof L === "undefined") {
+              reject(new Error("Leaflet load timeout"))
+            }
+          }, 10000)
+        }
+      } else {
+        // Create and load script
+        const script = document.createElement("script")
+        script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        script.crossOrigin = "anonymous"
+        script.onload = () => {
+          // Give it a moment to initialize
+          setTimeout(resolve, 50)
+        }
+        script.onerror = () => reject(new Error("Failed to load Leaflet script"))
+        document.head.appendChild(script)
+      }
+    })
   }
 
   disconnect() {
@@ -38,25 +98,61 @@ export default class extends Controller {
   initializeMap() {
     if (!this.hasMapTarget || this.map) return
 
-    // Initialize map centered on Sydney, Australia
-    this.map = L.map(this.mapTarget, {
-      zoomControl: false
-    }).setView([-33.8688, 151.2093], 12)
+    // Ensure Leaflet is available
+    if (typeof L === "undefined") {
+      console.error("Leaflet not loaded")
+      return
+    }
 
-    // Add zoom control to bottom right
-    L.control.zoom({ position: "bottomright" }).addTo(this.map)
+    const mapEl = this.mapTarget
+    console.log("Initializing map...", mapEl)
+    console.log("Map target dimensions:", mapEl.offsetWidth, mapEl.offsetHeight)
 
-    // Add tile layer (OpenStreetMap)
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(this.map)
+    // Ensure container has dimensions
+    if (mapEl.offsetHeight === 0) {
+      console.warn("Map container has 0 height, setting minimum height")
+      mapEl.style.minHeight = "400px"
+    }
 
-    // Load properties and add markers
-    this.loadPropertiesFromDOM()
+    try {
+      // Initialize map centered on Sydney, Australia
+      this.map = L.map(mapEl, {
+        zoomControl: false
+      }).setView([-33.8688, 151.2093], 12)
 
-    // Update markers when map moves
-    this.map.on("moveend", () => this.onMapMove())
+      console.log("Map initialized:", this.map)
+
+      // Add zoom control to bottom right
+      L.control.zoom({ position: "bottomright" }).addTo(this.map)
+
+      // Add tile layer (OpenStreetMap)
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(this.map)
+
+      // Invalidate size after a brief delay (fixes grey map issue)
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize()
+          console.log("Map size invalidated")
+        }
+      }, 100)
+
+      // Also invalidate on window resize
+      window.addEventListener("resize", () => {
+        if (this.map) this.map.invalidateSize()
+      })
+
+      // Load properties and add markers
+      this.loadPropertiesFromDOM()
+
+      // Update markers when map moves
+      this.map.on("moveend", () => this.onMapMove())
+
+    } catch (error) {
+      console.error("Error initializing map:", error)
+    }
   }
 
   loadPropertiesFromDOM() {

@@ -241,6 +241,8 @@ class Offer < ApplicationRecord
   private
 
   def buyer_cannot_be_seller
+    # Skip validation for counter-offers (where seller becomes the buyer)
+    return if counter_offer.present?
     return unless property&.user == buyer
 
     errors.add(:buyer, "cannot make an offer on their own property")

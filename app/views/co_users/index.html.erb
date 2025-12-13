@@ -1,8 +1,4 @@
-<div class="layout">
-  <%= render "shared/dashboard_sidebar" %>
 
-  <main class="layout-main">
-    <div class="content">
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
@@ -21,7 +17,7 @@
               Invite Co-User
             <% end %>
           <% end %>
-          <%= link_to co_users_invitations_path, class: "btn btn-secondary" do %>
+          <%= link_to invitations_co_users_path, class: "btn btn-secondary" do %>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect width="20" height="16" x="2" y="4" rx="2"/>
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
@@ -106,6 +102,3 @@
           </div>
         </div>
       <% end %>
-    </div>
-  </main>
-</div>

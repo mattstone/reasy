@@ -22,7 +22,7 @@ module Admin
       @total_transactions = Transaction.count
       @active_count = Transaction.where(status: %w[pending in_progress]).count
       @completed_count = Transaction.where(status: "completed").count
-      @disputed_count = Transaction.where(disputed: true).count
+      @disputed_count = 0  # Disputes tracked separately if needed
     end
 
     def active
@@ -38,14 +38,15 @@ module Admin
     end
 
     def disputes
-      @transactions = Transaction.where(disputed: true).order(created_at: :desc).includes(:property, :buyer, :seller)
+      # Disputes feature not yet implemented - show empty list
+      @transactions = Transaction.none
       @pagy, @transactions = pagy(@transactions, items: 25)
       render :index
     end
 
     def show
-      @offers = @transaction.offers.order(created_at: :desc)
-      @timeline = @transaction.timeline_events.order(created_at: :desc)
+      @offer = @transaction.offer
+      @timeline = @transaction.transaction_events.order(occurred_at: :desc)
     end
 
     private

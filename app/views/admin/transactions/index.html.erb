@@ -90,16 +90,13 @@
               </td>
               <td>
                 <span class="font-medium">
-                  <%= number_to_currency(transaction.amount_cents.to_i / 100, precision: 0) %>
+                  <%= number_to_currency(transaction.sale_price_cents.to_i / 100, precision: 0) %>
                 </span>
               </td>
               <td>
                 <span class="badge badge-sm <%= transaction.status == 'completed' ? 'badge-green' : (transaction.status == 'cancelled' ? 'badge-red' : 'badge-blue') %>">
                   <%= transaction.status&.humanize || "Pending" %>
                 </span>
-                <% if transaction.disputed? %>
-                  <span class="badge badge-sm badge-red">Disputed</span>
-                <% end %>
               </td>
               <td class="text-muted text-sm">
                 <%= transaction.created_at.strftime("%b %d, %Y") %>
@@ -121,7 +118,7 @@
     </div>
 
     <% if @transactions.empty? %>
-      <div class="admin-panel-content" style="text-align: center; padding: var(--reasy-space-8);">
+      <div class="admin-panel-content" style="text-align: center; padding: var(--space-8);">
         <p class="text-muted">No transactions found.</p>
       </div>
     <% end %>

@@ -1,0 +1,165 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">AI Analytics</h1>
+      <p class="admin-page-subtitle">Conversation metrics, assistant usage, and ratings</p>
+    </div>
+    <div class="admin-section-nav">
+      <%= link_to "System Status", admin_system_root_path, class: "admin-section-nav-item" %>
+      <%= link_to "Platform Usage", admin_system_usage_path, class: "admin-section-nav-item" %>
+      <%= link_to "AI Analytics", admin_system_ai_path, class: "admin-section-nav-item active" %>
+      <%= link_to "Audit Activity", admin_system_audit_path, class: "admin-section-nav-item" %>
+    </div>
+  </div>
+
+  <%# Hero Metrics %>
+  <div class="admin-metric-hero">
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_with_delimiter(@total_conversations) %></div>
+      <div class="admin-metric-hero-label">Total Conversations</div>
+      <div class="admin-metric-hero-change neutral">All time</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_with_delimiter(@conversations_this_week) %></div>
+      <div class="admin-metric-hero-label">This Week</div>
+      <div class="admin-metric-hero-change positive">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        Last 7 days
+      </div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon orange">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= @avg_messages_per_conversation %></div>
+      <div class="admin-metric-hero-label">Avg Messages/Convo</div>
+      <div class="admin-metric-hero-change neutral">Engagement metric</div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon purple">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= @avg_rating %>/5</div>
+      <div class="admin-metric-hero-label">Avg Rating</div>
+      <div class="admin-metric-hero-change neutral">User satisfaction</div>
+    </div>
+  </div>
+
+  <%# Charts %>
+  <div class="admin-grid-2 mb-6">
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">Daily Conversations</h3>
+          <p class="admin-chart-card-subtitle">Last 30 days</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="bar"
+           data-d3-chart-data-value="<%= @daily_volume.map { |date, count| { label: date.strftime('%b %d'), value: count } }.to_json %>"
+           data-d3-chart-height-value="250"
+           data-d3-chart-colors-value='["#3b82f6"]'>
+      </div>
+    </div>
+
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">By Assistant Type</h3>
+          <p class="admin-chart-card-subtitle">Usage distribution</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="donut"
+           data-d3-chart-data-value="<%= @by_assistant.map { |type, count| { label: type&.humanize || 'Unknown', value: count } }.to_json %>"
+           data-d3-chart-height-value="250">
+      </div>
+    </div>
+  </div>
+
+  <%# Rating Distribution and Recent %>
+  <div class="admin-grid-2">
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Rating Distribution</h2>
+      </div>
+      <div class="admin-panel-content">
+        <ul class="admin-data-list">
+          <% (1..5).reverse_each do |rating| %>
+            <li class="admin-data-list-item">
+              <div class="admin-data-list-bar">
+                <span class="admin-data-list-label">
+                  <% rating.times do %>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--color-warning-pale0)" stroke="var(--color-warning-pale0)" stroke-width="2" style="display: inline;">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  <% end %>
+                </span>
+                <% count = @rating_distribution[rating] || 0 %>
+                <% max_count = [@rating_distribution.values.max || 1, 1].max %>
+                <div class="admin-data-list-bar-fill" style="width: <%= (count.to_f / max_count * 100).round %>px; background: var(--color-warning-pale0);"></div>
+              </div>
+              <span class="admin-data-list-value"><%= @rating_distribution[rating] || 0 %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Recent Conversations</h2>
+        <%= link_to "View All", admin_ai_conversations_path, class: "btn btn-ghost btn-sm" %>
+      </div>
+      <% if @recent_conversations.any? %>
+        <ul class="recent-activity-list">
+          <% @recent_conversations.each do |conversation| %>
+            <li class="recent-activity-item">
+              <% if conversation.user&.avatar&.attached? %>
+                <%= image_tag conversation.user.avatar, class: "avatar avatar-sm" %>
+              <% else %>
+                <div class="avatar avatar-sm avatar-placeholder">
+                  <%= conversation.user&.name&.first&.upcase || "U" %>
+                </div>
+              <% end %>
+              <div class="recent-activity-info">
+                <%= link_to admin_ai_conversation_path(conversation), class: "recent-activity-name" do %>
+                  <%= conversation.user&.name || "Anonymous" %>
+                <% end %>
+                <span class="recent-activity-meta">
+                  <%= conversation.assistant_type&.humanize || "General" %> assistant
+                </span>
+              </div>
+              <span class="recent-activity-time"><%= time_ago_in_words(conversation.created_at) %> ago</span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="admin-panel-content text-center py-6">
+          <p class="text-muted">No conversations yet</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

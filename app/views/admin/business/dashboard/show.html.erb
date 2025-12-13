@@ -1,0 +1,190 @@
+<div class="admin-content">
+  <%# Page Header %>
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">Business Intelligence</h1>
+      <p class="admin-page-subtitle">Revenue, subscriptions, and transaction analytics</p>
+    </div>
+    <div class="admin-section-nav">
+      <%= link_to "Overview", admin_business_root_path, class: "admin-section-nav-item active" %>
+      <%= link_to "Revenue", admin_business_revenue_path, class: "admin-section-nav-item" %>
+      <%= link_to "User Growth", admin_business_users_path, class: "admin-section-nav-item" %>
+      <%= link_to "Transactions", admin_business_transactions_path, class: "admin-section-nav-item" %>
+    </div>
+  </div>
+
+  <%# Hero Metrics %>
+  <div class="admin-metric-hero">
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@mrr, precision: 0) %></div>
+      <div class="admin-metric-hero-label">Monthly Recurring Revenue</div>
+      <div class="admin-metric-hero-change <%= @mrr_change >= 0 ? 'positive' : 'negative' %>">
+        <% if @mrr_change >= 0 %>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        <% else %>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <% end %>
+        <%= @mrr_change.abs %>% vs last month
+      </div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_to_currency(@total_transaction_value, precision: 0) %></div>
+      <div class="admin-metric-hero-label">Transaction Value (This Month)</div>
+      <div class="admin-metric-hero-change <%= @transaction_change >= 0 ? 'positive' : 'negative' %>">
+        <% if @transaction_change >= 0 %>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        <% else %>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <% end %>
+        <%= @transaction_change.abs %>% vs last month
+      </div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon orange">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= number_with_delimiter(@active_subscriptions) %></div>
+      <div class="admin-metric-hero-label">Active Subscriptions</div>
+      <div class="admin-metric-hero-change <%= @subscription_change >= 0 ? 'positive' : 'negative' %>">
+        <% if @subscription_change >= 0 %>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        <% else %>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <% end %>
+        <%= @subscription_change.abs %>% vs last week
+      </div>
+    </div>
+
+    <div class="admin-metric-hero-card">
+      <div class="admin-metric-hero-card-icon purple">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="admin-metric-hero-value"><%= @conversion_rate %>%</div>
+      <div class="admin-metric-hero-label">Trial → Paid Conversion</div>
+      <div class="admin-metric-hero-change neutral">
+        Lifetime rate
+      </div>
+    </div>
+  </div>
+
+  <%# Charts Row %>
+  <div class="admin-grid-2 mb-6">
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">Revenue Trend</h3>
+          <p class="admin-chart-card-subtitle">Last 30 days</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="area"
+           data-d3-chart-data-value="<%= @revenue_trend.to_json %>"
+           data-d3-chart-height-value="250"
+           data-d3-chart-colors-value='["#22c55e"]'>
+      </div>
+    </div>
+
+    <div class="admin-chart-card">
+      <div class="admin-chart-card-header">
+        <div>
+          <h3 class="admin-chart-card-title">Transactions by Status</h3>
+          <p class="admin-chart-card-subtitle">Current distribution</p>
+        </div>
+      </div>
+      <div class="admin-chart-container"
+           data-controller="d3-chart"
+           data-d3-chart-type-value="donut"
+           data-d3-chart-data-value="<%= @transactions_by_status.to_json %>"
+           data-d3-chart-height-value="250">
+      </div>
+    </div>
+  </div>
+
+  <%# Recent Activity %>
+  <div class="admin-grid-2">
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Recent Transactions</h2>
+        <%= link_to "View All", admin_transactions_path, class: "btn btn-ghost btn-sm" %>
+      </div>
+      <% if @recent_transactions.any? %>
+        <ul class="recent-activity-list">
+          <% @recent_transactions.each do |transaction| %>
+            <li class="recent-activity-item">
+              <div class="recent-activity-info">
+                <span class="recent-activity-name">
+                  <%= number_to_currency(transaction.sale_price_cents / 100.0, precision: 0) rescue "N/A" %>
+                </span>
+                <span class="recent-activity-meta">
+                  <%= transaction.property&.address&.truncate(30) || "Unknown Property" %>
+                </span>
+              </div>
+              <span class="badge badge-sm <%= transaction.status == 'completed' ? 'badge-green' : 'badge-yellow' %>">
+                <%= transaction.status&.humanize || "Pending" %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="admin-panel-content text-center py-6">
+          <p class="text-muted">No recent transactions</p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Recent Subscribers</h2>
+        <%= link_to "View All", admin_users_path(subscription_status: "active"), class: "btn btn-ghost btn-sm" %>
+      </div>
+      <% if @recent_subscriptions.any? %>
+        <ul class="recent-activity-list">
+          <% @recent_subscriptions.each do |user| %>
+            <li class="recent-activity-item">
+              <% if user.avatar&.attached? %>
+                <%= image_tag user.avatar, class: "avatar avatar-sm" %>
+              <% else %>
+                <div class="avatar avatar-sm avatar-placeholder">
+                  <%= user.name&.first&.upcase || "U" %>
+                </div>
+              <% end %>
+              <div class="recent-activity-info">
+                <%= link_to user.name || "Unknown", admin_user_path(user), class: "recent-activity-name" %>
+                <span class="recent-activity-meta"><%= user.email %></span>
+              </div>
+              <span class="badge badge-sm <%= user.subscription_status == 'active' ? 'badge-green' : 'badge-yellow' %>">
+                <%= user.subscription_status&.humanize || "None" %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="admin-panel-content text-center py-6">
+          <p class="text-muted">No recent subscriptions</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
