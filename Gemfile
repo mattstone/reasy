@@ -96,7 +96,7 @@ gem "phonelib", "~> 0.9"
 gem "countries", "~> 7.1"
 
 # Pagination
-gem "pagy", "~> 9.3"
+gem "pagy", "~> 43.2"
 
 # JSON serialization
 gem "alba", "~> 3.3"
