@@ -1,0 +1,156 @@
+<%# Page Header %>
+<div class="page-header">
+  <div class="page-header-content">
+    <h1 class="page-title">Your Buying Journey</h1>
+    <p class="page-subtitle">Track your progress and earn rewards as you navigate your property purchase</p>
+  </div>
+  <div class="page-header-actions">
+    <%= link_to dashboard_path, class: "btn btn-secondary" do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back to Dashboard
+    <% end %>
+  </div>
+</div>
+
+<%# Journey Hero Section %>
+<div class="journey-hero">
+  <div class="journey-hero-ring">
+    <%= journey_progress_ring(@user, size: 100) %>
+  </div>
+  <div class="journey-hero-content">
+    <div class="journey-hero-level">Level <%= @user.journey_level || 1 %></div>
+    <div class="journey-hero-title"><%= @user.journey_title || "Property Newcomer" %></div>
+    <div class="journey-hero-points">
+      <strong><%= @user.journey_points || 0 %></strong> points earned
+      <% if @user.points_to_next_level > 0 %>
+        &middot; <strong><%= @user.points_to_next_level %></strong> to next level
+      <% end %>
+    </div>
+    <div class="journey-progress-container" style="margin-top: 1rem; max-width: 300px;">
+      <%= journey_progress_bar(@user) %>
+    </div>
+  </div>
+</div>
+
+<%# Checklist Sections by Category %>
+<div class="journey-sections">
+  <% categories = @checklist_items.group_by(&:category) %>
+
+  <%# Pre-Offer Tasks %>
+  <% if categories["pre_offer"]&.any? %>
+    <div class="checklist-section">
+      <div class="checklist-header">
+        <h2 class="checklist-header-title">Getting Started</h2>
+        <% completed = categories["pre_offer"].count { |item| item.completed_by?(@user) } %>
+        <span class="checklist-header-progress"><%= completed %>/<%= categories["pre_offer"].size %> completed</span>
+      </div>
+      <div class="checklist-items">
+        <% categories["pre_offer"].each do |item| %>
+          <%= render "shared/checklist_item", item: item, user: @user %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Property Evaluation Tasks %>
+  <% if categories["property_evaluation"]&.any? %>
+    <div class="checklist-section">
+      <div class="checklist-header">
+        <h2 class="checklist-header-title">Property Evaluation</h2>
+        <% completed = categories["property_evaluation"].count { |item| item.completed_by?(@user) } %>
+        <span class="checklist-header-progress"><%= completed %>/<%= categories["property_evaluation"].size %> completed</span>
+      </div>
+      <div class="checklist-items">
+        <% categories["property_evaluation"].each do |item| %>
+          <%= render "shared/checklist_item", item: item, user: @user %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Offer Tasks %>
+  <% if categories["offer"]&.any? %>
+    <div class="checklist-section">
+      <div class="checklist-header">
+        <h2 class="checklist-header-title">Making an Offer</h2>
+        <% completed = categories["offer"].count { |item| item.completed_by?(@user) } %>
+        <span class="checklist-header-progress"><%= completed %>/<%= categories["offer"].size %> completed</span>
+      </div>
+      <div class="checklist-items">
+        <% categories["offer"].each do |item| %>
+          <%= render "shared/checklist_item", item: item, user: @user %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Due Diligence Tasks %>
+  <% if categories["due_diligence"]&.any? %>
+    <div class="checklist-section">
+      <div class="checklist-header">
+        <h2 class="checklist-header-title">Due Diligence</h2>
+        <% completed = categories["due_diligence"].count { |item| item.completed_by?(@user) } %>
+        <span class="checklist-header-progress"><%= completed %>/<%= categories["due_diligence"].size %> completed</span>
+      </div>
+      <div class="checklist-items">
+        <% categories["due_diligence"].each do |item| %>
+          <%= render "shared/checklist_item", item: item, user: @user %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Settlement Tasks %>
+  <% if categories["settlement"]&.any? %>
+    <div class="checklist-section">
+      <div class="checklist-header">
+        <h2 class="checklist-header-title">Settlement</h2>
+        <% completed = categories["settlement"].count { |item| item.completed_by?(@user) } %>
+        <span class="checklist-header-progress"><%= completed %>/<%= categories["settlement"].size %> completed</span>
+      </div>
+      <div class="checklist-items">
+        <% categories["settlement"].each do |item| %>
+          <%= render "shared/checklist_item", item: item, user: @user %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Achievements Section %>
+  <% if @achievements.any? %>
+    <div class="dashboard-panel">
+      <div class="dashboard-panel-header">
+        <h2 class="dashboard-panel-title">Your Achievements</h2>
+      </div>
+      <div class="achievement-gallery">
+        <% @achievements.each do |achievement| %>
+          <div class="achievement-card">
+            <div class="achievement-card-icon" style="background: <%= achievement_background_color(achievement.achievement_type) %>;">
+              <%= achievement_icon(achievement.achievement_type) %>
+            </div>
+            <div class="achievement-card-title"><%= achievement.title %></div>
+            <% if achievement.awarded_at %>
+              <div class="achievement-card-date">Earned <%= time_ago_in_words(achievement.awarded_at) %> ago</div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Empty State if no checklist %>
+  <% if @checklist_items.empty? %>
+    <div class="card-empty">
+      <div class="card-empty-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="m9 11 3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <div class="card-empty-title">Journey checklist coming soon</div>
+      <div class="card-empty-description">We're preparing your personalized buying journey checklist.</div>
+    </div>
+  <% end %>
+</div>

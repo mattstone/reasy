@@ -1,0 +1,68 @@
+<%#
+  AI Badge Partial
+  Renders a single AI insight badge
+
+  Local variables:
+  - type: Symbol - :match_score, :reasy_score, :value, :risk, :opportunity
+  - value: Mixed - the value to display (score number, assessment symbol, etc)
+  - label: String (optional) - override the default label
+  - band: Symbol (optional) - for reasy_score, the quality band
+%>
+<%
+  type ||= :default
+  value ||= nil
+  label ||= nil
+  band ||= nil
+
+  badge_class = case type.to_sym
+                when :match_score
+                  quality = case value.to_i
+                            when 80..100 then "excellent"
+                            when 65..79 then "good"
+                            when 50..64 then "moderate"
+                            else "low"
+                  end
+                  "ai-badge-match ai-badge-match-#{quality}"
+                when :reasy_score
+                  score_band = band || case value.to_i
+                                       when 80..100 then :excellent
+                                       when 65..79 then :good
+                                       when 50..64 then :average
+                                       else :below_average
+                  end
+                  "ai-badge-reasy ai-badge-reasy-#{score_band}"
+                when :value
+                  "ai-badge-value ai-badge-value-#{value}"
+                when :risk
+                  "ai-badge-risk"
+                when :opportunity
+                  "ai-badge-opportunity"
+                else
+                  "ai-badge-default"
+                end
+
+  icon = case type.to_sym
+         when :risk then "!"
+         when :opportunity then "+"
+         else ""
+         end
+
+  display_label = label || case type.to_sym
+                           when :match_score then "#{value}% match"
+                           when :reasy_score then "#{value.to_i} Reasy"
+                           when :value then value.to_s.humanize
+                           when :risk then value.to_s.humanize
+                           when :opportunity then value.to_s.humanize
+                           else value.to_s
+                           end
+%>
+
+<span class="ai-badge <%= badge_class %>">
+  <% if icon.present? %>
+    <span class="ai-badge-icon"><%= icon %></span>
+  <% end %>
+  <% if type == :match_score || type == :reasy_score %>
+    <span class="ai-badge-score"><%= value.to_i %><%= "%" if type == :match_score %></span>
+  <% end %>
+  <span class="ai-badge-label"><%= display_label %></span>
+</span>

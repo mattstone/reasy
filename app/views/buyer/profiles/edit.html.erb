@@ -242,6 +242,55 @@
           </div>
         </div>
 
+        <%# Reasy Score Weights Section %>
+        <div class="dashboard-panel mb-6" data-controller="score-weights" data-score-weights-defaults-value="<%= BuyerProfile::DEFAULT_SCORE_WEIGHTS.to_json %>">
+          <div class="dashboard-panel-header">
+            <div>
+              <h2 class="dashboard-panel-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: -4px; margin-right: 8px;">
+                  <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7L12 16.4 5.7 21l2.3-7L2 9.4h7.6z"/>
+                </svg>
+                Customize Your Reasy Score
+              </h2>
+              <p class="dashboard-panel-subtitle">Adjust what matters most to you. Components with higher weights will have more influence on your personalized property scores.</p>
+            </div>
+            <div>
+              <button type="button"
+                      class="btn btn-secondary btn-sm hidden"
+                      data-score-weights-target="resetButton"
+                      data-action="click->score-weights#reset">
+                Reset to Defaults
+              </button>
+            </div>
+          </div>
+
+          <div class="score-weights-grid">
+            <% BuyerProfile::SCORE_COMPONENTS.each do |component| %>
+              <% weight = @buyer_profile.effective_score_weights[component] %>
+              <div class="weight-slider">
+                <div class="weight-slider-header">
+                  <label class="weight-slider-label"><%= component.to_s.titleize %></label>
+                  <span class="weight-slider-value" data-score-weights-target="value"><%= weight %>%</span>
+                </div>
+                <input type="range"
+                       name="buyer_profile[score_weights][<%= component %>]"
+                       min="0" max="100" step="5"
+                       value="<%= weight %>"
+                       class="weight-slider-input"
+                       data-score-weights-target="slider"
+                       data-action="input->score-weights#update">
+                <p class="weight-slider-description"><%= BuyerProfile.score_component_description(component).split(' - ').last %></p>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="score-weights-footer">
+            <span class="score-weights-total-label">Total Weight:</span>
+            <span class="score-weights-total-value" data-score-weights-target="total"><%= @buyer_profile.effective_score_weights.values.sum %>%</span>
+            <span class="score-weights-note">(Weights are normalized when calculating your score)</span>
+          </div>
+        </div>
+
         <%# Location Section %>
         <div class="dashboard-panel mb-6">
           <div class="dashboard-panel-header">

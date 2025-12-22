@@ -50,7 +50,8 @@ module Buyer
         must_have_features: [],
         nice_to_have_features: [],
         preferred_suburbs: [],
-        location_preferences: {}
+        location_preferences: {},
+        score_weights: {}
       )
     end
   end

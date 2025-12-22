@@ -23,6 +23,10 @@ CSS_FILES = [
   "components/navigation.css",
   "components/alerts.css",
   "components/tables.css",
+  "components/scores.css",
+  "components/journey.css",
+  "components/ai_badges.css",
+  "components/ai_analysis.css",
   # Layouts layer
   "layouts/grid.css",
   "layouts/dashboard.css",
@@ -42,7 +46,9 @@ CSS_FILES = [
   "pages/index2.css",
   "pages/index3.css",
   "pages/index4.css",
-  "pages/index5.css"
+  "pages/index5.css",
+  "pages/property-show.css",
+  "pages/properties-index.css"
 ].freeze
 
 HEADER = <<~CSS

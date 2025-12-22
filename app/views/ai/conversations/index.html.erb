@@ -2,131 +2,156 @@
       <%# Page Header %>
       <div class="page-header">
         <div class="page-header-content">
-          <h1 class="page-title">AI Assistants</h1>
-          <p class="page-subtitle">Get expert guidance from our team of AI assistants, each specialised in different aspects of your property journey</p>
+          <h1 class="page-title">Choose Your Property Sensei</h1>
+          <p class="page-subtitle">Your personal AI guide through every step of your property journey</p>
         </div>
       </div>
 
-      <%# Assistant Cards Grid %>
-      <div class="grid grid-cols-3 gap-6 mb-8">
-        <%# Max - Property Expert %>
-        <div class="dashboard-panel">
+      <%# Primary Assistants - Stevie & Evie %>
+      <div class="grid grid-cols-2 gap-6 mb-8">
+        <%# Stevie - Male Sensei %>
+        <div class="dashboard-panel <%= 'card-highlighted' if current_user.preferred_agent == 'stevie' %>">
           <div class="flex items-start gap-4 mb-4">
-            <div class="ai-chat-assistant-avatar ai-avatar-max" style="width: 56px; height: 56px; font-size: 28px;">
-              <span>🏠</span>
+            <div class="ai-chat-assistant-avatar ai-avatar-stevie" style="width: 72px; height: 72px; font-size: 36px; background: linear-gradient(135deg, #4F7DDD, #3D6BC7);">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M5.5 21a7.5 7.5 0 0 1 13 0"/>
+                <path d="M17 10l2 2-2 2"/>
+              </svg>
             </div>
             <div class="flex-1">
-              <h3 class="dashboard-panel-title mb-1">Max</h3>
-              <span class="badge badge-blue">Property Expert</span>
+              <h3 class="dashboard-panel-title mb-1">Stevie</h3>
+              <span class="badge badge-blue">Your Property Sensei</span>
+              <% if current_user.preferred_agent == 'stevie' %>
+                <span class="badge badge-success ml-2">Your Sensei</span>
+              <% end %>
             </div>
           </div>
-          <p class="text-secondary text-small mb-4">Your friendly property guru who knows buildings inside and out. Ask about property features, valuations, inspections, renovations, and zoning.</p>
-          <%= link_to ai_conversations_path(assistant: :max), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+          <p class="text-secondary text-small mb-4">Your property transaction wingman. Practical, straight-talking, gets things done without the fluff. Perfect for buyers and sellers who want clear, actionable guidance.</p>
+          <ul class="text-secondary text-small mb-4" style="list-style: disc; padding-left: 1.5rem;">
+            <li>Explains complex processes simply</li>
+            <li>Guides you through contracts and documents</li>
+            <li>Helps with offers and negotiations</li>
+            <li>Tracks your journey progress</li>
+          </ul>
+          <%= link_to ai_conversations_path(assistant: :stevie), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
             </svg>
-            Start Chat
+            Chat with Stevie
           <% end %>
         </div>
 
-        <%# Sage - Journey Guide %>
-        <div class="dashboard-panel">
+        <%# Evie - Female Sensei %>
+        <div class="dashboard-panel <%= 'card-highlighted' if current_user.preferred_agent == 'evie' %>">
           <div class="flex items-start gap-4 mb-4">
-            <div class="ai-chat-assistant-avatar ai-avatar-sage" style="width: 56px; height: 56px; font-size: 28px;">
-              <span>🧭</span>
+            <div class="ai-chat-assistant-avatar ai-avatar-evie" style="width: 72px; height: 72px; font-size: 36px; background: linear-gradient(135deg, #EC4899, #DB2777);">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M5.5 21a7.5 7.5 0 0 1 13 0"/>
+                <path d="M12 14l2 2 4-4"/>
+              </svg>
             </div>
             <div class="flex-1">
-              <h3 class="dashboard-panel-title mb-1">Sage</h3>
-              <span class="badge badge-green">Journey Guide</span>
+              <h3 class="dashboard-panel-title mb-1">Evie</h3>
+              <span class="badge badge-purple">Your Property Sensei</span>
+              <% if current_user.preferred_agent == 'evie' %>
+                <span class="badge badge-success ml-2">Your Sensei</span>
+              <% end %>
             </div>
           </div>
-          <p class="text-secondary text-small mb-4">Your wise companion through the property journey. Get help with process guidance, timelines, checklists, and milestones.</p>
-          <%= link_to ai_conversations_path(assistant: :sage), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
+          <p class="text-secondary text-small mb-4">Your property journey companion. Patient, thorough, celebrates every milestone with you. Perfect for first-home buyers who want supportive guidance.</p>
+          <ul class="text-secondary text-small mb-4" style="list-style: disc; padding-left: 1.5rem;">
+            <li>Walks you through each step</li>
+            <li>Explains documents in plain English</li>
+            <li>Celebrates your achievements</li>
+            <li>Always has your back</li>
+          </ul>
+          <%= link_to ai_conversations_path(assistant: :evie), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
             </svg>
-            Start Chat
+            Chat with Evie
           <% end %>
         </div>
+      </div>
 
-        <%# Nina - Negotiation Advisor %>
-        <div class="dashboard-panel">
-          <div class="flex items-start gap-4 mb-4">
-            <div class="ai-chat-assistant-avatar ai-avatar-nina" style="width: 56px; height: 56px; font-size: 28px;">
-              <span>🤝</span>
-            </div>
-            <div class="flex-1">
-              <h3 class="dashboard-panel-title mb-1">Nina</h3>
-              <span class="badge badge-orange">Negotiation Advisor</span>
-            </div>
-          </div>
-          <p class="text-secondary text-small mb-4">Your strategic partner in getting the best deal. Expert advice on offers, negotiation tactics, pricing strategy, and deal-making.</p>
-          <%= link_to ai_conversations_path(assistant: :nina), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
-            </svg>
-            Start Chat
-          <% end %>
+      <%# Capability Overview %>
+      <div class="dashboard-panel mb-8">
+        <div class="dashboard-panel-header">
+          <h2 class="dashboard-panel-title">What Your Sensei Can Help With</h2>
         </div>
-
-        <%# Doc - Document Decoder %>
-        <div class="dashboard-panel">
-          <div class="flex items-start gap-4 mb-4">
-            <div class="ai-chat-assistant-avatar ai-avatar-doc" style="width: 56px; height: 56px; font-size: 28px;">
-              <span>📄</span>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="flex gap-3 items-start">
+            <div class="metric-card-icon metric-card-icon-blue" style="width: 40px; height: 40px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              </svg>
             </div>
-            <div class="flex-1">
-              <h3 class="dashboard-panel-title mb-1">Doc</h3>
-              <span class="badge badge-gray">Document Decoder</span>
-            </div>
-          </div>
-          <p class="text-secondary text-small mb-4">Makes legal jargon understandable. Get help understanding contracts, legal documents, terms and conditions, and due diligence requirements.</p>
-          <%= link_to ai_conversations_path(assistant: :doc), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
-            </svg>
-            Start Chat
-          <% end %>
-        </div>
-
-        <%# Scout - Market Researcher %>
-        <div class="dashboard-panel">
-          <div class="flex items-start gap-4 mb-4">
-            <div class="ai-chat-assistant-avatar ai-avatar-scout" style="width: 56px; height: 56px; font-size: 28px;">
-              <span>📊</span>
-            </div>
-            <div class="flex-1">
-              <h3 class="dashboard-panel-title mb-1">Scout</h3>
-              <span class="badge badge-teal">Market Researcher</span>
+            <div>
+              <h4 class="text-base font-semibold mb-1">Property Analysis</h4>
+              <p class="text-secondary text-small">Understand property features, valuations, and potential</p>
             </div>
           </div>
-          <p class="text-secondary text-small mb-4">Your data-driven market analyst. Get insights on market data, comparable sales, suburb insights, and property market trends.</p>
-          <%= link_to ai_conversations_path(assistant: :scout), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
-            </svg>
-            Start Chat
-          <% end %>
-        </div>
-
-        <%# Ally - Service Provider Assistant %>
-        <div class="dashboard-panel">
-          <div class="flex items-start gap-4 mb-4">
-            <div class="ai-chat-assistant-avatar ai-avatar-ally" style="width: 56px; height: 56px; font-size: 28px;">
-              <span>👥</span>
+          <div class="flex gap-3 items-start">
+            <div class="metric-card-icon metric-card-icon-green" style="width: 40px; height: 40px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
             </div>
-            <div class="flex-1">
-              <h3 class="dashboard-panel-title mb-1">Ally</h3>
-              <span class="badge badge-purple">Service Provider Assistant</span>
+            <div>
+              <h4 class="text-base font-semibold mb-1">Journey Guidance</h4>
+              <p class="text-secondary text-small">Step-by-step help through buying or selling</p>
             </div>
           </div>
-          <p class="text-secondary text-small mb-4">Connects you with trusted professionals. Get help finding conveyancers, inspectors, mortgage brokers, and other service providers.</p>
-          <%= link_to ai_conversations_path(assistant: :ally), method: :post, class: "btn btn-primary btn-block", data: { turbo_method: :post } do %>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
-            </svg>
-            Start Chat
-          <% end %>
+          <div class="flex gap-3 items-start">
+            <div class="metric-card-icon metric-card-icon-orange" style="width: 40px; height: 40px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-base font-semibold mb-1">Offer Strategy</h4>
+              <p class="text-secondary text-small">Negotiate the best deal for your property</p>
+            </div>
+          </div>
+          <div class="flex gap-3 items-start">
+            <div class="metric-card-icon" style="width: 40px; height: 40px; background: #F5F5F5;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-base font-semibold mb-1">Contract Review</h4>
+              <p class="text-secondary text-small">Understand legal documents in plain English</p>
+            </div>
+          </div>
+          <div class="flex gap-3 items-start">
+            <div class="metric-card-icon metric-card-icon-teal" style="width: 40px; height: 40px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-base font-semibold mb-1">Market Insights</h4>
+              <p class="text-secondary text-small">Data-driven analysis of areas and trends</p>
+            </div>
+          </div>
+          <div class="flex gap-3 items-start">
+            <div class="metric-card-icon metric-card-icon-purple" style="width: 40px; height: 40px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-base font-semibold mb-1">Provider Matching</h4>
+              <p class="text-secondary text-small">Find trusted conveyancers, inspectors, and more</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -146,15 +171,8 @@
               <% assistant_key = conversation.assistant.to_sym %>
               <% assistant_info = AI::AssistantService::ASSISTANTS[assistant_key] %>
               <%= link_to ai_conversation_path(conversation), class: "ai-conversation-item" do %>
-                <div class="ai-conversation-avatar ai-avatar-<%= conversation.assistant %>">
-                  <% case conversation.assistant
-                     when "max" %>🏠<%
-                     when "sage" %>🧭<%
-                     when "nina" %>🤝<%
-                     when "doc" %>📄<%
-                     when "scout" %>📊<%
-                     when "ally" %>👥<%
-                     end %>
+                <div class="ai-conversation-avatar ai-avatar-<%= conversation.assistant %>" style="<%= assistant_avatar_style(conversation.assistant) %>">
+                  <%= assistant_avatar_icon(conversation.assistant) %>
                 </div>
                 <div class="ai-conversation-content">
                   <div class="ai-conversation-name"><%= assistant_info&.dig(:name) || conversation.assistant.titleize %></div>
@@ -172,7 +190,7 @@
               </svg>
             </div>
             <div class="card-empty-title">No conversations yet</div>
-            <div class="card-empty-description">Start a chat with any assistant above to get expert guidance</div>
+            <div class="card-empty-description">Choose Stevie or Evie above to start your property journey</div>
           </div>
         <% end %>
       </div>

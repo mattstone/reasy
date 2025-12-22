@@ -1,0 +1,31 @@
+<%# Checklist item partial %>
+<% completed = item.completed_by?(user) %>
+<div id="checklist_item_<%= item.id %>" class="checklist-item <%= 'completed' if completed %>">
+  <%= button_to toggle_checklist_progress_path(item), method: :post, class: "checklist-checkbox", data: { turbo_stream: true } do %>
+    <% if completed %>
+      <span class="checkbox-checked">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </span>
+    <% else %>
+      <span class="checkbox-unchecked"></span>
+    <% end %>
+  <% end %>
+  <div class="checklist-content">
+    <span class="checklist-title"><%= item.title %></span>
+    <% if item.description.present? %>
+      <span class="checklist-description"><%= item.description %></span>
+    <% end %>
+    <% if item.requires_document? %>
+      <span class="checklist-description">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Requires document upload
+      </span>
+    <% end %>
+  </div>
+  <span class="checklist-points">+<%= item.points %></span>
+</div>

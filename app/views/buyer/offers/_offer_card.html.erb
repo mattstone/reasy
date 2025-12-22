@@ -1,0 +1,36 @@
+<%= link_to buyer_offer_path(offer), class: "property-card property-card-horizontal" do %>
+  <div class="property-card-image">
+    <% if offer.property.hero_image.attached? %>
+      <%= image_tag offer.property.hero_image.variant(resize_to_fill: [200, 160]), alt: offer.property.street_address %>
+    <% else %>
+      <div class="property-card-placeholder">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+      </div>
+    <% end %>
+    <div class="property-card-badge">
+      <span class="badge <%= offer_status_badge_class(offer.status) %>"><%= offer.status.humanize %></span>
+    </div>
+  </div>
+  <div class="property-card-content">
+    <div class="property-card-price"><%= number_to_currency(offer.amount_cents / 100, precision: 0) %></div>
+    <div class="property-card-address"><%= offer.property.street_address %>, <%= offer.property.suburb %></div>
+    <div class="property-card-features">
+      <span>Submitted <%= time_ago_in_words(offer.created_at) %> ago</span>
+      <% if offer.conditions.present? %>
+        <span><%= offer.conditions.size %> conditions</span>
+      <% end %>
+    </div>
+    <% if offer.status == "countered" && offer.counter_amount_cents.present? %>
+      <div class="mt-2">
+        <span class="badge badge-orange">Counter: <%= number_to_currency(offer.counter_amount_cents / 100, precision: 0) %></span>
+      </div>
+    <% end %>
+  </div>
+  <div style="display: flex; align-items: center; padding-right: 1rem;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-text-muted);">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  </div>
+<% end %>

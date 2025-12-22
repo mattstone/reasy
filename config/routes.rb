@@ -91,6 +91,8 @@ Rails.application.routes.draw do
     # Buyer-specific routes
     namespace :buyer do
       resource :profile, only: [:show, :edit, :update]
+      resource :journey, only: [:show], controller: 'journey'
+      resources :offers, only: [:index, :show]
       resources :saved_searches
       resources :saved_properties, only: [:index, :create, :destroy]
       resources :property_alerts, only: [:index, :create, :update, :destroy]
@@ -99,6 +101,7 @@ Rails.application.routes.draw do
     # Seller-specific routes
     namespace :seller do
       resource :profile, only: [:show, :edit, :update]
+      resource :journey, only: [:show], controller: 'journey'
       resources :properties do
         member do
           post :publish
@@ -157,16 +160,30 @@ Rails.application.routes.draw do
 
     # Documents
     resources :documents, only: [:index, :show, :create, :destroy]
+
+    # Checklist progress (for journey)
+    resources :checklist_progress, only: [] do
+      member do
+        post :toggle
+      end
+    end
   end
 
   # Public property browsing
-  resources :properties, only: [:index, :show] do
-    member do
-      post :enquire
-      post :love
-      delete :unlove
+  resources :properties, only: [:index] do
+    collection do
+      # SEO-friendly nested property URLs: /properties/au/:state/:suburb/:slug
+      get "au/:state/:suburb/:slug", action: :show, as: :seo
+      post "au/:state/:suburb/:slug/enquire", action: :enquire, as: :enquire_seo
+      post "au/:state/:suburb/:slug/love", action: :love, as: :love_seo
+      delete "au/:state/:suburb/:slug/unlove", action: :unlove, as: :unlove_seo
+      get "au/:state/:suburb/:slug/offers/new", to: "property_offers#new", as: :new_seo_offer
+      post "au/:state/:suburb/:slug/offers", to: "property_offers#create", as: :seo_offers
     end
   end
+
+  # Fallback for legacy numeric IDs (redirects to SEO URL)
+  get "properties/:id", to: "properties#show_legacy", as: :property, constraints: { id: /\d+/ }
 
   # Map search
   get "search", to: "properties#search", as: :property_search
@@ -341,7 +358,25 @@ Rails.application.routes.draw do
   # API namespace (for future mobile app)
   namespace :api do
     namespace :v1 do
-      # API routes will go here
+      # Investor analytics API (public, rate-limited)
+      namespace :investor do
+        resources :postcodes, only: [:index, :show] do
+          member do
+            get :projections
+            get :score_breakdown
+            get :crime
+            get :property_score
+            get :value_projection
+          end
+        end
+        resources :suburbs, only: [:index, :show] do
+          member do
+            get :projections
+            get :crime
+            get :property_score
+          end
+        end
+      end
     end
   end
 

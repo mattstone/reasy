@@ -1,138 +1,156 @@
-<%= render "shared/nav" %>
+<%# Pricing - Reasy r5 Design System %>
+<%= stylesheet_link_tag "pages/index5", media: "all" %>
+<%= stylesheet_link_tag "pages/interior", media: "all" %>
 
-<div class="page-hero">
-  <h1>Simple, Transparent Pricing</h1>
-  <p>No hidden fees, no surprises. Pay only when your property sells.</p>
+<div class="r5-page">
+  <%= render "shared/r5_nav" %>
+
+  <%# Page Hero %>
+  <section class="r5-page-hero">
+    <div class="r5-page-hero-gradient"></div>
+    <div class="r5-page-hero-pattern"></div>
+    <div class="r5-page-hero-content">
+      <h1>Simple, Transparent Pricing</h1>
+      <p>No hidden fees, no surprises. Pay only when your property sells.</p>
+    </div>
+  </section>
+
+  <%# Pricing Cards %>
+  <section class="r5-interior-section r5-interior-section-white">
+    <div class="r5-section-inner">
+      <div class="r5-grid r5-grid-2 r5-max-w-narrow">
+
+        <%# Buyers Card %>
+        <div class="r5-pricing-card">
+          <span class="r5-badge r5-badge-blue">For Buyers</span>
+          <p class="r5-pricing-price r5-pricing-price-green">Free</p>
+          <p class="r5-pricing-desc">Browse, search, and make offers at no cost</p>
+
+          <ul class="r5-pricing-features">
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Unlimited property searches</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Access to "Open to Offers" listings</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Expert guidance through the process</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Direct communication with sellers</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Offer management &amp; tracking</span>
+            </li>
+          </ul>
+
+          <%= link_to "Start searching", new_user_registration_path(role: "buyer"), class: "r5-btn r5-btn-primary", style: "width: 100%; justify-content: center;" %>
+        </div>
+
+        <%# Sellers Card %>
+        <div class="r5-pricing-card r5-pricing-card-featured">
+          <span class="r5-badge r5-badge-orange">For Sellers</span>
+          <p class="r5-pricing-price r5-pricing-price-orange">$4,990</p>
+          <p class="r5-pricing-desc">Flat fee, only paid on successful sale</p>
+
+          <ul class="r5-pricing-features">
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Professional property listing</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>"Open to Offers" private listing option</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Negotiation guidance</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Contract &amp; document management</span>
+            </li>
+            <li>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--r5-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Full settlement support</span>
+            </li>
+          </ul>
+
+          <%= link_to "List your property", new_user_registration_path(role: "seller"), class: "r5-btn r5-btn-orange", style: "width: 100%; justify-content: center;" %>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <%# Savings Calculator %>
+  <section class="r5-interior-section r5-interior-section-dark">
+    <div class="r5-section-inner">
+      <div class="r5-interior-header">
+        <h2>See how much you could save</h2>
+      </div>
+
+      <div class="r5-savings-box">
+        <p class="r5-text-center" style="font-size: var(--r5-text-lg); margin-bottom: var(--r5-space-6);">
+          On a <strong style="color: var(--r5-white);">$1,000,000</strong> property sale:
+        </p>
+
+        <div class="r5-savings-compare">
+          <div>
+            <p>Traditional agent (2.5%)</p>
+            <p class="r5-savings-old">$25,000</p>
+          </div>
+          <div>
+            <p style="color: var(--r5-green);">With Reasy</p>
+            <p class="r5-savings-new">$4,990</p>
+          </div>
+        </div>
+
+        <div class="r5-savings-result">
+          <p>You keep</p>
+          <p class="r5-savings-amount">$20,010</p>
+          <p class="r5-savings-extra">extra in your pocket</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# FAQ Section %>
+  <section class="r5-interior-section r5-interior-section-alt">
+    <div class="r5-section-inner">
+      <div class="r5-interior-header">
+        <h2>Frequently asked questions</h2>
+      </div>
+
+      <div class="r5-max-w-narrow">
+        <div class="r5-faq-card">
+          <h4>When do I pay the $4,990?</h4>
+          <p>Only when your property successfully sells. If it doesn't sell, you don't pay.</p>
+        </div>
+        <div class="r5-faq-card">
+          <h4>Are there any hidden fees?</h4>
+          <p>No. $4,990 is the total fee for sellers. Buyers never pay us anything.</p>
+        </div>
+        <div class="r5-faq-card">
+          <h4>What's included in the seller fee?</h4>
+          <p>Everything: listing creation, buyer matching, offer management, negotiation guidance, contract support, and settlement assistance.</p>
+        </div>
+        <div class="r5-faq-card">
+          <h4>Do I still need a conveyancer?</h4>
+          <p>Yes &mdash; you'll need a conveyancer or solicitor for the legal aspects of the sale. We can connect you with trusted professionals if needed.</p>
+        </div>
+      </div>
+
+      <div class="r5-text-center r5-mt-12">
+        <%= link_to "Get started free", new_user_registration_path, class: "r5-btn r5-btn-primary r5-btn-xl" %>
+      </div>
+    </div>
+  </section>
+
+  <%= render "shared/r5_footer" %>
 </div>
-
-<section class="section" style="background: var(--reasy-white);">
-  <div class="container">
-    <div class="grid grid-2" style="max-width: 900px; margin: 0 auto; gap: var(--reasy-space-8);">
-
-      <div class="card" style="border: 2px solid var(--reasy-gray-200);">
-        <span class="badge badge-primary mb-4">For Buyers</span>
-        <h2 style="font-size: var(--reasy-text-4xl); color: var(--reasy-green);">Free</h2>
-        <p class="text-lg text-muted mb-8">Browse, search, and make offers at no cost</p>
-
-        <ul style="list-style: none; padding: 0; margin: 0 0 var(--reasy-space-8);">
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Unlimited property searches</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Access to "Open to Offers" listings</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Expert guidance through the process</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Direct communication with sellers</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Offer management & tracking</span>
-          </li>
-        </ul>
-
-        <%= link_to "Start searching", new_user_registration_path, class: "btn btn-primary btn-block" %>
-      </div>
-
-      <div class="card" style="border: 2px solid var(--reasy-orange); position: relative;">
-        <span class="badge badge-error mb-4">For Sellers</span>
-        <h2 style="font-size: var(--reasy-text-4xl); color: var(--reasy-orange);">$4,990</h2>
-        <p class="text-lg text-muted mb-8">Flat fee, only paid on successful sale</p>
-
-        <ul style="list-style: none; padding: 0; margin: 0 0 var(--reasy-space-8);">
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Professional property listing</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>"Open to Offers" private listing option</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Negotiation guidance</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Contract & document management</span>
-          </li>
-          <li style="display: flex; align-items: flex-start; gap: var(--reasy-space-3); margin-bottom: var(--reasy-space-4);">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--reasy-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Full settlement support</span>
-          </li>
-        </ul>
-
-        <%= link_to "List your property", new_user_registration_path, class: "btn btn-orange btn-block" %>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<section class="section" style="background: var(--reasy-dark); color: var(--reasy-white);">
-  <div class="container">
-    <div class="text-center" style="max-width: 800px; margin: 0 auto;">
-      <h2 style="color: var(--reasy-white);">See how much you could save</h2>
-
-      <div style="background: rgba(255,255,255,0.1); border-radius: var(--reasy-radius-xl); padding: var(--reasy-space-8); margin-top: var(--reasy-space-8);">
-        <p class="text-lg mb-4">On a <strong style="color: var(--reasy-white);">$1,000,000</strong> property sale:</p>
-
-        <div class="grid grid-2" style="gap: var(--reasy-space-6); text-align: center;">
-          <div>
-            <p class="text-muted mb-2">Traditional agent (2.5%)</p>
-            <p style="font-size: var(--reasy-text-3xl); font-weight: 700; color: var(--reasy-gray-400); text-decoration: line-through;">$25,000</p>
-          </div>
-          <div>
-            <p style="color: var(--reasy-green);" class="mb-2">With Reasy</p>
-            <p style="font-size: var(--reasy-text-3xl); font-weight: 700; color: var(--reasy-green);">$4,990</p>
-          </div>
-        </div>
-
-        <div style="margin-top: var(--reasy-space-6); padding-top: var(--reasy-space-6); border-top: 1px solid rgba(255,255,255,0.2);">
-          <p class="mb-2">You keep</p>
-          <p style="font-size: var(--reasy-text-4xl); font-weight: 700; color: var(--reasy-orange);">$20,010</p>
-          <p class="text-muted">extra in your pocket</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="background: var(--reasy-beige-light);">
-  <div class="container">
-    <div class="section-header">
-      <h2>Frequently asked questions</h2>
-    </div>
-
-    <div style="max-width: 800px; margin: 0 auto;">
-      <div class="card card-flat mb-4">
-        <h4>When do I pay the $4,990?</h4>
-        <p class="text-muted mb-0">Only when your property successfully sells. If it doesn't sell, you don't pay.</p>
-      </div>
-      <div class="card card-flat mb-4">
-        <h4>Are there any hidden fees?</h4>
-        <p class="text-muted mb-0">No. $4,990 is the total fee for sellers. Buyers never pay us anything.</p>
-      </div>
-      <div class="card card-flat mb-4">
-        <h4>What's included in the seller fee?</h4>
-        <p class="text-muted mb-0">Everything: listing creation, buyer matching, offer management, negotiation guidance, contract support, and settlement assistance.</p>
-      </div>
-      <div class="card card-flat mb-4">
-        <h4">Do I still need a conveyancer?</h4>
-        <p class="text-muted mb-0">Yes — you'll need a conveyancer or solicitor for the legal aspects of the sale. We can connect you with trusted professionals if needed.</p>
-      </div>
-    </div>
-
-    <div class="text-center mt-12">
-      <%= link_to "Get started free", new_user_registration_path, class: "btn btn-primary btn-lg" %>
-    </div>
-  </div>
-</section>
-
-<%= render "shared/footer" %>

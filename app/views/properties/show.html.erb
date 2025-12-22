@@ -24,13 +24,22 @@
           <% elsif @property.photos.attached? && @property.photos.first.present? %>
             <%= image_tag @property.photos.first.variant(resize_to_fill: [800, 500]), alt: @property.short_address, class: "gallery-hero-img" %>
           <% else %>
-            <div class="gallery-placeholder">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-              <p>No photos available</p>
-            </div>
+            <% if @property.latitude.present? && @property.longitude.present? %>
+              <div class="gallery-map-placeholder"
+                   data-controller="static-map"
+                   data-static-map-lat-value="<%= @property.latitude %>"
+                   data-static-map-lng-value="<%= @property.longitude %>"
+                   data-static-map-zoom-value="15">
+              </div>
+            <% else %>
+              <div class="gallery-placeholder">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <p>No photos available</p>
+              </div>
+            <% end %>
           <% end %>
 
           <%# Photo count badge %>
@@ -183,6 +192,365 @@
     </div>
   </section>
 
+  <%# Reasy Score Section - Enhanced with visual breakdown %>
+  <% if @score_breakdown.present? && @score_breakdown[:overall].present? %>
+    <section class="property-score-section">
+      <div class="container">
+        <div class="score-hero-card" data-controller="toggle">
+          <%# Main score display with visual bars %>
+          <div class="score-hero-content">
+            <div class="score-hero-left">
+              <div class="score-ring-large">
+                <%= score_ring_svg(@score_breakdown[:overall], size: 120, stroke_width: 8) %>
+                <div class="score-ring-value-large">
+                  <span class="score-number-large"><%= @score_breakdown[:overall].round %></span>
+                  <span class="score-max-large">/100</span>
+                </div>
+              </div>
+              <div class="score-hero-info">
+                <h2 class="score-hero-title">Reasy Score</h2>
+                <p class="score-hero-label <%= reasy_score_badge_class(@score_breakdown[:overall]) %>">
+                  <%= reasy_score_label(@score_breakdown[:overall]) %> Investment Area
+                </p>
+              </div>
+            </div>
+
+            <%# Visual Score Bars %>
+            <div class="score-bars-container">
+              <% score_components = [
+                { key: :growth_score, label: "Growth", icon: "trending-up", weight: 20 },
+                { key: :safety, label: "Safety", icon: "shield", weight: 15 },
+                { key: :transport, label: "Transport", icon: "train", weight: 15 },
+                { key: :hazard, label: "Hazards", icon: "alert", weight: 15 },
+                { key: :education, label: "Education", icon: "graduation-cap", weight: 10 },
+                { key: :rental_yield, label: "Yield", icon: "dollar", weight: 10, is_percent: true },
+                { key: :tenant_quality, label: "Tenants", icon: "users", weight: 10 },
+                { key: :socioeconomic, label: "Economy", icon: "building", weight: 5, is_seifa: true }
+              ] %>
+              <% score_components.each do |comp| %>
+                <%
+                  raw_value = @score_breakdown[comp[:key]]
+                  if comp[:is_percent] && raw_value
+                    # Convert yield percentage to 0-100 score (5% yield = 100 score)
+                    bar_value = [[raw_value * 20, 0].max, 100].min
+                    display_value = "#{number_with_precision(raw_value, precision: 1)}%"
+                  elsif comp[:is_seifa] && raw_value
+                    # Normalize SEIFA (500-1200) to 0-100
+                    bar_value = [[(raw_value - 500) / 7.0, 0].max, 100].min
+                    display_value = raw_value.round.to_s
+                  else
+                    bar_value = raw_value
+                    display_value = raw_value ? "#{raw_value.round}/100" : "--"
+                  end
+                %>
+                <div class="score-bar-row">
+                  <span class="score-bar-label"><%= comp[:label] %></span>
+                  <div class="score-bar-track">
+                    <div class="score-bar-fill score-bar-fill-<%= comp[:key] %>" style="width: <%= bar_value || 0 %>%"></div>
+                  </div>
+                  <span class="score-bar-value"><%= display_value %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <%# What is Reasy Score - expandable explanation %>
+          <div class="score-explanation" data-controller="toggle">
+            <button type="button" class="score-explanation-trigger" data-action="toggle#toggle" data-toggle-target="trigger">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              What is the Reasy Score?
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="score-explanation-content" data-toggle-target="content" hidden>
+              <p>The <strong>Reasy Score</strong> is a comprehensive investment rating (0-100) that helps you evaluate a property's potential as an investment.</p>
+
+              <div class="score-ranges">
+                <div class="score-range score-range-excellent">
+                  <span class="score-range-badge">80-100</span>
+                  <span>Excellent - Top investment areas</span>
+                </div>
+                <div class="score-range score-range-good">
+                  <span class="score-range-badge">65-79</span>
+                  <span>Good - Strong investment potential</span>
+                </div>
+                <div class="score-range score-range-average">
+                  <span class="score-range-badge">50-64</span>
+                  <span>Average - Moderate potential</span>
+                </div>
+                <div class="score-range score-range-low">
+                  <span class="score-range-badge">&lt;50</span>
+                  <span>Below Average - Consider carefully</span>
+                </div>
+              </div>
+
+              <h4>Score Components</h4>
+              <ul class="score-components-list">
+                <li><strong>Growth Potential (20%)</strong> - Land value and property price appreciation over 5 years</li>
+                <li><strong>Safety (15%)</strong> - Crime rates and safety metrics from NSW BOCSAR</li>
+                <li><strong>Transport Access (15%)</strong> - Proximity to train stations, ferries, and public transport</li>
+                <li><strong>Natural Hazards (15%)</strong> - Flood, bushfire, and coastal erosion risk assessment</li>
+                <li><strong>Education (10%)</strong> - Quality of schools in the area (ICSEA average)</li>
+                <li><strong>Rental Yield (10%)</strong> - Expected rental return based on market data</li>
+                <li><strong>Tenant Quality (10%)</strong> - Area demographics for reliable tenants</li>
+                <li><strong>Socioeconomic (5%)</strong> - Overall area prosperity (SEIFA index)</li>
+              </ul>
+
+              <p class="score-data-sources"><strong>Data Sources:</strong> NSW Valuer General, ABS Census 2021, NSW Bureau of Crime Statistics, NSW Department of Education, Transport for NSW, NSW SES Flood Data, NSW RFS Bushfire Prone Land</p>
+            </div>
+          </div>
+
+          <%# Detailed breakdown button %>
+          <button type="button" class="score-expand-btn" data-action="toggle#toggle" data-toggle-target="trigger" aria-expanded="false">
+            View Detailed Breakdown
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          <%# Detailed Score Breakdown Panel %>
+          <div class="score-breakdown-panel" data-toggle-target="content" hidden>
+            <div class="score-breakdown-grid">
+              <%# Growth Potential %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon metric-card-icon-green">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                    <polyline points="17 6 23 6 23 12"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Growth Potential</p>
+                  <p class="breakdown-value">
+                    <% if @score_breakdown[:land_growth_5yr] %>
+                      <span class="<%= growth_badge_class(@score_breakdown[:land_growth_5yr]) %>">
+                        <%= format_growth(@score_breakdown[:land_growth_5yr]) %>
+                      </span>
+                      <span class="breakdown-period">land value (4yr CAGR)</span>
+                    <% elsif @score_breakdown[:growth] %>
+                      <%= format_growth(@score_breakdown[:growth]) %> <span class="breakdown-period">(5yr)</span>
+                    <% else %>
+                      --
+                    <% end %>
+                  </p>
+                  <% if @score_breakdown[:land_growth_1yr] %>
+                    <p class="breakdown-note">1-year: <%= format_growth(@score_breakdown[:land_growth_1yr]) %></p>
+                  <% end %>
+                </div>
+              </div>
+
+              <%# Safety Score %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon <%= crime_band_badge_class(@score_breakdown[:crime_band]) %>">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Safety</p>
+                  <p class="breakdown-value">
+                    <%= crime_band_label(@score_breakdown[:crime_band]) %>
+                    <% trend = crime_trend_indicator(@score_breakdown[:crime_trend]) %>
+                    <span class="change-badge <%= trend[:css_class] %>">
+                      <%= trend[:label] %>
+                    </span>
+                  </p>
+                  <% if @score_breakdown[:safety] %>
+                    <p class="breakdown-score">Score: <%= @score_breakdown[:safety].round %>/100</p>
+                  <% end %>
+                </div>
+              </div>
+
+              <%# Transport Accessibility - NEW %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon metric-card-icon-blue">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 11V4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v7"/>
+                    <path d="M4 11v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>
+                    <path d="M8 21v-2"/>
+                    <path d="M16 21v-2"/>
+                    <path d="M4 11h16"/>
+                    <circle cx="8" cy="15" r="1"/>
+                    <circle cx="16" cy="15" r="1"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Transport Accessibility</p>
+                  <p class="breakdown-value">
+                    <% if @score_breakdown[:transport] %>
+                      <%= @score_breakdown[:transport].round %>/100
+                      <span class="breakdown-badge <%= transport_score_badge_class(@score_breakdown[:transport]) %>">
+                        <%= transport_score_label(@score_breakdown[:transport]) %>
+                      </span>
+                    <% else %>
+                      --
+                    <% end %>
+                  </p>
+                  <% if @score_breakdown[:nearest_station] %>
+                    <p class="breakdown-note">
+                      Nearest station: <%= @score_breakdown[:nearest_station] %>
+                      <% if @score_breakdown[:station_distance_km] %>
+                        (<%= format_distance(@score_breakdown[:station_distance_km]) %>)
+                      <% end %>
+                      <% if @score_breakdown[:stations_nearby] && @score_breakdown[:stations_nearby] > 0 %>
+                        &bull; <%= @score_breakdown[:stations_nearby] %> stations within 5km
+                      <% end %>
+                    </p>
+                  <% end %>
+                </div>
+              </div>
+
+              <%# Natural Hazard Risk - NEW %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon <%= hazard_score_badge_class(@score_breakdown[:hazard]) %>">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Natural Hazard Risk</p>
+                  <p class="breakdown-value">
+                    <% if @score_breakdown[:hazard] %>
+                      <%= @score_breakdown[:hazard].round %>/100
+                      <span class="breakdown-badge <%= hazard_score_badge_class(@score_breakdown[:hazard]) %>">
+                        <%= hazard_score_label(@score_breakdown[:hazard]) %>
+                      </span>
+                    <% else %>
+                      --
+                    <% end %>
+                  </p>
+                  <% if @score_breakdown[:flood_risk] || @score_breakdown[:bushfire_risk] || @score_breakdown[:coastal_risk] %>
+                    <p class="breakdown-note">
+                      <% if @score_breakdown[:flood_risk] && @score_breakdown[:flood_risk] != "none" %>
+                        Flood: <span class="<%= risk_level_badge_class(@score_breakdown[:flood_risk]) %>"><%= risk_level_label(@score_breakdown[:flood_risk]) %></span>
+                      <% end %>
+                      <% if @score_breakdown[:bushfire_risk] && @score_breakdown[:bushfire_risk] != "none" %>
+                        Bushfire: <span class="<%= risk_level_badge_class(@score_breakdown[:bushfire_risk]) %>"><%= risk_level_label(@score_breakdown[:bushfire_risk]) %></span>
+                      <% end %>
+                      <% if @score_breakdown[:coastal_risk] && @score_breakdown[:coastal_risk] != "none" %>
+                        Coastal: <span class="<%= risk_level_badge_class(@score_breakdown[:coastal_risk]) %>"><%= risk_level_label(@score_breakdown[:coastal_risk]) %></span>
+                      <% end %>
+                      <% if [@score_breakdown[:flood_risk], @score_breakdown[:bushfire_risk], @score_breakdown[:coastal_risk]].all? { |r| r == "none" || r.nil? } %>
+                        No significant natural hazard risks identified
+                      <% end %>
+                    </p>
+                  <% end %>
+                </div>
+              </div>
+
+              <%# Education Score %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon metric-card-icon-indigo">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Education Quality</p>
+                  <p class="breakdown-value">
+                    <% if @score_breakdown[:education] %>
+                      <%= @score_breakdown[:education].round %>/100
+                      <span class="breakdown-badge <%= reasy_score_badge_class(@score_breakdown[:education]) %>">
+                        <%= education_score_label(@score_breakdown[:education]) %>
+                      </span>
+                    <% else %>
+                      --
+                    <% end %>
+                  </p>
+                  <% if @score_breakdown[:avg_icsea] %>
+                    <p class="breakdown-note">
+                      Avg ICSEA: <%= @score_breakdown[:avg_icsea] %> (<%= icsea_label(@score_breakdown[:avg_icsea]) %>)
+                      <% if @score_breakdown[:school_count] && @score_breakdown[:school_count] > 0 %>
+                        &bull; <%= @score_breakdown[:school_count] %> schools nearby
+                      <% end %>
+                    </p>
+                  <% end %>
+                </div>
+              </div>
+
+              <%# Tenant Quality %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon metric-card-icon-blue">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Tenant Quality</p>
+                  <p class="breakdown-value">
+                    <% if @score_breakdown[:tenant_quality] %>
+                      <%= @score_breakdown[:tenant_quality].round %>/100
+                    <% else %>
+                      --
+                    <% end %>
+                  </p>
+                  <p class="breakdown-note">Based on socioeconomic factors &amp; crime rates</p>
+                </div>
+              </div>
+
+              <%# Socioeconomic Index %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon metric-card-icon-purple">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M3 9h18"/>
+                    <path d="M9 21V9"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Socioeconomic Index</p>
+                  <p class="breakdown-value">
+                    <% if @score_breakdown[:socioeconomic] %>
+                      <%= @score_breakdown[:socioeconomic].round %>
+                    <% else %>
+                      --
+                    <% end %>
+                  </p>
+                  <p class="breakdown-note">SEIFA IRSAD index (Aus avg: 1000)</p>
+                </div>
+              </div>
+
+              <%# Rental Yield %>
+              <div class="score-breakdown-item">
+                <div class="breakdown-icon metric-card-icon-teal">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <div class="breakdown-content">
+                  <p class="breakdown-label">Rental Yield</p>
+                  <p class="breakdown-value">
+                    <% if @score_breakdown[:rental_yield] %>
+                      <span class="<%= @score_breakdown[:rental_yield] >= 4 ? 'text-success' : '' %>">
+                        <%= number_with_precision(@score_breakdown[:rental_yield], precision: 2) %>%
+                      </span>
+                      <span class="breakdown-period">gross</span>
+                    <% else %>
+                      --
+                    <% end %>
+                  </p>
+                  <p class="breakdown-note">Based on median rents vs property prices</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
   <%# Main Content - Two Column Layout %>
   <section class="property-content-section">
     <div class="container">
@@ -223,6 +591,11 @@
               </div>
             </div>
           <% end %>
+
+          <%# AI Analysis - What Stevie/Evie Thinks %>
+          <div class="property-section">
+            <%= render "shared/ai_analysis", property: @property %>
+          </div>
 
           <%# Property Details Table %>
           <div class="property-section">
@@ -271,18 +644,272 @@
             </table>
           </div>
 
-          <%# Map Section (Placeholder) %>
+          <%# Map Section %>
           <div class="property-section">
             <h2 class="property-section-title">Location</h2>
-            <div class="property-map-placeholder">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              <p><%= @property.suburb %>, <%= @property.state %> <%= @property.postcode %></p>
-              <p class="text-sm text-muted">Interactive map coming soon</p>
-            </div>
+            <% if @property.latitude.present? && @property.longitude.present? %>
+              <div class="property-location-map"
+                   data-controller="static-map"
+                   data-static-map-lat-value="<%= @property.latitude %>"
+                   data-static-map-lng-value="<%= @property.longitude %>"
+                   data-static-map-zoom-value="14">
+              </div>
+              <p class="property-location-address">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <%= @property.full_address %>
+              </p>
+            <% else %>
+              <div class="property-map-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <p><%= @property.suburb %>, <%= @property.state %> <%= @property.postcode %></p>
+                <p class="text-sm text-muted">Map location not available</p>
+              </div>
+            <% end %>
           </div>
+
+          <%# Nearby Places of Worship Section %>
+          <% nearby_worship = @property.nearby_places_of_worship(radius_km: 2.0, limit: 8) %>
+          <% if nearby_worship.any? %>
+            <div class="property-section">
+              <h2 class="property-section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+                Nearby Places of Worship
+              </h2>
+              <p class="section-subtitle">Within 2km of this property</p>
+
+              <div class="places-of-worship-list">
+                <% nearby_worship.each do |place| %>
+                  <div class="worship-place-item">
+                    <div class="worship-place-icon <%= place[:religion] || 'unknown' %>">
+                      <% case place[:religion] %>
+                      <% when "christian" %>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 2v20M5 10h14"/>
+                        </svg>
+                      <% when "muslim" %>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 3a9 9 0 0 0 9 9 9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 0 9-9z"/>
+                        </svg>
+                      <% when "jewish" %>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                      <% when "buddhist", "hindu" %>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"/>
+                          <path d="M12 2v20M2 12h20"/>
+                        </svg>
+                      <% when "sikh" %>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"/>
+                          <path d="M12 6v12M6 12h12"/>
+                        </svg>
+                      <% else %>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+                        </svg>
+                      <% end %>
+                    </div>
+                    <div class="worship-place-info">
+                      <p class="worship-place-name"><%= place[:name] %></p>
+                      <p class="worship-place-details">
+                        <span class="worship-religion"><%= place[:religion_display] %></span>
+                        <% if place[:denomination].present? %>
+                          <span class="worship-denomination">(<%= place[:denomination].titleize %>)</span>
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="worship-place-distance">
+                      <%= place[:distance_km] < 1 ? "#{(place[:distance_km] * 1000).round}m" : "#{place[:distance_km]}km" %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <%# Investment Insights Section %>
+          <% property_price = @property.price_cents.to_i / 100 if @property.price_cents.present? %>
+          <% if @property.estimated_weekly_rent.present? || @property.rental_yield.present? || property_price.present? %>
+            <div class="property-section investment-insights-section">
+              <h2 class="property-section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23"/>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                Investment Insights
+              </h2>
+              <p class="investment-insights-subtitle">
+                Based on <%= @property.bedrooms || 0 %>-bedroom <%= @property.property_type %> rental data for <%= @property.suburb %>
+              </p>
+
+              <div class="investment-metrics-grid">
+                <% if @property.estimated_weekly_rent.present? %>
+                  <div class="investment-metric-card">
+                    <div class="investment-metric-icon rent-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                      </svg>
+                    </div>
+                    <div class="investment-metric-content">
+                      <p class="investment-metric-label">Estimated Weekly Rent</p>
+                      <p class="investment-metric-value">$<%= number_with_delimiter(@property.estimated_weekly_rent) %></p>
+                      <p class="investment-metric-note">
+                        ~$<%= number_with_delimiter((@property.estimated_weekly_rent * 52 / 12.0).round) %>/month
+                      </p>
+                    </div>
+                  </div>
+                <% end %>
+
+                <% if @property.rental_yield.present? %>
+                  <div class="investment-metric-card">
+                    <div class="investment-metric-icon yield-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                      </svg>
+                    </div>
+                    <div class="investment-metric-content">
+                      <p class="investment-metric-label">Gross Rental Yield</p>
+                      <p class="investment-metric-value <%= @property.rental_yield >= 4 ? 'yield-good' : (@property.rental_yield >= 3 ? 'yield-average' : 'yield-low') %>">
+                        <%= number_with_precision(@property.rental_yield, precision: 1) %>%
+                      </p>
+                      <p class="investment-metric-note">
+                        <% if @property.rental_yield >= 5 %>
+                          Excellent yield
+                        <% elsif @property.rental_yield >= 4 %>
+                          Good yield
+                        <% elsif @property.rental_yield >= 3 %>
+                          Average yield
+                        <% else %>
+                          Below average yield
+                        <% end %>
+                      </p>
+                    </div>
+                  </div>
+                <% end %>
+
+                <% annual_rent = @property.estimated_weekly_rent.to_i * 52 if @property.estimated_weekly_rent.present? %>
+                <% if annual_rent.present? && annual_rent > 0 %>
+                  <div class="investment-metric-card">
+                    <div class="investment-metric-icon annual-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                    </div>
+                    <div class="investment-metric-content">
+                      <p class="investment-metric-label">Annual Rental Income</p>
+                      <p class="investment-metric-value">$<%= number_with_delimiter(annual_rent) %></p>
+                      <p class="investment-metric-note">Before expenses</p>
+                    </div>
+                  </div>
+                <% end %>
+
+                <%# NSW Stamp Duty %>
+                <% if property_price.present? && property_price > 0 %>
+                  <% stamp_duty = calculate_nsw_stamp_duty(property_price) %>
+                  <div class="investment-metric-card">
+                    <div class="investment-metric-icon stamp-duty-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="18" x2="12" y2="12"/>
+                        <line x1="9" y1="15" x2="15" y2="15"/>
+                      </svg>
+                    </div>
+                    <div class="investment-metric-content">
+                      <p class="investment-metric-label">NSW Stamp Duty</p>
+                      <p class="investment-metric-value">$<%= number_with_delimiter(stamp_duty) %></p>
+                      <p class="investment-metric-note">
+                        <%= number_with_precision((stamp_duty.to_f / property_price) * 100, precision: 1) %>% of purchase price
+                      </p>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+
+              <%# Investment Calculator %>
+              <% if property_price.present? && property_price > 0 && @property.estimated_weekly_rent.present? %>
+                <div class="investment-calculator" data-controller="investment-calculator"
+                     data-investment-calculator-price-value="<%= property_price %>"
+                     data-investment-calculator-weekly-rent-value="<%= @property.estimated_weekly_rent %>"
+                     data-investment-calculator-stamp-duty-value="<%= calculate_nsw_stamp_duty(property_price) %>">
+
+                  <h3 class="calculator-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="2" width="16" height="20" rx="2"/>
+                      <line x1="8" y1="6" x2="16" y2="6"/>
+                      <line x1="8" y1="10" x2="16" y2="10"/>
+                      <line x1="8" y1="14" x2="12" y2="14"/>
+                      <line x1="8" y1="18" x2="12" y2="18"/>
+                    </svg>
+                    Investment Break-Even Calculator
+                  </h3>
+
+                  <div class="calculator-inputs">
+                    <div class="calculator-input-group">
+                      <label for="mortgage-amount">Mortgage Amount</label>
+                      <div class="input-with-prefix">
+                        <span class="input-prefix">$</span>
+                        <input type="text" id="mortgage-amount"
+                               data-investment-calculator-target="mortgageInput"
+                               data-action="input->investment-calculator#calculate"
+                               value="<%= number_with_delimiter((property_price * 0.8).round(-3)) %>"
+                               placeholder="e.g. 2,800,000">
+                      </div>
+                      <p class="input-hint">80% LVR = $<%= number_with_delimiter((property_price * 0.8).round(-3)) %></p>
+                    </div>
+
+                    <div class="calculator-input-group">
+                      <label for="interest-rate">Interest Rate (%)</label>
+                      <div class="input-with-suffix">
+                        <input type="text" id="interest-rate"
+                               data-investment-calculator-target="interestInput"
+                               data-action="input->investment-calculator#calculate"
+                               value="6.5"
+                               placeholder="e.g. 6.5">
+                        <span class="input-suffix">%</span>
+                      </div>
+                    </div>
+
+                    <div class="calculator-input-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="include-stamp-duty"
+                               data-investment-calculator-target="stampDutyCheckbox"
+                               data-action="change->investment-calculator#toggleStampDuty">
+                        <span>Include stamp duty in loan (+$<%= number_with_delimiter(calculate_nsw_stamp_duty(property_price)) %>)</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="calculator-results" data-investment-calculator-target="results">
+                    <%# Results populated by JavaScript %>
+                  </div>
+                </div>
+              <% end %>
+
+              <p class="investment-insights-disclaimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                Estimates based on NSW Rental Bonds data. Calculator assumes 5% annual property growth, 3% rent growth, 37% marginal tax rate. For illustrative purposes only.
+              </p>
+            </div>
+          <% end %>
         </div>
 
         <%# Right Column - Enquiry Card %>
@@ -302,7 +929,7 @@
             <%# Love button %>
             <div class="enquiry-card-love">
               <% if user_signed_in? %>
-                <%= button_to @property.loved_by?(current_user) ? unlove_property_path(@property) : love_property_path(@property),
+                <%= button_to @property.loved_by?(current_user) ? unlove_property_seo_path(@property) : love_property_seo_path(@property),
                     method: @property.loved_by?(current_user) ? :delete : :post,
                     class: "love-button #{'loved' if @property.loved_by?(current_user)}",
                     data: { turbo_frame: "_top" } do %>
@@ -345,7 +972,7 @@
                   </button>
 
                   <% if @property.listing_intent == "open_to_offers" && @property.can_receive_offers? %>
-                    <%= link_to new_property_offer_path(@property), class: "btn btn-accent btn-block" do %>
+                    <%= link_to new_property_offer_seo_path(@property), class: "btn btn-accent btn-block" do %>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2v20"/>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
@@ -762,6 +1389,182 @@
     font-size: var(--font-size-base);
   }
 
+  /* Gallery Map (when no photos) */
+  .gallery-map-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    border-radius: var(--radius-xl);
+  }
+
+  /* Location Map */
+  .property-location-map {
+    width: 100%;
+    height: 300px;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-3);
+    overflow: hidden;
+  }
+
+  .property-location-address {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  /* Places of Worship */
+  .section-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-4);
+  }
+
+  .places-of-worship-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .worship-place-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+  }
+
+  .worship-place-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: var(--color-gray-100);
+    color: var(--color-gray-600);
+    flex-shrink: 0;
+  }
+
+  .worship-place-icon.christian {
+    background: var(--color-primary-pale);
+    color: var(--color-primary);
+  }
+
+  .worship-place-icon.muslim {
+    background: var(--color-success-pale);
+    color: var(--color-success);
+  }
+
+  .worship-place-icon.jewish {
+    background: var(--color-info-pale);
+    color: var(--color-info);
+  }
+
+  .worship-place-icon.buddhist,
+  .worship-place-icon.hindu {
+    background: var(--color-warning-pale);
+    color: var(--color-warning);
+  }
+
+  .worship-place-icon.sikh {
+    background: var(--color-orange-pale);
+    color: var(--color-orange);
+  }
+
+  .worship-place-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .worship-place-name {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .worship-place-details {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .worship-denomination {
+    color: var(--color-text-muted);
+  }
+
+  .worship-place-distance {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+
+  /* Score Hover Tooltip */
+  .score-hover-trigger {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .score-hover-tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: var(--space-2);
+    padding: var(--space-4);
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-fast), visibility var(--transition-fast);
+    z-index: 100;
+  }
+
+  .score-hover-trigger:hover .score-hover-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .score-tooltip-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .score-tooltip-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .score-tooltip-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-sm);
+  }
+
+  .score-tooltip-item span:first-child {
+    color: var(--color-text-muted);
+  }
+
+  .score-tooltip-item span:last-child {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
   /* Sidebar (Right Column) */
   .property-sidebar {
     position: sticky;
@@ -939,6 +1742,375 @@
     margin: var(--space-4) 0;
   }
 
+  /* Enhanced Reasy Score Section */
+  .property-score-section {
+    background: linear-gradient(135deg, var(--color-primary-pale) 0%, var(--color-beige) 50%, var(--color-white) 100%);
+    padding: var(--space-8) 0;
+  }
+
+  .score-hero-card {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .score-hero-content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  .score-hero-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .score-ring-large {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .score-ring-value-large {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-number-large {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+
+  .score-max-large {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .score-hero-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2);
+  }
+
+  .score-hero-label {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-lg);
+    margin: 0 0 var(--space-2);
+  }
+
+  /* Score Bar Chart */
+  .score-bars-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .score-bar-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 60px;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .score-bar-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+  }
+
+  .score-bar-track {
+    height: 8px;
+    background: var(--color-gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease-out;
+  }
+
+  .score-bar-fill-growth_score { background: var(--color-success); }
+  .score-bar-fill-safety { background: var(--color-warning); }
+  .score-bar-fill-education { background: #6366f1; }
+  .score-bar-fill-rental_yield { background: #14b8a6; }
+  .score-bar-fill-tenant_quality { background: var(--color-primary); }
+  .score-bar-fill-socioeconomic { background: #a855f7; }
+
+  .score-bar-value {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    text-align: right;
+  }
+
+  /* Score Explanation Section */
+  .score-explanation {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .score-explanation-trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+    background: var(--color-primary-pale);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .score-explanation-trigger:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  .score-explanation-trigger .chevron {
+    transition: transform var(--transition-fast);
+  }
+
+  .score-explanation-trigger[aria-expanded="true"] .chevron {
+    transform: rotate(180deg);
+  }
+
+  .score-explanation-content {
+    padding: var(--space-6) 0 0;
+  }
+
+  .score-explanation-content p {
+    margin: 0 0 var(--space-4);
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .score-ranges {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
+  .score-range {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  .score-range-excellent { background: rgba(34, 197, 94, 0.1); }
+  .score-range-good { background: rgba(59, 130, 246, 0.1); }
+  .score-range-average { background: rgba(245, 158, 11, 0.1); }
+  .score-range-low { background: rgba(239, 68, 68, 0.1); }
+
+  .score-range-badge {
+    padding: var(--space-1) var(--space-2);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+  }
+
+  .score-range-excellent .score-range-badge { background: var(--color-success); color: var(--color-white); }
+  .score-range-good .score-range-badge { background: var(--color-primary); color: var(--color-white); }
+  .score-range-average .score-range-badge { background: var(--color-warning); color: var(--color-white); }
+  .score-range-low .score-range-badge { background: var(--color-error); color: var(--color-white); }
+
+  .score-explanation-content h4 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-3);
+  }
+
+  .score-components-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-4);
+  }
+
+  .score-components-list li {
+    position: relative;
+    padding-left: var(--space-5);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .score-components-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
+  }
+
+  .score-data-sources {
+    font-size: var(--font-size-xs) !important;
+    color: var(--color-text-muted) !important;
+    padding: var(--space-3);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Score Expand Button */
+  .score-expand-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-4);
+    margin-top: var(--space-6);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .score-expand-btn:hover {
+    background: var(--color-gray-100);
+    border-color: var(--color-border-hover);
+  }
+
+  .score-expand-btn svg {
+    transition: transform var(--transition-fast);
+  }
+
+  .score-expand-btn[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+
+  /* Score Breakdown Panel */
+  .score-breakdown-panel {
+    padding: var(--space-6) 0 0;
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .score-breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .score-breakdown-item {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-lg);
+  }
+
+  .breakdown-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    flex-shrink: 0;
+  }
+
+  .metric-card-icon-green { background: rgba(34, 197, 94, 0.15); color: var(--color-success); }
+  .metric-card-icon-orange { background: rgba(245, 158, 11, 0.15); color: var(--color-warning); }
+  .metric-card-icon-blue { background: rgba(59, 130, 246, 0.15); color: var(--color-primary); }
+  .metric-card-icon-purple { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+  .metric-card-icon-teal { background: rgba(20, 184, 166, 0.15); color: #14b8a6; }
+  .metric-card-icon-indigo { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+  .metric-card-icon-gray { background: var(--color-gray-100); color: var(--color-text-muted); }
+
+  .breakdown-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .breakdown-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .breakdown-value {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .breakdown-period {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-muted);
+  }
+
+  .breakdown-note {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 0;
+  }
+
+  .breakdown-score {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 0;
+  }
+
+  .breakdown-badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-md);
+    margin-left: var(--space-2);
+  }
+
+  .change-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-md);
+  }
+
+  .change-badge-positive { background: rgba(34, 197, 94, 0.15); color: var(--color-success); }
+  .change-badge-negative { background: rgba(239, 68, 68, 0.15); color: var(--color-error); }
+  .change-badge-neutral { background: var(--color-gray-100); color: var(--color-text-muted); }
+
+  .text-success { color: var(--color-success); }
+
   /* Responsive */
   @media (max-width: 1024px) {
     .property-content-grid {
@@ -947,6 +2119,28 @@
 
     .property-sidebar {
       position: static;
+    }
+
+    .score-hero-content {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    .score-hero-left {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .score-bars-container {
+      max-width: 100%;
+    }
+
+    .score-breakdown-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .score-ranges {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -979,11 +2173,681 @@
     .hide-mobile {
       display: none !important;
     }
+
+    .score-hero-card {
+      padding: var(--space-6);
+    }
+
+    .score-breakdown-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .score-bar-row {
+      grid-template-columns: 60px 1fr 50px;
+    }
   }
 
   @media (min-width: 769px) {
     .hide-desktop {
       display: none !important;
+    }
+  }
+
+  /* Investment Calculator Styles */
+  .investment-calculator {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .calculator-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-5);
+  }
+
+  .calculator-title svg {
+    color: var(--color-primary);
+  }
+
+  .calculator-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .calculator-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .calculator-input-group label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+  }
+
+  .input-with-prefix,
+  .input-with-suffix {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: var(--space-3);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .input-with-prefix input {
+    padding-left: var(--space-10) !important;
+  }
+
+  .input-with-suffix input {
+    padding-right: var(--space-8);
+  }
+
+  .calculator-input-group input[type="text"] {
+    width: 100%;
+    padding: var(--space-3);
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-white);
+    transition: border-color var(--transition-fast);
+  }
+
+  .calculator-input-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-pale);
+  }
+
+  .calculator-input-group input[type="text"].input-error {
+    border-color: var(--color-error);
+    background: rgba(239, 68, 68, 0.05);
+  }
+
+  .calculator-input-group input[type="text"].input-error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  }
+
+  .calculator-warning {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-warning-dark, #b45309);
+  }
+
+  .calculator-warning svg {
+    flex-shrink: 0;
+    color: var(--color-warning);
+  }
+
+  .input-hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  /* Calculator Results */
+  .calculator-results {
+    background: var(--color-gray-50);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+  }
+
+  .calculator-no-data {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    padding: var(--space-4);
+    margin: 0;
+  }
+
+  .calculator-summary {
+    margin-bottom: var(--space-4);
+  }
+
+  .calculator-summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+  }
+
+  .calculator-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: 1px solid var(--color-border-light);
+  }
+
+  .calculator-summary-item.highlight-success {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: var(--color-success);
+  }
+
+  .calculator-summary-item.highlight-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: var(--color-warning);
+  }
+
+  .summary-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .summary-value {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+  }
+
+  .calculator-gearing {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+  }
+
+  .calculator-gearing.negatively-geared {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid var(--color-primary);
+  }
+
+  .calculator-gearing.positively-geared {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid var(--color-success);
+  }
+
+  .gearing-badge {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-full);
+  }
+
+  .negatively-geared .gearing-badge {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  .positively-geared .gearing-badge {
+    background: var(--color-success);
+    color: var(--color-white);
+  }
+
+  .gearing-note {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  /* Workings Accordion */
+  .calculator-workings {
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    background: var(--color-white);
+  }
+
+  .calculator-workings summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    list-style: none;
+    transition: background var(--transition-fast);
+  }
+
+  .calculator-workings summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .calculator-workings summary:hover {
+    background: var(--color-gray-50);
+  }
+
+  .calculator-workings[open] summary {
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .workings-content {
+    padding: var(--space-4);
+  }
+
+  .workings-content h4 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: var(--space-4) 0 var(--space-3);
+  }
+
+  .workings-content h4:first-child {
+    margin-top: 0;
+  }
+
+  .workings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .workings-table td {
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .workings-table td:first-child {
+    color: var(--color-text-secondary);
+  }
+
+  .workings-table td:last-child {
+    text-align: right;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .workings-table .total-row {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .workings-table .total-row td {
+    border-bottom: 2px solid var(--color-border);
+    padding-top: var(--space-3);
+  }
+
+  .workings-table .total-row.highlight td {
+    background: var(--color-gray-50);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .workings-table .positive { color: var(--color-success); }
+  .workings-table .negative { color: var(--color-error); }
+
+  .assumptions-note {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-3);
+    font-style: italic;
+  }
+
+  /* Projections Table */
+  .projections-table-wrapper {
+    overflow-x: auto;
+    margin: 0 calc(-1 * var(--space-4));
+    padding: 0 var(--space-4);
+  }
+
+  .projections-table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    font-size: var(--font-size-xs);
+  }
+
+  .projections-table th,
+  .projections-table td {
+    padding: var(--space-2) var(--space-3);
+    text-align: right;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .projections-table th {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    background: var(--color-gray-50);
+    position: sticky;
+    top: 0;
+  }
+
+  .projections-table th:first-child,
+  .projections-table td:first-child {
+    text-align: left;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .projections-table .break-even-row {
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .projections-table .break-even-row td {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .projections-table .positive { color: var(--color-success); }
+  .projections-table .negative { color: var(--color-error); }
+
+  /* Stamp Duty Icon */
+  .investment-metric-icon.stamp-duty-icon {
+    background: rgba(168, 85, 247, 0.15);
+    color: #a855f7;
+  }
+
+  /* Break-Even Chart */
+  .breakeven-chart {
+    background: var(--color-white);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+  }
+
+  .chart-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .chart-title svg {
+    color: var(--color-primary);
+  }
+
+  .chart-description {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-3);
+    line-height: 1.4;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .legend-item::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .legend-positive::before {
+    background: var(--color-success);
+  }
+
+  .legend-negative::before {
+    background: var(--color-error);
+  }
+
+  .legend-tax-benefit::before {
+    background: var(--color-primary);
+  }
+
+  .chart-wrapper {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .chart-container {
+    position: relative;
+    flex: 1;
+  }
+
+  .chart-y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0;
+    min-width: 55px;
+    height: 160px; /* Match positive zone (80px) + negative zone (80px) */
+  }
+
+  .y-axis-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .y-axis-top {
+    color: var(--color-success);
+  }
+
+  .y-axis-zero {
+    /* Centered between top and bottom */
+  }
+
+  .y-axis-bottom {
+    color: var(--color-error);
+  }
+
+  .chart-zero-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 80px; /* Exactly at the boundary between positive (80px) and negative zones */
+    height: 2px;
+    background: var(--color-border);
+    z-index: 1;
+  }
+
+  .chart-bars {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-1);
+  }
+
+  .chart-bar-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chart-bar-positive-zone {
+    height: 80px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .chart-bar-negative-zone {
+    height: 80px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .chart-bar {
+    position: relative;
+    width: 100%;
+    max-width: 28px;
+    min-height: 4px;
+    transition: height 0.3s ease-out;
+  }
+
+  .chart-bar-positive {
+    background: linear-gradient(180deg, var(--color-success) 0%, rgba(34, 197, 94, 0.7) 100%);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  .chart-bar-negative {
+    background: linear-gradient(0deg, var(--color-error) 0%, rgba(239, 68, 68, 0.7) 100%);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+
+  .chart-bar-stack {
+    position: relative;
+    width: 100%;
+    max-width: 28px;
+    height: 100%;
+  }
+
+  .chart-bar-stack .chart-bar {
+    max-width: none;
+    width: 100%;
+  }
+
+  .chart-tax-benefit {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    background: linear-gradient(0deg, var(--color-primary) 0%, rgba(59, 130, 246, 0.7) 100%);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border: 1px solid var(--color-primary);
+    border-top: none;
+  }
+
+  .chart-bar-breakeven {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+  }
+
+  .breakeven-marker {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-success);
+    color: var(--color-white);
+    font-size: 9px;
+    font-weight: var(--font-weight-semibold);
+    padding: 2px 6px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  /* Cashflow Chart */
+  .cashflow-chart {
+    margin-top: var(--space-5);
+  }
+
+  .cashflow-initial {
+    flex: 0.7;
+    border-right: 1px dashed var(--color-border);
+    margin-right: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .chart-bar-initial {
+    background: linear-gradient(0deg, #7c3aed 0%, rgba(124, 58, 237, 0.7) 100%) !important;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+
+  .chart-bar-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+
+  .chart-summary {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .chart-stat {
+    text-align: center;
+  }
+
+  .chart-stat-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .chart-stat-value {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .chart-stat-value.positive {
+    color: var(--color-success);
+  }
+
+  .chart-stat-value.negative {
+    color: var(--color-error);
+  }
+
+  @media (max-width: 768px) {
+    .calculator-inputs {
+      grid-template-columns: 1fr;
+    }
+
+    .calculator-summary-row {
+      grid-template-columns: 1fr;
+    }
+
+    .calculator-gearing {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
     }
   }
 </style>

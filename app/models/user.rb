@@ -11,6 +11,23 @@ class User < ApplicationRecord
   # Roles constants
   ROLES = %w[buyer seller service_provider admin].freeze
 
+  # Preferred AI agent choices
+  PREFERRED_AGENTS = %w[stevie evie].freeze
+
+  # Level tiers for gamification
+  LEVEL_TIERS = {
+    1 => { points: 0, title: "Property Newcomer" },
+    2 => { points: 100, title: "Home Seeker" },
+    3 => { points: 250, title: "Property Explorer" },
+    4 => { points: 500, title: "Transaction Starter" },
+    5 => { points: 800, title: "Deal Maker" },
+    6 => { points: 1200, title: "Property Pro" },
+    7 => { points: 1800, title: "Transaction Expert" },
+    8 => { points: 2500, title: "Reasy Champion" },
+    9 => { points: 3500, title: "Property Master" },
+    10 => { points: 5000, title: "Reasy Legend" }
+  }.freeze
+
   # KYC status values
   KYC_STATUSES = %w[pending submitted under_review verified rejected].freeze
 
@@ -73,12 +90,21 @@ class User < ApplicationRecord
   # Saved searches
   has_many :saved_searches, dependent: :destroy
 
+  # AI Property analyses
+  has_many :property_analyses, dependent: :destroy
+
+  # Journey system - checklist progress and achievements
+  has_many :user_checklist_progresses, dependent: :destroy
+  has_many :user_achievements, dependent: :destroy
+  has_many :completed_checklist_items, through: :user_checklist_progresses, source: :checklist_item
+
   # Validations
   validates :name, presence: true
   validates :roles, presence: true
   validates :kyc_status, inclusion: { in: KYC_STATUSES }
   validates :subscription_status, inclusion: { in: SUBSCRIPTION_STATUSES }
   validates :phone, phone: { allow_blank: true, countries: :phone_country_code }
+  validates :preferred_agent, inclusion: { in: PREFERRED_AGENTS }, allow_blank: true
 
   # Callbacks
   before_validation :set_default_roles, on: :create
@@ -209,7 +235,108 @@ class User < ApplicationRecord
     !accepted_current_terms? || !accepted_current_privacy_policy?
   end
 
+  # Journey & Agent helpers
+  def preferred_agent_name
+    case preferred_agent
+    when "stevie" then "Stevie"
+    when "evie" then "Evie"
+    else nil
+    end
+  end
+
+  def has_preferred_agent?
+    preferred_agent.present?
+  end
+
+  def stevie?
+    preferred_agent == "stevie"
+  end
+
+  def evie?
+    preferred_agent == "evie"
+  end
+
+  # Level helpers
+  def level_progress_percentage
+    current_tier = LEVEL_TIERS[journey_level]
+    next_tier = LEVEL_TIERS[journey_level + 1]
+
+    return 100 if next_tier.nil? # Max level
+
+    current_threshold = current_tier[:points]
+    next_threshold = next_tier[:points]
+    points_in_level = journey_points - current_threshold
+    points_needed = next_threshold - current_threshold
+
+    ((points_in_level.to_f / points_needed) * 100).round
+  end
+
+  def points_to_next_level
+    next_tier = LEVEL_TIERS[journey_level + 1]
+    return 0 if next_tier.nil?
+
+    [next_tier[:points] - journey_points, 0].max
+  end
+
+  def recalculate_level!
+    new_level = calculate_level_from_points
+    return if new_level == journey_level
+
+    old_level = journey_level
+    new_title = LEVEL_TIERS[new_level][:title]
+
+    update!(
+      journey_level: new_level,
+      journey_title: new_title
+    )
+
+    # Award level up achievement if leveling up
+    if new_level > old_level
+      UserAchievement.award_level_up!(self, new_level, new_title)
+    end
+  end
+
+  # Checklist progress helpers
+  def checklist_progress_for(journey_type, context = nil)
+    scope = user_checklist_progresses.for_journey(journey_type)
+    scope = scope.where(context: context) if context
+    scope
+  end
+
+  def completed_items_for(journey_type, context = nil)
+    checklist_progress_for(journey_type, context).completed
+  end
+
+  def pending_items_for(journey_type, context = nil)
+    checklist_progress_for(journey_type, context).pending
+  end
+
+  def journey_completion_percentage(journey_type, context = nil)
+    checklists = JourneyChecklist.for_journey(journey_type)
+    total_items = checklists.sum { |c| c.checklist_items.count }
+    return 0 if total_items.zero?
+
+    completed = completed_items_for(journey_type, context).count
+    (completed.to_f / total_items * 100).round
+  end
+
+  # Achievement helpers
+  def recent_achievements(limit = 5)
+    user_achievements.recent.limit(limit)
+  end
+
+  def total_achievement_points
+    user_achievements.sum(:points_earned)
+  end
+
   private
+
+  def calculate_level_from_points
+    LEVEL_TIERS.reverse_each do |level, tier|
+      return level if journey_points >= tier[:points]
+    end
+    1
+  end
 
   def set_default_roles
     self.roles = ["buyer"] if roles.blank?

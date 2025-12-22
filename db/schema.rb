@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_21_215847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -137,6 +137,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.date "pre_approval_expires_at"
     t.string "pre_approval_lender"
     t.string "property_types", default: [], array: true
+    t.jsonb "score_weights", default: {}, null: false
     t.string "search_areas", default: [], array: true
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -147,6 +148,30 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["property_types"], name: "index_buyer_profiles_on_property_types", using: :gin
     t.index ["search_areas"], name: "index_buyer_profiles_on_search_areas", using: :gin
     t.index ["user_id"], name: "index_buyer_profiles_on_user_id", unique: true
+  end
+
+  create_table "checklist_items", force: :cascade do |t|
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "document_types", default: [], array: true
+    t.text "help_text"
+    t.bigint "journey_checklist_id", null: false
+    t.string "key", null: false
+    t.jsonb "metadata", default: {}
+    t.integer "points", default: 10
+    t.integer "position", default: 0
+    t.string "required_for_next"
+    t.boolean "requires_document", default: false
+    t.boolean "requires_service_provider", default: false
+    t.string "service_provider_types", default: [], array: true
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.text "why_important"
+    t.index ["category"], name: "index_checklist_items_on_category"
+    t.index ["journey_checklist_id", "position"], name: "index_checklist_items_on_journey_checklist_id_and_position"
+    t.index ["journey_checklist_id"], name: "index_checklist_items_on_journey_checklist_id"
+    t.index ["key"], name: "index_checklist_items_on_key"
   end
 
   create_table "co_user_invitations", force: :cascade do |t|
@@ -193,6 +218,27 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["status"], name: "index_co_user_relationships_on_status"
   end
 
+  create_table "contract_analyses", force: :cascade do |t|
+    t.string "analysis_status", default: "pending"
+    t.bigint "analyzed_by_id"
+    t.datetime "created_at", null: false
+    t.string "document_type"
+    t.text "error_message"
+    t.jsonb "extracted_terms", default: {}
+    t.text "extracted_text"
+    t.string "overall_risk_level"
+    t.bigint "property_document_id", null: false
+    t.text "recommendations"
+    t.text "summary"
+    t.integer "tokens_used", default: 0
+    t.jsonb "unusual_clauses", default: []
+    t.datetime "updated_at", null: false
+    t.index ["analysis_status"], name: "index_contract_analyses_on_analysis_status"
+    t.index ["analyzed_by_id"], name: "index_contract_analyses_on_analyzed_by_id"
+    t.index ["overall_risk_level"], name: "index_contract_analyses_on_overall_risk_level"
+    t.index ["property_document_id"], name: "index_contract_analyses_on_property_document_id"
+  end
+
   create_table "conversation_participants", force: :cascade do |t|
     t.boolean "archived", default: false
     t.bigint "conversation_id", null: false
@@ -214,6 +260,46 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.string "subject"
     t.datetime "updated_at", null: false
     t.index ["property_id"], name: "index_conversations_on_property_id"
+  end
+
+  create_table "crime_metrics", force: :cascade do |t|
+    t.datetime "calculated_at"
+    t.datetime "created_at", null: false
+    t.string "crime_band"
+    t.decimal "crime_rate_per_1000", precision: 8, scale: 2
+    t.decimal "crime_score", precision: 5, scale: 2
+    t.decimal "crime_trend_pct", precision: 8, scale: 2
+    t.integer "other_crime_count"
+    t.integer "period_year", null: false
+    t.string "postcode", null: false
+    t.integer "property_crime_count"
+    t.decimal "property_crime_rate", precision: 8, scale: 2
+    t.integer "total_incidents"
+    t.string "trend_direction"
+    t.datetime "updated_at", null: false
+    t.integer "violent_crime_count"
+    t.decimal "violent_crime_rate", precision: 8, scale: 2
+    t.index ["crime_band"], name: "index_crime_metrics_on_crime_band"
+    t.index ["crime_score"], name: "index_crime_metrics_on_crime_score"
+    t.index ["postcode", "period_year"], name: "index_crime_metrics_on_postcode_and_period_year", unique: true
+    t.index ["postcode"], name: "index_crime_metrics_on_postcode"
+  end
+
+  create_table "crime_statistics", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "data_source"
+    t.integer "incident_count", default: 0
+    t.string "offence_category", null: false
+    t.string "offence_subcategory"
+    t.integer "period_month"
+    t.integer "period_year", null: false
+    t.string "postcode", null: false
+    t.string "suburb"
+    t.datetime "updated_at", null: false
+    t.index ["postcode", "offence_category"], name: "index_crime_statistics_on_postcode_and_offence_category"
+    t.index ["postcode", "period_year", "period_month", "offence_category", "offence_subcategory"], name: "index_crime_stats_unique", unique: true
+    t.index ["postcode", "period_year"], name: "index_crime_statistics_on_postcode_and_period_year"
+    t.index ["postcode"], name: "index_crime_statistics_on_postcode"
   end
 
   create_table "entities", force: :cascade do |t|
@@ -251,6 +337,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["user_id", "is_default"], name: "index_entities_on_user_id_and_is_default", where: "((is_default = true) AND (deleted_at IS NULL))"
     t.index ["user_id"], name: "index_entities_on_user_id"
     t.index ["verification_status"], name: "index_entities_on_verification_status"
+  end
+
+  create_table "journey_checklists", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "journey_type", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_journey_checklists_on_active"
+    t.index ["journey_type"], name: "index_journey_checklists_on_journey_type"
   end
 
   create_table "legal_document_acceptances", force: :cascade do |t|
@@ -373,12 +471,47 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["submitted_at"], name: "index_offers_on_submitted_at"
   end
 
+  create_table "place_of_worships", force: :cascade do |t|
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.string "denomination"
+    t.decimal "latitude", precision: 10, scale: 7
+    t.decimal "longitude", precision: 10, scale: 7
+    t.string "name"
+    t.bigint "osm_id"
+    t.string "postcode"
+    t.string "religion"
+    t.string "state", default: "NSW"
+    t.string "suburb"
+    t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_place_of_worships_on_latitude_and_longitude"
+    t.index ["osm_id"], name: "index_place_of_worships_on_osm_id", unique: true
+    t.index ["postcode"], name: "index_place_of_worships_on_postcode"
+    t.index ["religion"], name: "index_place_of_worships_on_religion"
+    t.index ["suburb"], name: "index_place_of_worships_on_suburb"
+  end
+
   create_table "postcode_profiles", force: :cascade do |t|
     t.decimal "avg_household_size"
+    t.integer "avg_school_icsea"
+    t.integer "bus_interchange_count", default: 0
+    t.string "bushfire_risk"
+    t.string "coastal_risk"
     t.datetime "created_at", null: false
+    t.string "crime_band"
+    t.decimal "crime_score", precision: 5, scale: 2
+    t.string "crime_trend"
     t.string "data_source"
     t.integer "data_year"
+    t.decimal "education_score", precision: 5, scale: 2
     t.decimal "families_with_children_pct"
+    t.decimal "ferry_wharf_distance_km", precision: 6, scale: 2
+    t.string "flood_risk"
+    t.decimal "gross_rental_yield", precision: 5, scale: 2
+    t.decimal "hazard_score", precision: 5, scale: 2
+    t.decimal "investor_score", precision: 5, scale: 2
+    t.decimal "land_value_growth_1yr", precision: 5, scale: 2
+    t.decimal "land_value_growth_5yr", precision: 5, scale: 2
     t.datetime "last_updated_at"
     t.decimal "latitude"
     t.string "locality"
@@ -387,17 +520,37 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.bigint "median_house_price_cents"
     t.bigint "median_household_income_cents"
     t.bigint "median_land_value_cents"
+    t.integer "median_rent_1br_house_cents"
+    t.integer "median_rent_1br_unit_cents"
+    t.integer "median_rent_2br_house_cents"
+    t.integer "median_rent_2br_unit_cents"
+    t.integer "median_rent_3br_house_cents"
+    t.integer "median_rent_3br_unit_cents"
+    t.integer "median_rent_4br_house_cents"
+    t.integer "median_rent_4br_plus_unit_cents"
+    t.integer "median_rent_5br_plus_house_cents"
+    t.integer "median_rent_studio_unit_cents"
     t.bigint "median_unit_price_cents"
+    t.bigint "median_weekly_rent_cents"
     t.decimal "mortgage_pct"
+    t.string "nearest_train_station"
     t.decimal "owner_occupied_pct"
     t.integer "population"
     t.string "postcode"
     t.decimal "professional_occupation_pct"
+    t.decimal "property_score", precision: 5, scale: 2
+    t.decimal "rental_quality_score", precision: 5, scale: 2
+    t.integer "rental_sample_count", default: 0
     t.decimal "rented_pct"
+    t.integer "school_count", default: 0
     t.integer "seifa_advantage_disadvantage"
     t.integer "seifa_economic_resources"
     t.integer "seifa_education_occupation"
     t.string "state"
+    t.decimal "tenant_quality_score", precision: 5, scale: 2
+    t.integer "train_station_count_5km", default: 0
+    t.decimal "train_station_distance_km", precision: 6, scale: 2
+    t.decimal "transport_score", precision: 5, scale: 2
     t.decimal "unemployment_rate"
     t.decimal "university_educated_pct"
     t.datetime "updated_at", null: false
@@ -439,6 +592,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.integer "price_min_cents"
     t.string "property_type", null: false
     t.datetime "published_at"
+    t.string "slug"
     t.datetime "sold_at"
     t.string "state", null: false
     t.string "status", default: "draft", null: false
@@ -462,10 +616,33 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["price_cents"], name: "index_properties_on_price_cents"
     t.index ["property_type"], name: "index_properties_on_property_type"
     t.index ["published_at"], name: "index_properties_on_published_at"
+    t.index ["slug"], name: "index_properties_on_slug"
+    t.index ["state", "suburb", "slug"], name: "index_properties_on_state_suburb_slug", unique: true
     t.index ["state"], name: "index_properties_on_state"
     t.index ["status"], name: "index_properties_on_status"
     t.index ["suburb"], name: "index_properties_on_suburb"
     t.index ["user_id"], name: "index_properties_on_user_id"
+  end
+
+  create_table "property_analyses", force: :cascade do |t|
+    t.jsonb "ai_badges", default: []
+    t.datetime "analyzed_at"
+    t.jsonb "considerations", default: []
+    t.jsonb "context_snapshot", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.integer "match_score"
+    t.string "model_version"
+    t.bigint "property_id", null: false
+    t.string "status", default: "pending"
+    t.jsonb "strengths", default: []
+    t.text "suggestion"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["expires_at"], name: "index_property_analyses_on_expires_at"
+    t.index ["property_id", "user_id", "expires_at"], name: "index_property_analyses_on_property_user_expires"
+    t.index ["property_id"], name: "index_property_analyses_on_property_id"
+    t.index ["user_id"], name: "index_property_analyses_on_user_id"
   end
 
   create_table "property_documents", force: :cascade do |t|
@@ -616,6 +793,45 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["user_id"], name: "index_provider_leads_on_user_id"
   end
 
+  create_table "rental_bonds", force: :cascade do |t|
+    t.integer "bedrooms"
+    t.datetime "created_at", null: false
+    t.string "data_source"
+    t.date "date", null: false
+    t.integer "days_bond_held"
+    t.string "dwelling_type"
+    t.bigint "payment_to_agent_cents"
+    t.bigint "payment_to_tenant_cents"
+    t.string "postcode", null: false
+    t.string "record_type", null: false
+    t.string "source_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "weekly_rent_cents"
+    t.index ["date"], name: "index_rental_bonds_on_date"
+    t.index ["postcode", "record_type", "date"], name: "index_rental_bonds_on_postcode_type_date"
+    t.index ["postcode"], name: "index_rental_bonds_on_postcode"
+    t.index ["record_type"], name: "index_rental_bonds_on_record_type"
+    t.index ["source_id"], name: "index_rental_bonds_on_source_id", unique: true
+  end
+
+  create_table "rental_metrics", force: :cascade do |t|
+    t.integer "avg_days_bond_held"
+    t.datetime "calculated_at"
+    t.datetime "created_at", null: false
+    t.integer "lodgements_count"
+    t.bigint "median_weekly_rent_cents"
+    t.integer "period_quarter"
+    t.integer "period_year", null: false
+    t.string "postcode", null: false
+    t.integer "refunds_count"
+    t.decimal "rental_quality_score", precision: 5, scale: 2
+    t.decimal "tenant_quality_score", precision: 5, scale: 2
+    t.decimal "tenant_return_rate", precision: 8, scale: 4
+    t.datetime "updated_at", null: false
+    t.index ["postcode", "period_year", "period_quarter"], name: "index_rental_metrics_on_postcode_year_quarter", unique: true
+    t.index ["postcode"], name: "index_rental_metrics_on_postcode"
+  end
+
   create_table "review_disputes", force: :cascade do |t|
     t.text "admin_notes"
     t.datetime "created_at", null: false
@@ -745,12 +961,26 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
 
   create_table "suburb_profiles", force: :cascade do |t|
     t.decimal "avg_household_size"
+    t.integer "avg_school_icsea"
+    t.integer "bus_interchange_count", default: 0
+    t.string "bushfire_risk"
+    t.string "coastal_risk"
     t.datetime "created_at", null: false
+    t.string "crime_band"
+    t.decimal "crime_score", precision: 5, scale: 2
+    t.string "crime_trend"
     t.integer "data_year"
     t.integer "days_on_market_house"
     t.integer "days_on_market_unit"
+    t.decimal "education_score", precision: 5, scale: 2
+    t.decimal "ferry_wharf_distance_km", precision: 6, scale: 2
+    t.string "flood_risk"
+    t.decimal "hazard_score", precision: 5, scale: 2
     t.decimal "house_price_growth_1yr"
     t.decimal "house_price_growth_5yr"
+    t.decimal "investor_score", precision: 5, scale: 2
+    t.decimal "land_value_growth_1yr", precision: 5, scale: 2
+    t.decimal "land_value_growth_5yr", precision: 5, scale: 2
     t.datetime "last_updated_at"
     t.decimal "latitude"
     t.decimal "longitude"
@@ -758,19 +988,40 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.bigint "median_house_price_cents"
     t.bigint "median_household_income_cents"
     t.bigint "median_land_value_cents"
+    t.integer "median_rent_1br_house_cents"
+    t.integer "median_rent_1br_unit_cents"
+    t.integer "median_rent_2br_house_cents"
+    t.integer "median_rent_2br_unit_cents"
+    t.integer "median_rent_3br_house_cents"
+    t.integer "median_rent_3br_unit_cents"
+    t.integer "median_rent_4br_house_cents"
+    t.integer "median_rent_4br_plus_unit_cents"
+    t.integer "median_rent_5br_plus_house_cents"
+    t.integer "median_rent_studio_unit_cents"
     t.bigint "median_unit_price_cents"
+    t.bigint "median_weekly_rent_house_cents"
+    t.bigint "median_weekly_rent_unit_cents"
+    t.string "nearest_train_station"
     t.decimal "owner_occupied_pct"
     t.integer "population"
     t.string "postcode"
+    t.decimal "property_score", precision: 5, scale: 2
+    t.decimal "rental_quality_score", precision: 5, scale: 2
+    t.integer "rental_sample_count", default: 0
     t.decimal "rental_yield_house"
     t.decimal "rental_yield_unit"
     t.decimal "rented_pct"
     t.integer "sales_volume_12m"
     t.string "school_catchment_primary"
     t.string "school_catchment_secondary"
+    t.integer "school_count", default: 0
     t.integer "seifa_score"
     t.string "state"
     t.string "suburb"
+    t.decimal "tenant_quality_score", precision: 5, scale: 2
+    t.integer "train_station_count_5km", default: 0
+    t.decimal "train_station_distance_km", precision: 6, scale: 2
+    t.decimal "transport_score", precision: 5, scale: 2
     t.decimal "unit_price_growth_1yr"
     t.decimal "unit_price_growth_5yr"
     t.datetime "updated_at", null: false
@@ -794,6 +1045,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["occurred_at"], name: "index_transaction_events_on_occurred_at"
     t.index ["transaction_id"], name: "index_transaction_events_on_transaction_id"
     t.index ["user_id"], name: "index_transaction_events_on_user_id"
+  end
+
+  create_table "transaction_milestones", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.bigint "completed_by_id"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.jsonb "metadata", default: {}
+    t.string "milestone_type", null: false
+    t.string "title", null: false
+    t.bigint "transaction_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "visible_to", null: false
+    t.index ["completed_by_id"], name: "index_transaction_milestones_on_completed_by_id"
+    t.index ["milestone_type"], name: "index_transaction_milestones_on_milestone_type"
+    t.index ["transaction_id", "milestone_type"], name: "idx_on_transaction_id_milestone_type_14d0bf3d42", unique: true
+    t.index ["transaction_id"], name: "index_transaction_milestones_on_transaction_id"
+    t.index ["visible_to"], name: "index_transaction_milestones_on_visible_to"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -838,6 +1107,43 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["status"], name: "index_transactions_on_status"
   end
 
+  create_table "user_achievements", force: :cascade do |t|
+    t.string "achievement_type", null: false
+    t.string "badge_icon"
+    t.bigint "context_id"
+    t.string "context_type"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.datetime "earned_at"
+    t.integer "points_earned", default: 0
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["achievement_type"], name: "index_user_achievements_on_achievement_type"
+    t.index ["context_type", "context_id"], name: "index_user_achievements_on_context"
+    t.index ["earned_at"], name: "index_user_achievements_on_earned_at"
+    t.index ["user_id"], name: "index_user_achievements_on_user_id"
+  end
+
+  create_table "user_checklist_progresses", force: :cascade do |t|
+    t.bigint "checklist_item_id", null: false
+    t.datetime "completed_at"
+    t.bigint "context_id"
+    t.string "context_type"
+    t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}
+    t.text "notes"
+    t.datetime "started_at"
+    t.string "status", default: "pending"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["checklist_item_id"], name: "index_user_checklist_progresses_on_checklist_item_id"
+    t.index ["context_type", "context_id"], name: "index_user_checklist_progresses_on_context"
+    t.index ["status"], name: "index_user_checklist_progresses_on_status"
+    t.index ["user_id", "checklist_item_id", "context_type", "context_id"], name: "idx_user_checklist_progress_unique", unique: true
+    t.index ["user_id"], name: "index_user_checklist_progresses_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "confirmation_sent_at"
     t.string "confirmation_token"
@@ -849,6 +1155,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.integer "failed_attempts", default: 0, null: false
+    t.integer "journey_level", default: 1, null: false
+    t.integer "journey_points", default: 0, null: false
+    t.string "journey_title", default: "Property Newcomer", null: false
     t.string "kyc_status", default: "pending", null: false
     t.string "kyc_verification_id"
     t.datetime "kyc_verified_at"
@@ -862,6 +1171,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.datetime "onboarding_completed_at"
     t.string "phone"
     t.string "phone_country_code", default: "AU"
+    t.string "preferred_agent"
     t.string "preferred_language", default: "en"
     t.datetime "privacy_policy_accepted_at"
     t.datetime "remember_created_at"
@@ -883,6 +1193,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["kyc_status"], name: "index_users_on_kyc_status"
+    t.index ["preferred_agent"], name: "index_users_on_preferred_agent"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["roles"], name: "index_users_on_roles", using: :gin
     t.index ["stripe_customer_id"], name: "index_users_on_stripe_customer_id", unique: true, where: "(stripe_customer_id IS NOT NULL)"
@@ -899,11 +1210,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
   add_foreign_key "audit_logs", "users", column: "impersonated_by_id"
   add_foreign_key "buyer_profiles", "entities", column: "default_entity_id"
   add_foreign_key "buyer_profiles", "users"
+  add_foreign_key "checklist_items", "journey_checklists"
   add_foreign_key "co_user_invitations", "users", column: "invitee_id"
   add_foreign_key "co_user_invitations", "users", column: "inviter_id"
   add_foreign_key "co_user_relationships", "co_user_invitations"
   add_foreign_key "co_user_relationships", "users", column: "co_user_id"
   add_foreign_key "co_user_relationships", "users", column: "primary_user_id"
+  add_foreign_key "contract_analyses", "property_documents"
+  add_foreign_key "contract_analyses", "users", column: "analyzed_by_id"
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"
   add_foreign_key "conversations", "properties"
@@ -921,6 +1235,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
   add_foreign_key "offers", "users", column: "buyer_id"
   add_foreign_key "properties", "entities"
   add_foreign_key "properties", "users"
+  add_foreign_key "property_analyses", "properties"
+  add_foreign_key "property_analyses", "users"
   add_foreign_key "property_documents", "properties"
   add_foreign_key "property_documents", "users", column: "uploaded_by_id"
   add_foreign_key "property_enquiries", "entities"
@@ -949,6 +1265,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
   add_foreign_key "service_provider_profiles", "users"
   add_foreign_key "transaction_events", "transactions"
   add_foreign_key "transaction_events", "users"
+  add_foreign_key "transaction_milestones", "transactions"
+  add_foreign_key "transaction_milestones", "users", column: "completed_by_id"
   add_foreign_key "transactions", "entities", column: "buyer_entity_id"
   add_foreign_key "transactions", "entities", column: "seller_entity_id"
   add_foreign_key "transactions", "offers"
@@ -957,4 +1275,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_040739) do
   add_foreign_key "transactions", "users", column: "buyer_id"
   add_foreign_key "transactions", "users", column: "seller_conveyancer_id"
   add_foreign_key "transactions", "users", column: "seller_id"
+  add_foreign_key "user_achievements", "users"
+  add_foreign_key "user_checklist_progresses", "checklist_items"
+  add_foreign_key "user_checklist_progresses", "users"
 end

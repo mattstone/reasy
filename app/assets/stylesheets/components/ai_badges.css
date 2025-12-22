@@ -1,0 +1,186 @@
+/* AI Badges - Inline insight indicators for properties */
+
+/* Base badge styles */
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ai-badge-icon {
+  font-weight: 700;
+}
+
+.ai-badge-score {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.ai-badge-label {
+  font-weight: 500;
+}
+
+/* Container for multiple badges */
+.ai-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+/* Match Score Badges */
+.ai-badge-match {
+  background: var(--color-gray-100, #f3f4f6);
+  color: var(--color-gray-700, #374151);
+}
+
+.ai-badge-match-excellent {
+  background: var(--color-success-light, #dcfce7);
+  color: var(--color-success-dark, #166534);
+}
+
+.ai-badge-match-good {
+  background: var(--color-primary-light, #dbeafe);
+  color: var(--color-primary-dark, #1e40af);
+}
+
+.ai-badge-match-moderate {
+  background: var(--color-warning-light, #fef3c7);
+  color: var(--color-warning-dark, #92400e);
+}
+
+.ai-badge-match-low {
+  background: var(--color-gray-100, #f3f4f6);
+  color: var(--color-gray-600, #4b5563);
+}
+
+/* Reasy Score Badges */
+.ai-badge-reasy {
+  background: var(--color-gray-100, #f3f4f6);
+  color: var(--color-gray-700, #374151);
+}
+
+.ai-badge-reasy-excellent {
+  background: linear-gradient(135deg, #065f46, #059669);
+  color: white;
+}
+
+.ai-badge-reasy-good {
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  color: white;
+}
+
+.ai-badge-reasy-average {
+  background: linear-gradient(135deg, #92400e, #f59e0b);
+  color: white;
+}
+
+.ai-badge-reasy-below_average,
+.ai-badge-reasy-below-average {
+  background: var(--color-gray-200, #e5e7eb);
+  color: var(--color-gray-700, #374151);
+}
+
+.ai-badge-reasy-low {
+  background: var(--color-gray-100, #f3f4f6);
+  color: var(--color-gray-600, #4b5563);
+}
+
+/* Value Assessment Badges */
+.ai-badge-value {
+  font-weight: 600;
+}
+
+.ai-badge-value-opportunity {
+  background: var(--color-success-light, #dcfce7);
+  color: var(--color-success-dark, #166534);
+}
+
+.ai-badge-value-fair {
+  background: var(--color-primary-light, #dbeafe);
+  color: var(--color-primary-dark, #1e40af);
+}
+
+.ai-badge-value-above_market,
+.ai-badge-value-above-market {
+  background: var(--color-warning-light, #fef3c7);
+  color: var(--color-warning-dark, #92400e);
+}
+
+/* Risk Badges */
+.ai-badge-risk {
+  background: var(--color-danger-light, #fee2e2);
+  color: var(--color-danger-dark, #991b1b);
+}
+
+.ai-badge-risk .ai-badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background: var(--color-danger, #ef4444);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+/* Opportunity Badges */
+.ai-badge-opportunity {
+  background: var(--color-success-light, #dcfce7);
+  color: var(--color-success-dark, #166534);
+}
+
+.ai-badge-opportunity .ai-badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background: var(--color-success, #22c55e);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Default badge */
+.ai-badge-default {
+  background: var(--color-gray-100, #f3f4f6);
+  color: var(--color-gray-700, #374151);
+}
+
+/* Property card badge positioning */
+.property-card .ai-badges {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  margin: 0;
+}
+
+.property-card .ai-badge {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .ai-badge {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  .ai-badge-score {
+    font-size: 12px;
+  }
+
+  .ai-badges {
+    gap: 4px;
+  }
+}

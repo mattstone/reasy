@@ -1,124 +1,122 @@
-<%= render "shared/nav" %>
+<%# How It Works - Reasy r5 Design System %>
+<%= stylesheet_link_tag "pages/index5", media: "all" %>
+<%= stylesheet_link_tag "pages/interior", media: "all" %>
 
-<div class="page-hero">
-  <h1>How Reasy Works</h1>
-  <p>Whether you're buying or selling, we make the process simple and transparent</p>
+<div class="r5-page">
+  <%= render "shared/r5_nav" %>
+
+  <%# Page Hero %>
+  <section class="r5-page-hero">
+    <div class="r5-page-hero-gradient"></div>
+    <div class="r5-page-hero-pattern"></div>
+    <div class="r5-page-hero-content">
+      <h1>How Reasy Works</h1>
+      <p>Whether you're buying or selling, we make the process simple and transparent</p>
+    </div>
+  </section>
+
+  <%# For Buyers Section %>
+  <section class="r5-interior-section r5-interior-section-white">
+    <div class="r5-section-inner">
+      <div class="r5-interior-header">
+        <span class="r5-badge r5-badge-blue">For Buyers</span>
+        <h2>Find your perfect home</h2>
+        <p>Access properties others can't see, with guidance you can trust</p>
+      </div>
+
+      <div class="r5-grid r5-grid-4">
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-blue">1</div>
+          <h4>Create your profile</h4>
+          <p>Tell us what you're looking for &mdash; location, budget, must-haves.</p>
+        </div>
+
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-blue">2</div>
+          <h4>Get matched</h4>
+          <p>We find properties that match your criteria, including off-market "Open to Offers" listings.</p>
+        </div>
+
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-blue">3</div>
+          <h4>Make an offer</h4>
+          <p>Submit offers directly to sellers. Get guidance on fair market value and negotiation strategy.</p>
+        </div>
+
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-blue">4</div>
+          <h4>Close with confidence</h4>
+          <p>We guide you through contracts, inspections, and settlement. No surprises.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# For Sellers Section %>
+  <section class="r5-interior-section r5-interior-section-alt">
+    <div class="r5-section-inner">
+      <div class="r5-interior-header">
+        <span class="r5-badge r5-badge-orange">For Sellers</span>
+        <h2>Sell on your terms</h2>
+        <p>Keep more of your hard-earned equity with our flat-fee model</p>
+      </div>
+
+      <div class="r5-grid r5-grid-4">
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-orange">1</div>
+          <h4>List your property</h4>
+          <p>Create your listing with photos and details. Choose "Open to Offers" to test the market privately.</p>
+        </div>
+
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-orange">2</div>
+          <h4>Receive enquiries</h4>
+          <p>Verified buyers reach out directly. No time-wasters, no tyre-kickers.</p>
+        </div>
+
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-orange">3</div>
+          <h4>Negotiate offers</h4>
+          <p>Accept, reject, or counter. Get data-backed advice on every offer.</p>
+        </div>
+
+        <div class="r5-step-card">
+          <div class="r5-step-number r5-step-number-orange">4</div>
+          <h4>Settle &amp; save</h4>
+          <p>Complete the sale with our guided process. Pay just $4,990 &mdash; not $20,000+.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# Expert Guidance Section %>
+  <section class="r5-interior-section r5-interior-section-white">
+    <div class="r5-section-inner">
+      <div class="r5-interior-header">
+        <h2>Expert guidance at every step</h2>
+        <p>Never feel lost or overwhelmed. Our platform guides you through every decision.</p>
+      </div>
+
+      <div class="r5-grid r5-grid-3">
+        <div class="r5-interior-card">
+          <h4>Step-by-step checklists</h4>
+          <p>Know exactly what to do next, from your first search to settlement day.</p>
+        </div>
+        <div class="r5-interior-card">
+          <h4>Document management</h4>
+          <p>All your contracts, reports, and paperwork in one secure place.</p>
+        </div>
+        <div class="r5-interior-card">
+          <h4>Expert network</h4>
+          <p>Access trusted conveyancers, building inspectors, and mortgage brokers when you need them.</p>
+        </div>
+      </div>
+
+      <div class="r5-text-center r5-mt-12">
+        <%= link_to "Get started free", new_user_registration_path, class: "r5-btn r5-btn-primary r5-btn-xl" %>
+      </div>
+    </div>
+  </section>
+
+  <%= render "shared/r5_footer" %>
 </div>
-
-<section class="section" style="background: var(--reasy-white);">
-  <div class="container">
-    <div class="section-header">
-      <span class="badge badge-primary mb-4">For Buyers</span>
-      <h2>Find your perfect home</h2>
-      <p>Access properties others can't see, with guidance you can trust</p>
-    </div>
-
-    <div class="grid grid-4">
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-blue-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-blue);">1</span>
-        </div>
-        <h4>Create your profile</h4>
-        <p class="text-muted mb-0">Tell us what you're looking for — location, budget, must-haves.</p>
-      </div>
-
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-blue-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-blue);">2</span>
-        </div>
-        <h4>Get matched</h4>
-        <p class="text-muted mb-0">We find properties that match your criteria, including off-market "Open to Offers" listings.</p>
-      </div>
-
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-blue-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-blue);">3</span>
-        </div>
-        <h4>Make an offer</h4>
-        <p class="text-muted mb-0">Submit offers directly to sellers. Get guidance on fair market value and negotiation strategy.</p>
-      </div>
-
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-blue-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-blue);">4</span>
-        </div>
-        <h4>Close with confidence</h4>
-        <p class="text-muted mb-0">We guide you through contracts, inspections, and settlement. No surprises.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="background: var(--reasy-beige-light);">
-  <div class="container">
-    <div class="section-header">
-      <span class="badge badge-error mb-4">For Sellers</span>
-      <h2>Sell on your terms</h2>
-      <p>Keep more of your hard-earned equity with our flat-fee model</p>
-    </div>
-
-    <div class="grid grid-4">
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-orange-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-orange);">1</span>
-        </div>
-        <h4>List your property</h4>
-        <p class="text-muted mb-0">Create your listing with photos and details. Choose "Open to Offers" to test the market privately.</p>
-      </div>
-
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-orange-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-orange);">2</span>
-        </div>
-        <h4>Receive enquiries</h4>
-        <p class="text-muted mb-0">Verified buyers reach out directly. No time-wasters, no tyre-kickers.</p>
-      </div>
-
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-orange-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-orange);">3</span>
-        </div>
-        <h4>Negotiate offers</h4>
-        <p class="text-muted mb-0">Accept, reject, or counter. Get data-backed advice on every offer.</p>
-      </div>
-
-      <div class="card text-center">
-        <div style="width: 64px; height: 64px; background: var(--reasy-orange-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--reasy-space-4);">
-          <span style="font-size: var(--reasy-text-2xl); font-weight: 700; color: var(--reasy-orange);">4</span>
-        </div>
-        <h4>Settle & save</h4>
-        <p class="text-muted mb-0">Complete the sale with our guided process. Pay just $4,990 — not $20,000+.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="background: var(--reasy-white);">
-  <div class="container">
-    <div class="section-header">
-      <h2>Expert guidance at every step</h2>
-      <p>Never feel lost or overwhelmed. Our platform guides you through every decision.</p>
-    </div>
-
-    <div class="grid grid-3">
-      <div class="card card-flat">
-        <h4>Step-by-step checklists</h4>
-        <p class="text-muted mb-0">Know exactly what to do next, from your first search to settlement day.</p>
-      </div>
-      <div class="card card-flat">
-        <h4>Document management</h4>
-        <p class="text-muted mb-0">All your contracts, reports, and paperwork in one secure place.</p>
-      </div>
-      <div class="card card-flat">
-        <h4>Expert network</h4>
-        <p class="text-muted mb-0">Access trusted conveyancers, building inspectors, and mortgage brokers when you need them.</p>
-      </div>
-    </div>
-
-    <div class="text-center mt-12">
-      <%= link_to "Get started free", new_user_registration_path, class: "btn btn-primary btn-lg" %>
-    </div>
-  </div>
-</section>
-
-<%= render "shared/footer" %>

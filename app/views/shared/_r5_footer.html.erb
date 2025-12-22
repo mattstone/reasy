@@ -1,0 +1,46 @@
+<%# Reasy r5 Design System - Shared Footer %>
+<footer class="r5-footer">
+  <div class="r5-footer-inner">
+    <div class="r5-footer-main">
+      <div class="r5-footer-brand">
+        <%= image_tag "Reasy Logo Beige.png", alt: "Reasy", class: "r5-footer-logo", height: 32 %>
+        <p>Real estate made easy. The smarter way for Australians to buy and sell property.</p>
+        <div class="r5-footer-social">
+          <a href="#" aria-label="Facebook">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="r5-footer-links">
+        <div class="r5-footer-col">
+          <h4>For you</h4>
+          <a href="<%= properties_path %>">Browse properties</a>
+          <a href="/how-it-works">How it works</a>
+          <a href="/pricing">Pricing</a>
+        </div>
+        <div class="r5-footer-col">
+          <h4>Company</h4>
+          <a href="/about">About us</a>
+          <a href="/contact">Contact</a>
+        </div>
+        <div class="r5-footer-col">
+          <h4>Legal</h4>
+          <a href="<%= terms_path %>">Terms of service</a>
+          <a href="<%= privacy_path %>">Privacy policy</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="r5-footer-bottom">
+      <p>&copy; <%= Date.current.year %> Reasy Pty Ltd. All rights reserved.</p>
+      <p>Reasy is not a licensed real estate agent. We provide a platform to connect buyers and sellers directly.</p>
+    </div>
+  </div>
+</footer>

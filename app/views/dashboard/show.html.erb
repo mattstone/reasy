@@ -268,7 +268,7 @@
               <% if matches.any? %>
                 <div class="property-card-list">
                   <% matches.each do |property| %>
-                    <%= link_to property_path(property), class: "property-card property-card-horizontal", data: { turbo_frame: "_top" } do %>
+                    <%= link_to property_seo_path(property), class: "property-card property-card-horizontal", data: { turbo_frame: "_top" } do %>
                       <div class="property-card-image">
                         <%= render 'shared/property_image', property: property, size: :medium %>
                       </div>
@@ -461,7 +461,41 @@
             </div>
           </div>
 
-          <%# AI Assistant Callout %>
+          <%# Journey Progress Widget %>
+          <div class="journey-widget">
+            <div class="journey-widget-header">
+              <h3 class="journey-widget-title">Your Journey</h3>
+              <%= link_to buyer_journey_path, class: "btn btn-sm btn-ghost" do %>
+                View all
+              <% end %>
+            </div>
+            <div class="journey-widget-body">
+              <div class="journey-widget-stats">
+                <div class="journey-widget-level">
+                  <%= journey_progress_ring(current_user, size: 60) %>
+                </div>
+                <div class="journey-widget-info">
+                  <div class="journey-widget-title-text"><%= current_user.journey_title || "Property Newcomer" %></div>
+                  <div class="journey-widget-points"><%= current_user.journey_points || 0 %> points</div>
+                  <% if current_user.points_to_next_level > 0 %>
+                    <div class="journey-widget-points"><%= current_user.points_to_next_level %> to next level</div>
+                  <% end %>
+                </div>
+              </div>
+              <% recent_achievements = current_user.user_achievements.order(awarded_at: :desc).limit(3) rescue [] %>
+              <% if recent_achievements.any? %>
+                <div class="journey-widget-achievements">
+                  <% recent_achievements.each do |ua| %>
+                    <div class="achievement-mini" title="<%= ua.title %>">
+                      <%= achievement_icon(ua.achievement_type) %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <%# AI Assistant Callout - Stevie & Evie %>
           <div class="callout">
             <div class="callout-avatar">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
@@ -470,9 +504,9 @@
               </svg>
             </div>
             <div class="callout-content">
-              <div class="callout-name">Meet your AI Assistants</div>
+              <div class="callout-name">Meet Stevie & Evie</div>
               <div class="callout-message">
-                Get expert guidance from Max (property), Sage (journey), Nina (negotiation), Doc (documents), Scout (market), and Ally (providers).
+                Your AI property senseis are here to guide you through every step of your real estate journey - from first search to settlement.
               </div>
               <%= link_to "Start chatting", ai_conversations_path, class: "btn btn-sm btn-primary mt-3" %>
             </div>

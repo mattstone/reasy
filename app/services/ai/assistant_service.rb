@@ -3,7 +3,11 @@
 module AI
   # Main service for interacting with AI assistants
   #
-  # Each assistant has a unique personality and expertise:
+  # PRIMARY ASSISTANTS (Recommended):
+  # - Stevie: Your Property Sensei (male) - practical, straight-talking guide
+  # - Evie: Your Property Sensei (female) - supportive, thorough companion
+  #
+  # LEGACY ASSISTANTS (Deprecated - for existing conversations):
   # - Max: Property Expert - helps understand property features and value
   # - Sage: Journey Guide - guides through the buying/selling process
   # - Nina: Negotiation Advisor - helps with offers and negotiations
@@ -12,44 +16,87 @@ module AI
   # - Ally: Service Provider Assistant - helps find trusted professionals
   #
   class AssistantService
+    # Full expertise list for the primary sensei agents
+    SENSEI_EXPERTISE = %w[
+      property_features valuations inspections renovations zoning
+      process_guidance timelines checklists milestones
+      offers negotiation pricing strategy
+      contracts legal_documents terms_conditions due_diligence
+      market_data comparable_sales suburb_insights trends
+      conveyancers inspectors mortgage_brokers service_providers
+      buyer_guidance seller_guidance
+    ].freeze
+
     ASSISTANTS = {
+      # PRIMARY ASSISTANTS - Users choose one as their personal sensei
+      stevie: {
+        name: "Stevie",
+        title: "Your Property Sensei",
+        description: "Your property transaction wingman. Practical, straight-talking, gets things done without the fluff.",
+        expertise: SENSEI_EXPERTISE,
+        primary: true,
+        gender: :male,
+        avatar: "businessman"
+      },
+      evie: {
+        name: "Evie",
+        title: "Your Property Sensei",
+        description: "Your property journey companion. Patient, thorough, celebrates every milestone with you.",
+        expertise: SENSEI_EXPERTISE,
+        primary: true,
+        gender: :female,
+        avatar: "businesswoman"
+      },
+      # LEGACY ASSISTANTS - Deprecated but maintained for existing conversations
       max: {
         name: "Max",
         title: "Property Expert",
         description: "Your friendly property guru who knows buildings inside and out",
-        expertise: %w[property_features valuations inspections renovations zoning]
+        expertise: %w[property_features valuations inspections renovations zoning],
+        deprecated: true
       },
       sage: {
         name: "Sage",
         title: "Journey Guide",
         description: "Your wise companion through the property journey",
-        expertise: %w[process_guidance timelines checklists milestones]
+        expertise: %w[process_guidance timelines checklists milestones],
+        deprecated: true
       },
       nina: {
         name: "Nina",
         title: "Negotiation Advisor",
         description: "Your strategic partner in getting the best deal",
-        expertise: %w[offers negotiation pricing strategy]
+        expertise: %w[offers negotiation pricing strategy],
+        deprecated: true
       },
       doc: {
         name: "Doc",
         title: "Document Decoder",
         description: "Makes legal jargon understandable",
-        expertise: %w[contracts legal_documents terms_conditions due_diligence]
+        expertise: %w[contracts legal_documents terms_conditions due_diligence],
+        deprecated: true
       },
       scout: {
         name: "Scout",
         title: "Market Researcher",
         description: "Your data-driven market analyst",
-        expertise: %w[market_data comparable_sales suburb_insights trends]
+        expertise: %w[market_data comparable_sales suburb_insights trends],
+        deprecated: true
       },
       ally: {
         name: "Ally",
         title: "Service Provider Assistant",
         description: "Connects you with trusted professionals",
-        expertise: %w[conveyancers inspectors mortgage_brokers service_providers]
+        expertise: %w[conveyancers inspectors mortgage_brokers service_providers],
+        deprecated: true
       }
     }.freeze
+
+    # Primary assistants that new users should choose from
+    PRIMARY_ASSISTANTS = ASSISTANTS.select { |_, v| v[:primary] }.keys.freeze
+
+    # Deprecated assistants (for legacy support)
+    LEGACY_ASSISTANTS = ASSISTANTS.select { |_, v| v[:deprecated] }.keys.freeze
 
     attr_reader :user, :assistant_type, :conversation
 
@@ -163,6 +210,8 @@ module AI
     # Get suggested questions based on context
     def suggested_questions(context: {})
       case @assistant_type
+      when :stevie, :evie
+        sensei_suggestions(context)
       when :max
         property_expert_suggestions(context)
       when :sage
@@ -176,6 +225,22 @@ module AI
       when :ally
         service_provider_suggestions(context)
       end
+    end
+
+    # Check if this is a primary (sensei) assistant
+    def primary_assistant?
+      assistant_info[:primary] == true
+    end
+
+    # Check if this is a deprecated assistant
+    def deprecated_assistant?
+      assistant_info[:deprecated] == true
+    end
+
+    # Get the assistant type for the user's preferred agent
+    def self.for_user(user)
+      return nil unless user.has_preferred_agent?
+      user.preferred_agent.to_sym
     end
 
     private
@@ -312,6 +377,69 @@ module AI
         "What should a building inspection cover?",
         "When do I need a mortgage broker?",
         "How do I find a trusted pest inspector?"
+      ]
+    end
+
+    # Comprehensive suggestions for Stevie/Evie based on user role and context
+    def sensei_suggestions(context)
+      suggestions = []
+
+      # Role-based suggestions
+      if @user.buyer?
+        suggestions += buyer_sensei_suggestions(context)
+      elsif @user.seller?
+        suggestions += seller_sensei_suggestions(context)
+      end
+
+      # Context-based additions
+      if context[:property].present?
+        suggestions << "What should I know about this property?"
+        suggestions << "Can you analyze the Reasy Score for this area?"
+      end
+
+      if context[:contract_analysis].present?
+        suggestions << "Explain the unusual clauses you found"
+        suggestions << "What questions should I ask my conveyancer?"
+      end
+
+      if context[:transaction].present?
+        suggestions << "What's my next step in the transaction?"
+        suggestions << "When should I be concerned about deadlines?"
+      end
+
+      # Fallback general suggestions
+      if suggestions.empty?
+        suggestions = [
+          "What's the first step in buying a property?",
+          "How do I find properties in my budget?",
+          "What documents do I need to prepare?",
+          "Can you explain the buying/selling process?"
+        ]
+      end
+
+      suggestions.first(6)
+    end
+
+    def buyer_sensei_suggestions(context)
+      # Check user's checklist progress to provide relevant suggestions
+      [
+        "What should I complete on my buyer checklist?",
+        "How do I analyze a contract for unusual clauses?",
+        "What questions should I ask during an inspection?",
+        "How do I structure a competitive offer?",
+        "What happens during the cooling-off period?",
+        "How do I choose the right conveyancer?"
+      ]
+    end
+
+    def seller_sensei_suggestions(context)
+      [
+        "What should I complete on my seller checklist?",
+        "How do I price my property correctly?",
+        "What documents do I need to prepare for sale?",
+        "How should I respond to buyer offers?",
+        "What makes a good contract of sale?",
+        "How do I prepare for settlement?"
       ]
     end
   end

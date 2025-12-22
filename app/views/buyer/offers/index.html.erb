@@ -1,0 +1,106 @@
+<%# Page Header %>
+<div class="page-header">
+  <div class="page-header-content">
+    <h1 class="page-title">My Offers</h1>
+    <p class="page-subtitle">Track the status of all offers you've made on properties</p>
+  </div>
+  <div class="page-header-actions">
+    <%= link_to properties_path, class: "btn btn-primary", data: { turbo_frame: "_top" } do %>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      Find Properties
+    <% end %>
+  </div>
+</div>
+
+<%# Summary Cards %>
+<div class="stat-cards-3 mb-6">
+  <div class="metric-card">
+    <div class="metric-card-icon metric-card-icon-blue">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    </div>
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @pending_offers.count %></div>
+      <div class="metric-card-label">Pending Offers</div>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-card-icon metric-card-icon-orange">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="17 1 21 5 17 9"/>
+        <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+        <polyline points="7 23 3 19 7 15"/>
+        <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+      </svg>
+    </div>
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @active_offers.count %></div>
+      <div class="metric-card-label">Counter Offers</div>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-card-icon metric-card-icon-green">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+    <div class="metric-card-content">
+      <div class="metric-card-value"><%= @offers.count %></div>
+      <div class="metric-card-label">Total Offers Made</div>
+    </div>
+  </div>
+</div>
+
+<% if @offers.any? %>
+  <%# Active & Pending Offers %>
+  <% if @pending_offers.any? || @active_offers.any? %>
+    <div class="dashboard-panel mb-6">
+      <div class="dashboard-panel-header">
+        <h2 class="dashboard-panel-title">Active Offers</h2>
+        <p class="dashboard-panel-subtitle">Offers awaiting response</p>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <% (@pending_offers + @active_offers).each do |offer| %>
+          <%= render "buyer/offers/offer_card", offer: offer %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Completed Offers %>
+  <% if @completed_offers.any? %>
+    <div class="dashboard-panel">
+      <div class="dashboard-panel-header">
+        <h2 class="dashboard-panel-title">Completed Offers</h2>
+        <p class="dashboard-panel-subtitle">Past offers that are no longer active</p>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <% @completed_offers.each do |offer| %>
+          <%= render "buyer/offers/offer_card", offer: offer %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <%# Empty State %>
+  <div class="dashboard-panel">
+    <div class="card-empty">
+      <div class="card-empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="card-empty-title">No offers yet</div>
+      <div class="card-empty-description">When you find a property you love, you can make an offer right from the property page.</div>
+      <%= link_to "Browse Properties", properties_path, class: "btn btn-primary", data: { turbo_frame: "_top" } %>
+    </div>
+  </div>
+<% end %>

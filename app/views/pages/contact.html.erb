@@ -1,102 +1,114 @@
-<%= render "shared/nav" %>
+<%# Contact - Reasy r5 Design System %>
+<%= stylesheet_link_tag "pages/index5", media: "all" %>
+<%= stylesheet_link_tag "pages/interior", media: "all" %>
 
-<div class="page-hero">
-  <h1>Contact Us</h1>
-  <p>Have questions? We're here to help.</p>
-</div>
+<div class="r5-page">
+  <%= render "shared/r5_nav" %>
 
-<section class="section" style="background: var(--reasy-white);">
-  <div class="container">
-    <div class="grid grid-2" style="max-width: 1000px; margin: 0 auto; gap: var(--reasy-space-12);">
+  <%# Page Hero %>
+  <section class="r5-page-hero">
+    <div class="r5-page-hero-gradient"></div>
+    <div class="r5-page-hero-pattern"></div>
+    <div class="r5-page-hero-content">
+      <h1>Contact Us</h1>
+      <p>Have questions? We're here to help.</p>
+    </div>
+  </section>
 
-      <div>
-        <h2>Get in touch</h2>
-        <p class="text-lg text-muted mb-8">
-          Whether you have a question about our platform, need help with your listing, or just want to say hello — we'd love to hear from you.
-        </p>
+  <%# Contact Section %>
+  <section class="r5-interior-section r5-interior-section-white">
+    <div class="r5-section-inner">
+      <div class="r5-contact-grid">
 
-        <div class="mb-8">
-          <div style="display: flex; align-items: flex-start; gap: var(--reasy-space-4); margin-bottom: var(--reasy-space-6);">
-            <div style="width: 48px; height: 48px; background: var(--reasy-blue-pale); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="24" height="24" fill="none" stroke="var(--reasy-blue)" stroke-width="2" viewBox="0 0 24 24">
+        <%# Contact Info %>
+        <div class="r5-contact-info">
+          <h2>Get in touch</h2>
+          <p>
+            Whether you have a question about our platform, need help with your listing, or just want to say hello &mdash; we'd love to hear from you.
+          </p>
+
+          <div class="r5-contact-item">
+            <div class="r5-contact-icon">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
             </div>
             <div>
-              <h4 class="mb-1">Email</h4>
-              <p class="text-muted mb-0">support@reasy.com.au</p>
-              <p class="text-sm text-muted">We respond within 24 hours</p>
+              <h4>Email</h4>
+              <p>support@reasy.com.au</p>
+              <p class="r5-text-sm">We respond within 24 hours</p>
             </div>
           </div>
 
-          <div style="display: flex; align-items: flex-start; gap: var(--reasy-space-4); margin-bottom: var(--reasy-space-6);">
-            <div style="width: 48px; height: 48px; background: var(--reasy-blue-pale); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="24" height="24" fill="none" stroke="var(--reasy-blue)" stroke-width="2" viewBox="0 0 24 24">
+          <div class="r5-contact-item">
+            <div class="r5-contact-icon">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
               </svg>
             </div>
             <div>
-              <h4 class="mb-1">Live Chat</h4>
-              <p class="text-muted mb-0">Available 9am - 5pm AEST</p>
-              <p class="text-sm text-muted">Monday to Friday</p>
+              <h4>Live Chat</h4>
+              <p>Available 9am - 5pm AEST</p>
+              <p class="r5-text-sm">Monday to Friday</p>
             </div>
           </div>
 
-          <div style="display: flex; align-items: flex-start; gap: var(--reasy-space-4);">
-            <div style="width: 48px; height: 48px; background: var(--reasy-blue-pale); border-radius: var(--reasy-radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="24" height="24" fill="none" stroke="var(--reasy-blue)" stroke-width="2" viewBox="0 0 24 24">
+          <div class="r5-contact-item">
+            <div class="r5-contact-icon">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                 <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
             </div>
             <div>
-              <h4 class="mb-1">Office</h4>
-              <p class="text-muted mb-0">Sydney, Australia</p>
-              <p class="text-sm text-muted">By appointment only</p>
+              <h4>Office</h4>
+              <p>Sydney, Australia</p>
+              <p class="r5-text-sm">By appointment only</p>
             </div>
           </div>
         </div>
+
+        <%# Contact Form %>
+        <div class="r5-contact-form">
+          <h3>Send us a message</h3>
+
+          <%= form_with url: contact_path, method: :post, local: true do |f| %>
+            <div class="r5-form-group">
+              <label for="name" class="r5-form-label">Your name</label>
+              <input type="text" name="name" id="name" class="r5-form-input" placeholder="John Smith" required>
+            </div>
+
+            <div class="r5-form-group">
+              <label for="email" class="r5-form-label">Email address</label>
+              <input type="email" name="email" id="email" class="r5-form-input" placeholder="you@example.com" required>
+            </div>
+
+            <div class="r5-form-group">
+              <label for="subject" class="r5-form-label">Subject</label>
+              <select name="subject" id="subject" class="r5-form-select">
+                <option value="">Select a topic</option>
+                <option value="buying">Buying a property</option>
+                <option value="selling">Selling a property</option>
+                <option value="account">Account help</option>
+                <option value="feedback">Feedback</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="r5-form-group">
+              <label for="message" class="r5-form-label">Message</label>
+              <textarea name="message" id="message" class="r5-form-textarea" placeholder="How can we help?" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="r5-btn r5-btn-primary" style="width: 100%; justify-content: center;">
+              Send message
+            </button>
+          <% end %>
+        </div>
+
       </div>
-
-      <div class="card" style="background: var(--reasy-gray-50);">
-        <h3 class="mb-6">Send us a message</h3>
-
-        <%= form_with url: contact_path, method: :post, local: true do |f| %>
-          <div class="form-group">
-            <label for="name" class="form-label">Your name</label>
-            <input type="text" name="name" id="name" class="form-input" placeholder="John Smith" required>
-          </div>
-
-          <div class="form-group">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" name="email" id="email" class="form-input" placeholder="you@example.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="subject" class="form-label">Subject</label>
-            <select name="subject" id="subject" class="form-select">
-              <option value="">Select a topic</option>
-              <option value="buying">Buying a property</option>
-              <option value="selling">Selling a property</option>
-              <option value="account">Account help</option>
-              <option value="feedback">Feedback</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="message" class="form-label">Message</label>
-            <textarea name="message" id="message" class="form-textarea" placeholder="How can we help?" rows="5" required></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block">
-            Send message
-          </button>
-        <% end %>
-      </div>
-
     </div>
-  </div>
-</section>
+  </section>
 
-<%= render "shared/footer" %>
+  <%= render "shared/r5_footer" %>
+</div>

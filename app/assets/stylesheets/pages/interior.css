@@ -1,0 +1,711 @@
+/*
+ * Reasy Interior Pages - Consistent Design System
+ * Extends the r5- design tokens from index5.css
+ * For: How It Works, Pricing, About, Contact pages
+ */
+
+/* ============================================
+   Page Hero - Interior variant
+   ============================================ */
+.r5-page-hero {
+  position: relative;
+  padding: var(--r5-space-24) var(--r5-space-6);
+  padding-top: calc(var(--r5-space-24) + 80px);
+  text-align: center;
+  overflow: hidden;
+}
+
+.r5-page-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    var(--r5-blue-pale) 0%,
+    var(--r5-white) 50%,
+    var(--r5-beige-light) 100%
+  );
+  z-index: 0;
+}
+
+.r5-page-hero-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  background-image: radial-gradient(var(--r5-blue) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 70%);
+  z-index: 0;
+}
+
+.r5-page-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.r5-page-hero h1 {
+  font-size: var(--r5-text-5xl);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-4);
+  line-height: 1.1;
+}
+
+.r5-page-hero p {
+  font-size: var(--r5-text-xl);
+  color: var(--r5-gray-600);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   Interior Sections
+   ============================================ */
+.r5-interior-section {
+  padding: var(--r5-space-20) 0;
+}
+
+.r5-interior-section-alt {
+  background: var(--r5-beige-light);
+}
+
+.r5-interior-section-white {
+  background: var(--r5-white);
+}
+
+.r5-interior-section-dark {
+  background: var(--r5-dark);
+  color: var(--r5-white);
+}
+
+.r5-interior-section-dark h2 {
+  color: var(--r5-white);
+}
+
+.r5-interior-section-dark .r5-lead {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.r5-interior-section-blue {
+  background: var(--r5-blue);
+  color: var(--r5-white);
+}
+
+.r5-interior-section-blue h2 {
+  color: var(--r5-white);
+}
+
+/* ============================================
+   Interior Section Header
+   ============================================ */
+.r5-interior-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto var(--r5-space-12);
+}
+
+.r5-interior-header h2 {
+  font-size: var(--r5-text-4xl);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-4);
+}
+
+.r5-interior-header p {
+  font-size: var(--r5-text-lg);
+  color: var(--r5-gray-600);
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* ============================================
+   Interior Cards
+   ============================================ */
+.r5-interior-card {
+  background: var(--r5-white);
+  border-radius: var(--r5-radius-xl);
+  padding: var(--r5-space-8);
+  box-shadow: var(--r5-shadow-sm);
+  transition: all var(--r5-transition-base);
+}
+
+.r5-interior-card:hover {
+  box-shadow: var(--r5-shadow-lg);
+  transform: translateY(-4px);
+}
+
+.r5-interior-card-flat {
+  background: var(--r5-white);
+  border-radius: var(--r5-radius-lg);
+  padding: var(--r5-space-6);
+  border: 1px solid var(--r5-gray-200);
+}
+
+.r5-interior-card h4 {
+  font-size: var(--r5-text-xl);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-3);
+}
+
+.r5-interior-card p {
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-600);
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* ============================================
+   Step Cards (How It Works)
+   ============================================ */
+.r5-step-card {
+  text-align: center;
+  padding: var(--r5-space-6);
+}
+
+.r5-step-number {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--r5-text-2xl);
+  font-weight: 700;
+  margin: 0 auto var(--r5-space-5);
+  color: var(--r5-white);
+  box-shadow: var(--r5-shadow-lg);
+}
+
+.r5-step-number-blue {
+  background: var(--r5-blue);
+}
+
+.r5-step-number-orange {
+  background: var(--r5-orange);
+}
+
+.r5-step-card h4 {
+  font-size: var(--r5-text-xl);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-3);
+}
+
+.r5-step-card p {
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-600);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   Badge / Eyebrow
+   ============================================ */
+.r5-badge {
+  display: inline-block;
+  padding: var(--r5-space-2) var(--r5-space-4);
+  border-radius: var(--r5-radius-full);
+  font-size: var(--r5-text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--r5-space-4);
+}
+
+.r5-badge-blue {
+  background: var(--r5-blue-pale);
+  color: var(--r5-blue);
+}
+
+.r5-badge-orange {
+  background: var(--r5-orange-pale);
+  color: var(--r5-orange);
+}
+
+/* ============================================
+   Grid Layouts
+   ============================================ */
+.r5-grid {
+  display: grid;
+  gap: var(--r5-space-6);
+}
+
+.r5-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.r5-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.r5-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* ============================================
+   Pricing Cards
+   ============================================ */
+.r5-pricing-card {
+  background: var(--r5-white);
+  border-radius: var(--r5-radius-xl);
+  padding: var(--r5-space-8);
+  border: 2px solid var(--r5-gray-200);
+  transition: all var(--r5-transition-base);
+}
+
+.r5-pricing-card:hover {
+  box-shadow: var(--r5-shadow-xl);
+  transform: translateY(-4px);
+}
+
+.r5-pricing-card-featured {
+  border-color: var(--r5-orange);
+  position: relative;
+}
+
+.r5-pricing-price {
+  font-size: var(--r5-text-4xl);
+  font-weight: 700;
+  margin: 0 0 var(--r5-space-2);
+}
+
+.r5-pricing-price-green {
+  color: var(--r5-green);
+}
+
+.r5-pricing-price-orange {
+  color: var(--r5-orange);
+}
+
+.r5-pricing-desc {
+  font-size: var(--r5-text-lg);
+  color: var(--r5-gray-600);
+  margin: 0 0 var(--r5-space-8);
+}
+
+.r5-pricing-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--r5-space-8);
+}
+
+.r5-pricing-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--r5-space-3);
+  margin-bottom: var(--r5-space-4);
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-700);
+}
+
+.r5-pricing-features svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ============================================
+   Savings Calculator
+   ============================================ */
+.r5-savings-box {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--r5-radius-xl);
+  padding: var(--r5-space-8);
+  max-width: 700px;
+  margin: var(--r5-space-8) auto 0;
+}
+
+.r5-savings-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--r5-space-6);
+  text-align: center;
+  margin-bottom: var(--r5-space-6);
+}
+
+.r5-savings-compare p:first-child {
+  font-size: var(--r5-text-sm);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 var(--r5-space-2);
+}
+
+.r5-savings-old {
+  font-size: var(--r5-text-3xl);
+  font-weight: 700;
+  color: var(--r5-gray-400);
+  text-decoration: line-through;
+}
+
+.r5-savings-new {
+  font-size: var(--r5-text-3xl);
+  font-weight: 700;
+  color: var(--r5-green);
+}
+
+.r5-savings-result {
+  padding-top: var(--r5-space-6);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.r5-savings-result p:first-child {
+  font-size: var(--r5-text-sm);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 var(--r5-space-2);
+}
+
+.r5-savings-amount {
+  font-size: var(--r5-text-4xl);
+  font-weight: 700;
+  color: var(--r5-orange);
+  margin: 0;
+}
+
+.r5-savings-extra {
+  font-size: var(--r5-text-base);
+  color: rgba(255, 255, 255, 0.7);
+  margin: var(--r5-space-2) 0 0;
+}
+
+/* ============================================
+   FAQ Cards
+   ============================================ */
+.r5-faq-card {
+  background: var(--r5-white);
+  border-radius: var(--r5-radius-lg);
+  padding: var(--r5-space-6);
+  margin-bottom: var(--r5-space-4);
+  border: 1px solid var(--r5-gray-200);
+}
+
+.r5-faq-card h4 {
+  font-size: var(--r5-text-lg);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-3);
+}
+
+.r5-faq-card p {
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-600);
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* ============================================
+   About Page - Prose Content
+   ============================================ */
+.r5-prose {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--r5-space-6);
+}
+
+.r5-prose p {
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-700);
+  line-height: 1.8;
+  margin: 0 0 var(--r5-space-6);
+}
+
+.r5-prose p.r5-lead {
+  font-size: var(--r5-text-xl);
+  color: var(--r5-gray-600);
+}
+
+.r5-prose h2 {
+  font-size: var(--r5-text-2xl);
+  color: var(--r5-dark);
+  margin: var(--r5-space-12) 0 var(--r5-space-4);
+}
+
+.r5-prose h2:first-of-type {
+  margin-top: 0;
+}
+
+.r5-prose ul {
+  padding-left: var(--r5-space-6);
+  margin: 0 0 var(--r5-space-6);
+}
+
+.r5-prose ul li {
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-700);
+  line-height: 1.8;
+  margin-bottom: var(--r5-space-3);
+}
+
+.r5-prose ul li strong {
+  color: var(--r5-dark);
+}
+
+/* Values Card Grid */
+.r5-values-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--r5-space-6);
+  margin: var(--r5-space-8) 0;
+}
+
+.r5-value-card {
+  background: var(--r5-white);
+  border-radius: var(--r5-radius-xl);
+  padding: var(--r5-space-6);
+  box-shadow: var(--r5-shadow-sm);
+  transition: all var(--r5-transition-base);
+}
+
+.r5-value-card:hover {
+  box-shadow: var(--r5-shadow-lg);
+  transform: translateY(-4px);
+}
+
+.r5-value-card h4 {
+  font-size: var(--r5-text-lg);
+  margin: 0 0 var(--r5-space-3);
+}
+
+.r5-value-card h4.r5-text-blue {
+  color: var(--r5-blue);
+}
+
+.r5-value-card h4.r5-text-orange {
+  color: var(--r5-orange);
+}
+
+.r5-value-card p {
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-600);
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* ============================================
+   Contact Page
+   ============================================ */
+.r5-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--r5-space-12);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.r5-contact-info h2 {
+  font-size: var(--r5-text-3xl);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-4);
+}
+
+.r5-contact-info > p {
+  font-size: var(--r5-text-lg);
+  color: var(--r5-gray-600);
+  margin: 0 0 var(--r5-space-8);
+  line-height: 1.7;
+}
+
+.r5-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--r5-space-4);
+  margin-bottom: var(--r5-space-6);
+}
+
+.r5-contact-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--r5-blue-pale);
+  border-radius: var(--r5-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--r5-blue);
+}
+
+.r5-contact-item h4 {
+  font-size: var(--r5-text-lg);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-1);
+}
+
+.r5-contact-item p {
+  font-size: var(--r5-text-base);
+  color: var(--r5-gray-600);
+  margin: 0;
+}
+
+.r5-contact-item .r5-text-sm {
+  font-size: var(--r5-text-sm);
+  color: var(--r5-gray-500);
+}
+
+/* Contact Form */
+.r5-contact-form {
+  background: var(--r5-gray-50);
+  border-radius: var(--r5-radius-xl);
+  padding: var(--r5-space-8);
+}
+
+.r5-contact-form h3 {
+  font-size: var(--r5-text-xl);
+  color: var(--r5-dark);
+  margin: 0 0 var(--r5-space-6);
+}
+
+.r5-form-group {
+  margin-bottom: var(--r5-space-5);
+}
+
+.r5-form-label {
+  display: block;
+  font-size: var(--r5-text-sm);
+  font-weight: 600;
+  color: var(--r5-dark);
+  margin-bottom: var(--r5-space-2);
+}
+
+.r5-form-input,
+.r5-form-select,
+.r5-form-textarea {
+  width: 100%;
+  padding: var(--r5-space-3) var(--r5-space-4);
+  font-size: var(--r5-text-base);
+  font-family: var(--r5-font);
+  color: var(--r5-dark);
+  background: var(--r5-white);
+  border: 1px solid var(--r5-gray-300);
+  border-radius: var(--r5-radius-md);
+  transition: all var(--r5-transition-fast);
+}
+
+.r5-form-input:focus,
+.r5-form-select:focus,
+.r5-form-textarea:focus {
+  outline: none;
+  border-color: var(--r5-blue);
+  box-shadow: 0 0 0 3px var(--r5-blue-pale);
+}
+
+.r5-form-input::placeholder,
+.r5-form-textarea::placeholder {
+  color: var(--r5-gray-400);
+}
+
+.r5-form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+.r5-text-center {
+  text-align: center;
+}
+
+.r5-text-blue {
+  color: var(--r5-blue);
+}
+
+.r5-text-orange {
+  color: var(--r5-orange);
+}
+
+.r5-text-green {
+  color: var(--r5-green);
+}
+
+.r5-mt-8 {
+  margin-top: var(--r5-space-8);
+}
+
+.r5-mt-12 {
+  margin-top: var(--r5-space-12);
+}
+
+.r5-mb-4 {
+  margin-bottom: var(--r5-space-4);
+}
+
+.r5-mb-8 {
+  margin-bottom: var(--r5-space-8);
+}
+
+.r5-max-w-narrow {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 1024px) {
+  .r5-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .r5-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .r5-page-hero {
+    padding: var(--r5-space-16) var(--r5-space-4);
+    padding-top: calc(var(--r5-space-16) + 80px);
+  }
+
+  .r5-page-hero h1 {
+    font-size: var(--r5-text-3xl);
+  }
+
+  .r5-page-hero p {
+    font-size: var(--r5-text-lg);
+  }
+
+  .r5-interior-section {
+    padding: var(--r5-space-12) 0;
+  }
+
+  .r5-interior-header h2 {
+    font-size: var(--r5-text-2xl);
+  }
+
+  .r5-grid-4,
+  .r5-grid-3,
+  .r5-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .r5-values-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .r5-contact-grid {
+    grid-template-columns: 1fr;
+    gap: var(--r5-space-8);
+  }
+
+  .r5-savings-compare {
+    grid-template-columns: 1fr;
+    gap: var(--r5-space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .r5-page-hero h1 {
+    font-size: var(--r5-text-2xl);
+  }
+
+  .r5-step-number {
+    width: 60px;
+    height: 60px;
+    font-size: var(--r5-text-xl);
+  }
+
+  .r5-pricing-card {
+    padding: var(--r5-space-6);
+  }
+
+  .r5-contact-form {
+    padding: var(--r5-space-6);
+  }
+}
