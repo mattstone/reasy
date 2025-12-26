@@ -111,7 +111,7 @@ gem "geocoder", "~> 1.8"
 gem "aasm", "~> 5.5"
 
 # File uploads
-gem "aws-sdk-s3", "~> 1.176", require: false
+gem "aws-sdk-s3", "~> 1.208", require: false
 
 # Testing
 group :development, :test do
