@@ -80,7 +80,7 @@ gem "devise", "~> 4.9"
 gem "pundit", "~> 2.4"
 
 # Encrypted attributes
-gem "lockbox", "~> 1.4"
+gem "lockbox", "~> 2.1"
 gem "blind_index", "~> 2.5"
 
 # Background jobs
